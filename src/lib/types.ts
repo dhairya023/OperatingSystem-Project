@@ -6,21 +6,21 @@ export type ClassSession = {
   endTime: string;
   room: string;
   status: 'attended' | 'missed' | 'holiday' | 'cancelled';
-  date: Date;
+  date: any; // Allow any for Firestore Timestamps
 };
 
 export type Assignment = {
   id: string;
   title: string;
   subject: string;
-  dueDate: Date;
+  dueDate: any; // Allow any for Firestore Timestamps
   completed: boolean;
 };
 
 export type Exam = {
   id:string;
   subject: string;
-  date: Date;
+  date: any; // Allow any for Firestore Timestamps
   venue: string;
   type: 'Mid-term' | 'Final' | 'Quiz';
 };

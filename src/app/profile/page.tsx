@@ -1,5 +1,5 @@
 'use client';
-
+import AppLayout from '@/components/app-layout';
 import { useState } from 'react';
 import Image from 'next/image';
 import PageHeader from '@/components/page-header';
@@ -17,12 +17,12 @@ const ProfileDetail = ({ icon: Icon, label, value }: { icon: React.ElementType, 
     <Icon className="w-5 h-5 text-muted-foreground mt-1" />
     <div>
       <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="font-medium">{value}</p>
+      <p className="font-medium">{value || '-'}</p>
     </div>
   </div>
 );
 
-export default function ProfilePage() {
+function ProfileContent() {
   const { profile, updateProfile } = useAppContext();
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -32,7 +32,7 @@ export default function ProfilePage() {
   };
 
   const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
   }
 
   return (
@@ -51,10 +51,10 @@ export default function ProfilePage() {
               <Mail className="w-4 h-4" />
               <span>{profile.email}</span>
             </div>
-            <div className="flex items-center gap-2 mt-1 text-muted-foreground">
+            {profile.rollNo && <div className="flex items-center gap-2 mt-1 text-muted-foreground">
               <GraduationCap className="w-4 h-4" />
               <span>{profile.rollNo}</span>
-            </div>
+            </div>}
           </div>
         </CardHeader>
         <CardContent className="grid gap-6 md:grid-cols-2 pt-6">
@@ -81,4 +81,13 @@ export default function ProfilePage() {
       </Card>
     </div>
   );
+}
+
+
+export default function ProfilePage() {
+    return (
+        <AppLayout>
+            <ProfileContent />
+        </AppLayout>
+    )
 }

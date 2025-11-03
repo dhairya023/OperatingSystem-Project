@@ -1,4 +1,5 @@
 'use client';
+import AppLayout from '@/components/app-layout';
 import PageHeader from '@/components/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -14,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 
-export default function AttendancePage() {
+function AttendanceContent() {
   const { subjects, getSubjectAttendance, classes } = useAppContext();
   const [selectedSubject, setSelectedSubject] = useState(subjects.length > 0 ? subjects[0].name : '');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -34,7 +35,7 @@ export default function AttendancePage() {
   };
   
   const dailyClasses = classes
-    .filter((c) => format(c.date, 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
+    .filter((c) => format(new Date(c.date), 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
     .sort((a, b) => {
         const timeA = a.startTime.split(':');
         const timeB = b.startTime.split(':');
@@ -140,4 +141,13 @@ export default function AttendancePage() {
 
     </div>
   );
+}
+
+
+export default function AttendancePage() {
+    return (
+        <AppLayout>
+            <AttendanceContent />
+        </AppLayout>
+    )
 }

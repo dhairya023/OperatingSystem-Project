@@ -1,4 +1,5 @@
 'use client';
+import AppLayout from '@/components/app-layout';
 import { useState } from 'react';
 import PageHeader from '@/components/page-header';
 import { useAppContext } from '@/context/app-context';
@@ -93,7 +94,7 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
   );
 };
 
-export default function TimetablePage() {
+function TimetableContent() {
   const { subjects, classes } = useAppContext();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -114,7 +115,7 @@ export default function TimetablePage() {
   }
 
   const dailyClasses = classes
-    .filter((c) => format(c.date, 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
+    .filter((c) => format(new Date(c.date), 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
     .sort((a, b) => {
         const timeA = a.startTime.split(':');
         const timeB = b.startTime.split(':');
@@ -181,4 +182,13 @@ export default function TimetablePage() {
       </div>
     </div>
   );
+}
+
+
+export default function TimetablePage() {
+    return (
+        <AppLayout>
+            <TimetableContent />
+        </AppLayout>
+    )
 }

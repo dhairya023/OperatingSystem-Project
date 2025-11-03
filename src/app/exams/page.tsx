@@ -1,4 +1,5 @@
 'use client';
+import AppLayout from '@/components/app-layout';
 import { useState } from 'react';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
@@ -29,7 +30,7 @@ import { Badge } from '@/components/ui/badge';
 const ExamItem = ({ exam, onEdit, onDelete }: { exam: Exam, onEdit: () => void, onDelete: () => void }) => {
   const { subjects } = useAppContext();
   const subject = subjects.find(s => s.name === exam.subject);
-  const isOver = isPast(exam.date);
+  const isOver = isPast(new Date(exam.date));
 
   return (
     <div className="flex items-start gap-4 p-4 border rounded-lg">
@@ -50,7 +51,7 @@ const ExamItem = ({ exam, onEdit, onDelete }: { exam: Exam, onEdit: () => void, 
         <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4"/>
-                <span>{format(exam.date, 'PPP, p')}</span>
+                <span>{format(new Date(exam.date), 'PPP, p')}</span>
             </div>
              <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4"/>
@@ -58,7 +59,7 @@ const ExamItem = ({ exam, onEdit, onDelete }: { exam: Exam, onEdit: () => void, 
             </div>
         </div>
          <p className={cn("text-xs mt-3", isOver ? 'text-muted-foreground' : 'text-primary font-medium')}>
-            {isOver ? `Completed ${formatDistanceToNow(exam.date, { addSuffix: true })}` : `In ${formatDistanceToNow(exam.date, { addSuffix: false })}`}
+            {isOver ? `Completed ${formatDistanceToNow(new Date(exam.date), { addSuffix: true })}` : `In ${formatDistanceToNow(new Date(exam.date), { addSuffix: false })}`}
         </p>
       </div>
       {!isOver && (
@@ -83,14 +84,14 @@ const ExamItem = ({ exam, onEdit, onDelete }: { exam: Exam, onEdit: () => void, 
 };
 
 
-export default function ExamsPage() {
+function ExamsContent() {
   const { exams, addExam, updateExam, deleteExam } = useAppContext();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedExam, setSelectedExam] = useState<Exam | undefined>(undefined);
 
-  const upcomingExams = exams.filter(e => !isPast(e.date)).sort((a,b) => a.date.getTime() - b.date.getTime());
-  const pastExams = exams.filter(e => isPast(e.date)).sort((a,b) => b.date.getTime() - a.date.getTime());
+  const upcomingExams = exams.filter(e => !isPast(new Date(e.date))).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const pastExams = exams.filter(e => isPast(new Date(e.date))).sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const handleSaveExam = (exam: Exam) => {
     if (selectedExam) {
@@ -209,4 +210,13 @@ export default function ExamsPage() {
         </Dialog>
     </div>
   );
+}
+
+
+export default function ExamsPage() {
+    return (
+        <AppLayout>
+            <ExamsContent />
+        </AppLayout>
+    )
 }

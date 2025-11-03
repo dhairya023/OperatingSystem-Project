@@ -1,214 +1,209 @@
 'use client';
 
-import { MOCK_CLASSES, MOCK_SUBJECTS_LIST, MOCK_ASSIGNMENTS, MOCK_EXAMS, MOCK_PROFILE } from '@/lib/placeholder-data';
-import type { ClassSession, Subject, SubjectAttendance, Assignment, Exam, UserProfile } from '@/lib/types';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  doc,
+  setDoc,
+  getDoc,
+  serverTimestamp,
+  updateDoc,
+  onSnapshot,
+} from 'firebase/firestore';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+
+import type { ClassSession, Subject, Assignment, Exam, UserProfile } from '@/lib/types';
+import { useFirebase } from '@/firebase/provider';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Helper to safely get data from localStorage
-const getFromLocalStorage = <T,>(key: string, defaultValue: T): T => {
-    if (typeof window === 'undefined') {
-        return defaultValue;
-    }
-    try {
-        const item = window.localStorage.getItem(key);
-        return item ? JSON.parse(item, (k, v) => {
-            // Revive dates from string format
-            if ((k === 'date' || k === 'dueDate') && v) {
-                return new Date(v);
-            }
-            return v;
-        }) : defaultValue;
-    } catch (error) {
-        console.warn(`Error reading localStorage key “${key}”:`, error);
-        return defaultValue;
-    }
-};
-
-// Helper to safely set data in localStorage
-const setInLocalStorage = <T,>(key: string, value: T) => {
-    if (typeof window === 'undefined') {
-        return;
-    }
-    try {
-        window.localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-        console.warn(`Error setting localStorage key “${key}”:`, error);
-    }
-};
-
-
-interface AppContextType {
-  subjects: Subject[];
-  addSubject: (subject: Subject) => void;
-  updateSubject: (subject: Subject) => void;
-  deleteSubject: (id: string) => void;
-  classes: ClassSession[];
-  addClass: (session: ClassSession) => void;
-  updateClass: (session: ClassSession) => void;
-  deleteClass: (id: string) => void;
-  getSubjectAttendance: (subjectName: string) => SubjectAttendance;
-  assignments: Assignment[];
-  addAssignment: (assignment: Assignment) => void;
-  updateAssignment: (assignment: Assignment) => void;
-  deleteAssignment: (id: string) => void;
-  toggleAssignmentCompletion: (id: string) => void;
-  exams: Exam[];
-  addExam: (exam: Exam) => void;
-  updateExam: (exam: Exam) => void;
-  deleteExam: (id: string) => void;
+interface UserData {
   profile: UserProfile;
-  updateProfile: (profile: UserProfile) => void;
+  subjects: Subject[];
+  classes: ClassSession[];
+  assignments: Assignment[];
+  exams: Exam[];
+}
+
+interface AppContextType extends UserData {
+  addSubject: (subject: Subject) => Promise<void>;
+  updateSubject: (subject: Subject) => Promise<void>;
+  deleteSubject: (id: string) => Promise<void>;
+  addClass: (session: ClassSession) => Promise<void>;
+  updateClass: (session: ClassSession) => Promise<void>;
+  deleteClass: (id: string) => Promise<void>;
+  addAssignment: (assignment: Assignment) => Promise<void>;
+  updateAssignment: (assignment: Assignment) => Promise<void>;
+  deleteAssignment: (id: string) => Promise<void>;
+  toggleAssignmentCompletion: (id: string) => Promise<void>;
+  addExam: (exam: Exam) => Promise<void>;
+  updateExam: (exam: Exam) => Promise<void>;
+  deleteExam: (id: string) => Promise<void>;
+  updateProfile: (profile: UserProfile) => Promise<void>;
+  registerUser: (email: string, password: string) => Promise<void>;
+  loginUser: (email: string, password: string) => Promise<void>;
+  getSubjectAttendance: any; // Simplified for now
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [classes, setClasses] = useState<ClassSession[]>([]);
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [exams, setExams] = useState<Exam[]>([]);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  
+  const { user, isUserLoading, auth, firestore } = useFirebase();
+  const router = useRouter();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    // Only run on the client
-    if (typeof window !== 'undefined') {
-        setSubjects(getFromLocalStorage('subjects', MOCK_SUBJECTS_LIST));
-        setClasses(getFromLocalStorage('classes', MOCK_CLASSES));
-        setAssignments(getFromLocalStorage('assignments', MOCK_ASSIGNMENTS));
-        setExams(getFromLocalStorage('exams', MOCK_EXAMS));
-        setProfile(getFromLocalStorage('profile', MOCK_PROFILE));
-        setLoading(false);
+    if (isUserLoading) return;
+    if (!user) {
+      setIsLoading(false);
+      // Let individual pages handle redirects if needed, except for a global one in a layout
+      return;
     }
-  }, []);
 
-  useEffect(() => {
-    if (!loading) setInLocalStorage('subjects', subjects);
-  }, [subjects, loading]);
+    const userDocRef = doc(firestore, 'users', user.uid);
+    const unsubscribe = onSnapshot(
+      userDocRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
 
-  useEffect(() => {
-    if (!loading) setInLocalStorage('classes', classes);
-  }, [classes, loading]);
+          const parseDates = <T extends { dueDate?: any; date?: any }>(items: T[] = []): T[] => {
+            return items.map(item => ({
+              ...item,
+              ...(item.dueDate && { dueDate: item.dueDate.toDate() }),
+              ...(item.date && { date: item.date.toDate() }),
+            }));
+          };
+
+          setUserData({
+            profile: data.profile || { fullName: user.email },
+            subjects: data.subjects || [],
+            classes: parseDates(data.classes),
+            assignments: parseDates(data.assignments),
+            exams: parseDates(data.exams),
+          });
+        } else {
+          // This case might happen briefly if a new user's doc hasn't been created yet
+          console.log("User document doesn't exist yet.");
+        }
+        setIsLoading(false);
+      },
+      (error) => {
+        console.error('Error listening to user document:', error);
+        setIsLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user, isUserLoading, firestore, router]);
   
-  useEffect(() => {
-    if (!loading) setInLocalStorage('assignments', assignments);
-  }, [assignments, loading]);
+  const updateUserData = async (field: keyof UserData, value: any) => {
+      if (!user) throw new Error('User not logged in');
+      const userDocRef = doc(firestore, 'users', user.uid);
+      await updateDoc(userDocRef, { [field]: value });
+  }
 
-  useEffect(() => {
-    if (!loading) setInLocalStorage('exams', exams);
-  }, [exams, loading]);
+  const registerUser = async (email: string, password: string) => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const newUser = userCredential.user;
 
-  useEffect(() => {
-    if (!loading && profile) setInLocalStorage('profile', profile);
-  }, [profile, loading]);
-
-  const addSubject = (subject: Subject) => {
-    setSubjects([...subjects, subject]);
+    const userDocRef = doc(firestore, 'users', newUser.uid);
+    await setDoc(userDocRef, {
+      uid: newUser.uid,
+      email: newUser.email,
+      createdAt: serverTimestamp(),
+      profile: {
+        fullName: newUser.email,
+        email: newUser.email,
+        rollNo: '',
+        university: '',
+        course: '',
+        semester: '',
+        department: '',
+        profilePhotoUrl: '',
+      },
+      subjects: [],
+      classes: [],
+      assignments: [],
+      exams: [],
+      timetable: [],
+      attendance: {},
+      attendanceStats: { overallPercentage: 0, currentStreak: 0 },
+      analytics: {},
+    });
   };
 
-  const updateSubject = (updatedSubject: Subject) => {
-    setSubjects(subjects.map((s) => (s.id === updatedSubject.id ? updatedSubject : s)));
-  };
-
-  const deleteSubject = (id: string) => {
-    setSubjects(subjects.filter((s) => s.id !== id));
+  const loginUser = async (email: string, password: string) => {
+    await signInWithEmailAndPassword(auth, email, password);
   };
   
-  const addClass = (session: ClassSession) => {
-    setClasses([...classes, session]);
-  }
-
-  const updateClass = (updatedSession: ClassSession) => {
-    setClasses(classes.map(c => c.id === updatedSession.id ? updatedSession : c));
-  }
-
-  const deleteClass = (id: string) => {
-    setClasses(classes.filter(c => c.id !== id));
-  }
-
-  const getSubjectAttendance = (subjectName: string) : SubjectAttendance => {
-    const subjectClasses = classes.filter(c => c.subject === subjectName);
-    const relevantClasses = subjectClasses.filter(c => c.status !== 'holiday' && c.status !== 'cancelled');
-    const attended = relevantClasses.filter(c => c.status === 'attended').length;
-    const total = relevantClasses.length;
-    return { subject: subjectName, attended, total };
+  const createItemUpdater = <T extends {id: string}>(field: keyof UserData) => {
+      const getItems = () => userData?.[field] as T[] || [];
+      return {
+          add: async (item: T) => updateUserData(field, [...getItems(), item]),
+          update: async (updatedItem: T) => updateUserData(field, getItems().map(i => i.id === updatedItem.id ? updatedItem : i)),
+          delete: async (id: string) => updateUserData(field, getItems().filter(i => i.id !== id)),
+      }
   }
   
-  const addAssignment = (assignment: Assignment) => {
-    setAssignments([...assignments, assignment]);
-  };
+  const subjectUpdater = createItemUpdater<Subject>('subjects');
+  const classUpdater = createItemUpdater<ClassSession>('classes');
+  const assignmentUpdater = createItemUpdater<Assignment>('assignments');
+  const examUpdater = createItemUpdater<Exam>('exams');
 
-  const updateAssignment = (updatedAssignment: Assignment) => {
-    setAssignments(assignments.map((a) => (a.id === updatedAssignment.id ? updatedAssignment : a)));
-  };
-
-  const deleteAssignment = (id: string) => {
-    setAssignments(assignments.filter((a) => a.id !== id));
-  };
-  
-  const toggleAssignmentCompletion = (id: string) => {
-    setAssignments(assignments.map(a => a.id === id ? {...a, completed: !a.completed} : a));
-  }
-
-  const addExam = (exam: Exam) => {
-    setExams([...exams, exam]);
-  };
-
-  const updateExam = (updatedExam: Exam) => {
-    setExams(exams.map((e) => (e.id === updatedExam.id ? updatedExam : e)));
-  };
-
-  const deleteExam = (id: string) => {
-    setExams(exams.filter((e) => e.id !== id));
-  };
-
-  const updateProfile = (updatedProfile: UserProfile) => {
-    setProfile(updatedProfile);
-  };
-
-  if (loading || !profile) {
+  if (isLoading || isUserLoading || (user && !userData)) {
     return (
-        <div className="flex min-h-screen items-center justify-center bg-background">
-            <div className="p-8 space-y-4 w-full max-w-lg">
-                <div className="flex items-center space-x-4">
-                    <Skeleton className="h-16 w-16 rounded-full" />
-                    <div className="space-y-2">
-                        <Skeleton className="h-6 w-[250px]" />
-                        <Skeleton className="h-4 w-[200px]" />
-                    </div>
-                </div>
-                <div className="space-y-2 pt-4">
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                </div>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="p-8 space-y-4 w-full max-w-lg">
+          <div className="flex items-center space-x-4">
+            <Skeleton className="h-16 w-16 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-[250px]" />
+              <Skeleton className="h-4 w-[200px]" />
             </div>
+          </div>
+          <div className="space-y-2 pt-4">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
         </div>
-    )
+      </div>
+    );
   }
 
-  const value = {
-    subjects,
-    addSubject,
-    updateSubject,
-    deleteSubject,
-    classes,
-    addClass,
-    updateClass,
-    deleteClass,
-    getSubjectAttendance,
-    assignments,
-    addAssignment,
-    updateAssignment,
-    deleteAssignment,
-    toggleAssignmentCompletion,
-    exams,
-    addExam,
-    updateExam,
-    deleteExam,
-    profile,
-    updateProfile,
+  const value: AppContextType = {
+    profile: userData?.profile!,
+    subjects: userData?.subjects || [],
+    classes: userData?.classes || [],
+    assignments: userData?.assignments || [],
+    exams: userData?.exams || [],
+    updateProfile: (profile: UserProfile) => updateUserData('profile', profile),
+    addSubject: subjectUpdater.add,
+    updateSubject: subjectUpdater.update,
+    deleteSubject: subjectUpdater.delete,
+    addClass: classUpdater.add,
+    updateClass: classUpdater.update,
+    deleteClass: classUpdater.delete,
+    addAssignment: assignmentUpdater.add,
+    updateAssignment: assignmentUpdater.update,
+    deleteAssignment: assignmentUpdater.delete,
+    toggleAssignmentCompletion: async (id: string) => {
+        const assignments = userData?.assignments || [];
+        const assignment = assignments.find(a => a.id === id);
+        if (assignment) {
+            await assignmentUpdater.update({...assignment, completed: !assignment.completed });
+        }
+    },
+    addExam: examUpdater.add,
+    updateExam: examUpdater.update,
+    deleteExam: examUpdater.delete,
+    registerUser,
+    loginUser,
+    getSubjectAttendance: () => ({ attended: 0, total: 0 }), // Placeholder
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

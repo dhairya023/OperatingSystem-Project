@@ -23,7 +23,7 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
   const { subjects } = useAppContext();
   const [title, setTitle] = useState(assignment?.title || '');
   const [subject, setSubject] = useState(assignment?.subject || '');
-  const [dueDate, setDueDate] = useState<Date | undefined>(assignment?.dueDate || new Date());
+  const [dueDate, setDueDate] = useState<Date | undefined>(assignment ? new Date(assignment.dueDate) : new Date());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

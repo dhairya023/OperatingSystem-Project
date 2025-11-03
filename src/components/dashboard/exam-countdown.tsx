@@ -7,7 +7,7 @@ import { Clock } from "lucide-react";
 import { isPast } from "date-fns";
 
 const calculateTimeLeft = (targetDate: Date) => {
-  const difference = +targetDate - +new Date();
+  const difference = +new Date(targetDate) - +new Date();
   let timeLeft = {
     days: 0,
     hours: 0,
@@ -28,7 +28,7 @@ const calculateTimeLeft = (targetDate: Date) => {
 
 export default function ExamCountdown() {
   const { exams } = useAppContext();
-  const upcomingExams = exams.filter(exam => !isPast(exam.date)).sort((a, b) => a.date.getTime() - b.date.getTime());
+  const upcomingExams = exams.filter(exam => !isPast(new Date(exam.date))).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   const nextExam = upcomingExams.length > 0 ? upcomingExams[0] : null;
 
   const [timeLeft, setTimeLeft] = useState(nextExam ? calculateTimeLeft(nextExam.date) : null);
@@ -69,7 +69,7 @@ export default function ExamCountdown() {
       <CardHeader>
         <CardTitle className="text-base font-bold">Next Exam: {nextExam.subject}</CardTitle>
         <CardDescription className="text-xs">
-          {nextExam.date.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+          {new Date(nextExam.date).toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex items-center justify-center">

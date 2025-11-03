@@ -22,8 +22,8 @@ export default function ExamForm({ exam, onSave }: ExamFormProps) {
   const { subjects } = useAppContext();
   const [subject, setSubject] = useState(exam?.subject || '');
   const [type, setType] = useState<Exam['type']>(exam?.type || 'Mid-term');
-  const [date, setDate] = useState<Date | undefined>(exam?.date || new Date());
-  const [time, setTime] = useState(exam ? format(exam.date, 'HH:mm') : '10:00');
+  const [date, setDate] = useState<Date | undefined>(exam ? new Date(exam.date) : new Date());
+  const [time, setTime] = useState(exam ? format(new Date(exam.date), 'HH:mm') : '10:00');
   const [venue, setVenue] = useState(exam?.venue || '');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -93,8 +93,7 @@ export default function ExamForm({ exam, onSave }: ExamFormProps) {
           <Input id="time" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="col-span-3" required />
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="venue" className="text-right">Venue</Label>
-          <Input id="venue" value={venue} onChange={e => setVenue(e.target.value)} className="col-span-3" required />
+          <Label htmlFor="venue" className="text-right">Venue</Label>          <Input id="venue" value={venue} onChange={e => setVenue(e.target.value)} className="col-span-3" required />
         </div>
       </div>
       <DialogFooter>

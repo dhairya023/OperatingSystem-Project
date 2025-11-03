@@ -1,4 +1,5 @@
 'use client';
+import AppLayout from '@/components/app-layout';
 import { useState } from 'react';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
@@ -75,7 +76,7 @@ const SubjectForm = ({ subject, onSave }: { subject?: Subject; onSave: (subject:
   );
 };
 
-export default function SubjectsPage() {
+function SubjectsContent() {
   const { subjects, addSubject, updateSubject, deleteSubject } = useAppContext();
   const [isNewSubjectDialogOpen, setIsNewSubjectDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -196,4 +197,13 @@ export default function SubjectsPage() {
       </Card>
     </div>
   );
+}
+
+
+export default function SubjectsPage() {
+    return (
+        <AppLayout>
+            <SubjectsContent />
+        </AppLayout>
+    )
 }

@@ -39,7 +39,7 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
   const startingDay = getDay(firstDay);
 
   const classesByDate = classes.reduce((acc, cls) => {
-    const dateKey = format(cls.date, 'yyyy-MM-dd');
+    const dateKey = format(new Date(cls.date), 'yyyy-MM-dd');
     if (!acc[dateKey]) {
       acc[dateKey] = [];
     }

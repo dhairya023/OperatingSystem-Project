@@ -10,7 +10,7 @@ export default function PendingAssignments() {
   const { assignments } = useAppContext();
   const pendingAssignments = assignments
     .filter(a => !a.completed)
-    .sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
+    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
   return (
     <Link href="/assignments" className="block h-full">
@@ -30,8 +30,8 @@ export default function PendingAssignments() {
                       <p className="text-xs text-muted-foreground">{assignment.subject}</p>
                     </div>
                     <div className="text-right text-xs text-primary">
-                      <p className="font-semibold">Due in {formatDistanceToNow(assignment.dueDate)}</p>
-                      <p className="text-muted-foreground">{assignment.dueDate.toLocaleDateString()}</p>
+                      <p className="font-semibold">Due in {formatDistanceToNow(new Date(assignment.dueDate))}</p>
+                      <p className="text-muted-foreground">{new Date(assignment.dueDate).toLocaleDateString()}</p>
                     </div>
                   </div>
                   {index < pendingAssignments.slice(0,3).length - 1 && <Separator className="mt-3" />}

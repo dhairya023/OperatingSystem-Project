@@ -22,7 +22,7 @@ type ClassSessionFormProps = {
 export default function ClassSessionForm({ session, onSave, defaultDate }: ClassSessionFormProps) {
   const { subjects, addClass, updateClass } = useAppContext();
   const [subject, setSubject] = useState(session?.subject || '');
-  const [date, setDate] = useState<Date | undefined>(session?.date || defaultDate || new Date());
+  const [date, setDate] = useState<Date | undefined>(session ? new Date(session.date) : (defaultDate || new Date()));
   const [startTime, setStartTime] = useState(session?.startTime || '');
   const [endTime, setEndTime] = useState(session?.endTime || '');
   const [room, setRoom] = useState(session?.room || '');

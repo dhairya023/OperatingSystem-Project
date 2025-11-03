@@ -7,8 +7,10 @@ import { BookCheck, CalendarDays, PercentCircle } from "lucide-react";
 export default function DashboardSummary() {
     const { classes, assignments, profile } = useAppContext();
 
-    const lecturesToday = classes.filter(c => isToday(c.date)).length;
-    const assignmentsDueToday = assignments.filter(a => isToday(a.dueDate) && !a.completed).length;
+    if (!profile) return null;
+
+    const lecturesToday = classes.filter(c => isToday(new Date(c.date))).length;
+    const assignmentsDueToday = assignments.filter(a => isToday(new Date(a.dueDate)) && !a.completed).length;
 
     const relevantClasses = classes.filter(c => c.status === 'attended' || c.status === 'missed');
     const attendedClasses = relevantClasses.filter(c => c.status === 'attended').length;
@@ -20,7 +22,7 @@ export default function DashboardSummary() {
         { icon: PercentCircle, label: "Attendance", value: `${overallAttendance}%` },
     ]
     
-    const firstName = profile.fullName.split(' ')[0];
+    const firstName = profile.fullName ? profile.fullName.split(' ')[0] : 'there';
 
     return (
         <Card>

@@ -1,4 +1,5 @@
 'use client';
+import AppLayout from '@/components/app-layout';
 import { useState } from 'react';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
@@ -30,7 +31,7 @@ import { cn } from '@/lib/utils';
 const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment: Assignment, onEdit: () => void, onDelete: () => void, onToggle: (id: string) => void }) => {
   const { subjects } = useAppContext();
   const subject = subjects.find(s => s.name === assignment.subject);
-  const isOverdue = !assignment.completed && isPast(assignment.dueDate);
+  const isOverdue = !assignment.completed && isPast(new Date(assignment.dueDate));
 
   return (
     <div className="flex items-start gap-4 p-4 border rounded-lg">
@@ -49,7 +50,7 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
             <p className="text-sm text-muted-foreground">{assignment.subject}</p>
         </div>
         <p className={cn("text-xs mt-2", isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
-            Due {formatDistanceToNow(assignment.dueDate, { addSuffix: true })} ({format(assignment.dueDate, 'PPP')})
+            Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })} ({format(new Date(assignment.dueDate), 'PPP')})
         </p>
       </div>
       <DropdownMenu>
@@ -72,14 +73,14 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
 };
 
 
-export default function AssignmentsPage() {
+function AssignmentsContent() {
   const { assignments, addAssignment, updateAssignment, deleteAssignment, toggleAssignmentCompletion } = useAppContext();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | undefined>(undefined);
 
-  const pendingAssignments = assignments.filter(a => !a.completed).sort((a,b) => a.dueDate.getTime() - b.dueDate.getTime());
-  const completedAssignments = assignments.filter(a => a.completed).sort((a,b) => b.dueDate.getTime() - a.dueDate.getTime());
+  const pendingAssignments = assignments.filter(a => !a.completed).sort((a,b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+  const completedAssignments = assignments.filter(a => a.completed).sort((a,b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
 
   const handleSaveAssignment = (assignment: Assignment) => {
     if (selectedAssignment) {
@@ -200,4 +201,12 @@ export default function AssignmentsPage() {
         </Dialog>
     </div>
   );
+}
+
+export default function AssignmentsPage() {
+    return (
+        <AppLayout>
+            <AssignmentsContent />
+        </AppLayout>
+    )
 }

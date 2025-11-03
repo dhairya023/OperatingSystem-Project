@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function UpcomingClasses() {
   const { classes } = useAppContext();
-  const upcomingClasses = classes.filter(c => isToday(c.date)).sort((a, b) => {
+  const upcomingClasses = classes.filter(c => isToday(new Date(c.date))).sort((a, b) => {
     const timeA = a.startTime.split(':');
     const timeB = b.startTime.split(':');
     return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime()
@@ -30,7 +30,7 @@ export default function UpcomingClasses() {
                     <div className="flex items-start gap-3">
                     <div className="flex-1">
                         <p className="font-semibold text-sm">{session.subject}</p>
-                        <p className="text-xs text-muted-foreground">{session.teacher}</p>
+                        <p className="text-xs textmuted-foreground">{session.teacher}</p>
                         <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {session.startTime} - {session.endTime}</span>
                         <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>

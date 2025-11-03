@@ -1,7 +1,6 @@
 import type { Assignment, ClassSession, Exam, Subject, SubjectAttendance, UserProfile } from './types';
-import { addDays, subDays, set } from 'date-fns';
 
-const today = new Date();
+// This file is now mostly a reference for types, as data will come from Firestore.
 
 export const MOCK_SUBJECTS_LIST: Subject[] = [];
 
@@ -21,14 +20,3 @@ export const MOCK_PROFILE: UserProfile = {
     department: "Computer Science",
     profilePhotoUrl: "",
 };
-
-
-export const MOCK_SUBJECTS_ATTENDANCE: SubjectAttendance[] = [];
-
-
-export const getAttendancePercentage = () => {
-  const totalClasses = MOCK_CLASSES.length;
-  if (totalClasses === 0) return 0;
-  const attendedClasses = MOCK_CLASSES.filter(c => c.status === 'attended').length;
-  return Math.round((attendedClasses / totalClasses) * 100);
-}
