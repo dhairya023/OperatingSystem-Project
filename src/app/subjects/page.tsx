@@ -105,8 +105,8 @@ function SubjectsContent() {
       <PageHeader title="Subjects" description="Manage your academic subjects." />
       <Card>
         <CardHeader>
-           <div className="flex flex-col items-center sm:flex-row justify-between sm:items-center gap-4 text-center sm:text-left">
-            <div>
+           <div className="flex flex-col items-center sm:flex-row justify-between sm:items-center gap-4">
+            <div className="text-center sm:text-left">
               <CardTitle>Your Subjects</CardTitle>
               <CardDescription>Add, edit, or remove your subjects here.</CardDescription>
             </div>
