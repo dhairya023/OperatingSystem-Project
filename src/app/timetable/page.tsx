@@ -123,7 +123,7 @@ export default function TimetablePage() {
 
   if (subjects.length === 0) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
         <PageHeader title="Timetable" description="Manage your class schedule." />
         <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
           <div className="text-center">
@@ -136,7 +136,7 @@ export default function TimetablePage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 p-4 md:p-6 lg:p-8">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight font-headline md:text-3xl">Timetable</h1>
@@ -148,7 +148,7 @@ export default function TimetablePage() {
       </div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-            <Button className="w-full"><PlusCircle className="mr-2" /> Add Class</Button>
+            <Button className="w-full" size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
             </DialogTrigger>
             <DialogContent>
             <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
@@ -158,14 +158,14 @@ export default function TimetablePage() {
 
       <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
         <Button variant="ghost" size="icon" onClick={handlePrevDay}>
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-5 h-5" />
         </Button>
         <div className="text-center">
-          <p className="text-lg font-bold md:text-xl">{getRelativeDate(currentDate)}</p>
-          <p className="text-muted-foreground text-xs md:text-sm">{format(currentDate, 'do MMMM yyyy')}</p>
+          <p className="font-bold text-base md:text-lg">{getRelativeDate(currentDate)}</p>
+          <p className="text-muted-foreground text-xs">{format(currentDate, 'do MMMM yyyy')}</p>
         </div>
         <Button variant="ghost" size="icon" onClick={handleNextDay}>
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-5 h-5" />
         </Button>
       </div>
 

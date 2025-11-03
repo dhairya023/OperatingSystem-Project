@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function DashboardPage() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
       <PageHeader title="Dashboard" description="Welcome back! Here's an overview of your academic life." />
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">

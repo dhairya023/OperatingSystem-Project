@@ -100,7 +100,7 @@ export default function SubjectsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
       <PageHeader title="Subjects" description="Manage your academic subjects." />
       <Card>
         <CardHeader>
