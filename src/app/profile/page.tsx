@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Edit, Mail, User, GraduationCap, Building, Book, Award, Briefcase } from 'lucide-react';
@@ -37,21 +37,7 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title="My Profile" description="View and manage your personal information.">
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Edit className="mr-2" /> Edit Profile
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Edit Your Profile</DialogTitle>
-            </DialogHeader>
-            <ProfileForm onSave={handleSaveProfile} profile={profile} />
-          </DialogContent>
-        </Dialog>
-      </PageHeader>
+      <PageHeader title="My Profile" description="View and manage your personal information." />
 
       <Card>
         <CardHeader className="flex flex-col md:flex-row items-start md:items-center gap-4">
@@ -77,6 +63,21 @@ export default function ProfilePage() {
           <ProfileDetail icon={Award} label="Semester" value={profile.semester} />
           <ProfileDetail icon={Briefcase} label="Department" value={profile.department} />
         </CardContent>
+        <CardFooter className="justify-end">
+            <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+                <DialogTrigger asChild>
+                    <Button>
+                    <Edit className="mr-2" /> Edit Profile
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                    <DialogTitle>Edit Your Profile</DialogTitle>
+                    </DialogHeader>
+                    <ProfileForm onSave={handleSaveProfile} profile={profile} />
+                </DialogContent>
+            </Dialog>
+        </CardFooter>
       </Card>
     </div>
   );
