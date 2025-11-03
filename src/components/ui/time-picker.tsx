@@ -12,21 +12,17 @@ type TimePickerProps = {
 
 export function TimePicker({ value, onChange }: TimePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [hour, setHour] = React.useState(() => value ? parseInt(value.split(':')[0]) % 12 || 12 : 10);
-  const [minute, setMinute] = React.useState(() => value ? parseInt(value.split(':')[1].slice(0, 2)) : 0);
-  const [period, setPeriod] = React.useState(() => value ? (parseInt(value.split(':')[0]) >= 12 ? 'PM' : 'AM') : 'AM');
-  
-  React.useEffect(() => {
-    if (value) {
-      const [h, m] = value.split(':');
-      const hour24 = parseInt(h);
-      setHour(hour24 % 12 || 12);
-      setMinute(parseInt(m));
-      setPeriod(hour24 >= 12 ? 'PM' : 'AM');
-    }
-  }, [value]);
 
-  const updateTime = (h: number, m: number, p: 'AM' | 'PM') => {
+  const initialHour24 = value ? parseInt(value.split(':')[0]) : 10;
+  const initialMinute = value ? parseInt(value.split(':')[1]) : 0;
+  const initialPeriod = initialHour24 >= 12 ? 'PM' : 'AM';
+  const initialHour12 = initialHour24 % 12 || 12;
+
+  const [hour, setHour] = React.useState(initialHour12);
+  const [minute, setMinute] = React.useState(initialMinute);
+  const [period, setPeriod] = React.useState(initialPeriod);
+
+  const updateTime = React.useCallback((h: number, m: number, p: string) => {
     let hour24 = h;
     if (p === 'PM' && h < 12) {
       hour24 += 12;
@@ -36,23 +32,22 @@ export function TimePicker({ value, onChange }: TimePickerProps) {
     }
     const formattedTime = `${String(hour24).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
     onChange(formattedTime);
-  };
+  }, [onChange]);
+  
+  React.useEffect(() => {
+    updateTime(hour, minute, period);
+  }, [hour, minute, period, updateTime]);
 
   const handleHourChange = (amount: number) => {
-    const newHour = (hour + amount + 11) % 12 + 1;
-    setHour(newHour);
-    updateTime(newHour, minute, period as 'AM' | 'PM');
+    setHour((prevHour) => (prevHour + amount + 11) % 12 + 1);
   };
 
   const handleMinuteChange = (amount: number) => {
-    const newMinute = (minute + amount + 60) % 60;
-    setMinute(newMinute);
-    updateTime(hour, newMinute, period as 'AM' | 'PM');
+    setMinute((prevMinute) => (prevMinute + amount + 60) % 60);
   };
   
   const handlePeriodChange = (newPeriod: 'AM' | 'PM') => {
     setPeriod(newPeriod);
-    updateTime(hour, minute, newPeriod);
   };
 
   const formatDisplayTime = () => {
