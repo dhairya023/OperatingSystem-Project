@@ -8,10 +8,12 @@ import {
   serverTimestamp,
   updateDoc,
   onSnapshot,
+  deleteDoc,
 } from 'firebase/firestore';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  deleteUser,
 } from 'firebase/auth';
 
 import type { ClassSession, Subject, Assignment, Exam, UserProfile } from '@/lib/types';
@@ -40,18 +42,36 @@ interface AppContextType extends UserData {
   addExam: (exam: Exam) => Promise<void>;
   updateExam: (exam: Exam) => Promise<void>;
   deleteExam: (id: string) => Promise<void>;
-  updateProfile: (profile: UserProfile) => Promise<void>;
-  registerUser: (email: string, password: string) => Promise<void>;
+  updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
+  registerUser: (email: string, password: string, fullName: string) => Promise<void>;
   loginUser: (email: string, password: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
+  completeProfileSetup: () => Promise<void>;
   getSubjectAttendance: any; // Simplified for now
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+const initialProfile: UserProfile = {
+  fullName: '',
+  email: '',
+  course: '',
+  branch: '',
+  year: '',
+  collegeName: '',
+  rollNumber: '',
+  phoneNumber: '',
+  dateOfBirth: undefined,
+  profilePhotoUrl: '',
+  profileCompleted: false,
+};
+
+
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const { user, isUserLoading, auth, firestore } = useFirebase();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     if (isUserLoading) return;
@@ -61,15 +81,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    setIsDataLoading(true);
     const userDocRef = doc(firestore, 'users', user.uid);
     const unsubscribe = onSnapshot(
       userDocRef,
       (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
-
-          const parseDates = <T extends { dueDate?: any; date?: any }>(items: T[] = []): T[] => {
-            // Firestore timestamps can be null, check before calling toDate()
+          const parseDates = <T extends { dueDate?: any; date?: any; dateOfBirth?: any }>(items: T[] = []): T[] => {
             return items.map(item => ({
               ...item,
               ...(item.dueDate && item.dueDate.toDate && { dueDate: item.dueDate.toDate() }),
@@ -77,17 +96,23 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
             }));
           };
 
+          const parseProfile = (profile: any) => {
+              if (profile && profile.dateOfBirth && profile.dateOfBirth.toDate) {
+                  return {...profile, dateOfBirth: profile.dateOfBirth.toDate() };
+              }
+              return profile;
+          }
+
           setUserData({
-            profile: data.profile || { fullName: user.email },
+            profile: parseProfile(data.profile) || { ...initialProfile, fullName: user.displayName, email: user.email },
             subjects: data.subjects || [],
             classes: parseDates(data.classes),
             assignments: parseDates(data.assignments),
             exams: parseDates(data.exams),
           });
         } else {
-          // This case happens for a newly registered user before their doc is created.
            setUserData({
-            profile: { fullName: user.email, email: user.email, rollNo: '', university: '', course: '', semester: '', department: '', profilePhotoUrl: '' },
+            profile: { ...initialProfile, fullName: user.displayName, email: user.email },
             subjects: [],
             classes: [],
             assignments: [],
@@ -105,13 +130,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, [user, isUserLoading, firestore]);
   
-  const updateUserData = async (field: keyof UserData, value: any) => {
+  const updateUserData = async (field: keyof UserData | string, value: any) => {
       if (!user) throw new Error('User not logged in');
       const userDocRef = doc(firestore, 'users', user.uid);
       await updateDoc(userDocRef, { [field]: value });
   }
 
-  const registerUser = async (email: string, password: string) => {
+  const registerUser = async (email: string, password: string, fullName: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const newUser = userCredential.user;
 
@@ -121,14 +146,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       email: newUser.email,
       createdAt: serverTimestamp(),
       profile: {
-        fullName: newUser.email,
-        email: newUser.email,
-        rollNo: '',
-        university: '',
-        course: '',
-        semester: '',
-        department: '',
-        profilePhotoUrl: '',
+          ...initialProfile,
+          fullName: fullName,
+          email: newUser.email,
       },
       subjects: [],
       classes: [],
@@ -145,6 +165,28 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
   
+  const deleteAccount = async () => {
+    if (!user) throw new Error("No user is logged in to delete.");
+
+    const userDocRef = doc(firestore, "users", user.uid);
+    try {
+      // First, delete Firestore document
+      await deleteDoc(userDocRef);
+      // Then, delete the user from Firebase Auth
+      await deleteUser(user);
+      router.push('/login');
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      throw error;
+    }
+  };
+
+  const completeProfileSetup = async () => {
+    if (!user) throw new Error('User not logged in');
+    const userDocRef = doc(firestore, 'users', user.uid);
+    await updateDoc(userDocRef, { 'profile.profileCompleted': true });
+  }
+
   const createItemUpdater = <T extends {id: string}>(field: keyof UserData) => {
       const getItems = () => userData?.[field] as T[] || [];
       return {
@@ -166,7 +208,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     classes: userData?.classes || [],
     assignments: userData?.assignments || [],
     exams: userData?.exams || [],
-    updateProfile: (profile: UserProfile) => updateUserData('profile', profile),
+    updateProfile: (profile: Partial<UserProfile>) => updateUserData('profile', {...(userData?.profile || {}), ...profile}),
     addSubject: subjectUpdater.add,
     updateSubject: subjectUpdater.update,
     deleteSubject: subjectUpdater.delete,
@@ -188,6 +230,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     deleteExam: examUpdater.delete,
     registerUser,
     loginUser,
+    deleteAccount,
+    completeProfileSetup,
     getSubjectAttendance: () => ({ attended: 0, total: 0 }), // Placeholder
   };
 

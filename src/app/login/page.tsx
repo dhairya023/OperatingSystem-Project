@@ -12,6 +12,7 @@ import { GraduationCap } from 'lucide-react';
 
 export default function LoginPage() {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -25,8 +26,8 @@ export default function LoginPage() {
 
     try {
       if (isRegisterMode) {
-        await registerUser(email, password);
-        toast({ title: "Registration successful!", description: "Welcome to ScholarSphere." });
+        await registerUser(email, password, username);
+        toast({ title: "Registration successful!", description: "Please complete your profile." });
       } else {
         await loginUser(email, password);
         toast({ title: "Login successful!", description: "Welcome back." });
@@ -62,6 +63,20 @@ export default function LoginPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {isRegisterMode && (
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="your_username"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input

@@ -1,18 +1,29 @@
 'use client';
 import AppLayout from '@/components/app-layout';
 import { useState } from 'react';
-import Image from 'next/image';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Edit, Mail, User, GraduationCap, Building, Book, Award, Briefcase } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Edit, Mail, GraduationCap, Building, Book, Award, Briefcase, Phone, Cake, User } from 'lucide-react';
 import { useAppContext } from '@/context/app-context';
 import type { UserProfile } from '@/lib/types';
 import ProfileForm from '@/components/profile/profile-form';
+import { format } from 'date-fns';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
-const ProfileDetail = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: string }) => (
+const ProfileDetail = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: string | undefined }) => (
   <div className="flex items-start gap-4">
     <Icon className="w-5 h-5 text-muted-foreground mt-1" />
     <div>
@@ -23,15 +34,15 @@ const ProfileDetail = ({ icon: Icon, label, value }: { icon: React.ElementType, 
 );
 
 function ProfileContent() {
-  const { profile, updateProfile } = useAppContext();
+  const { profile, updateProfile, deleteAccount } = useAppContext();
   const [isFormOpen, setIsFormOpen] = useState(false);
-
+  
   const handleSaveProfile = (updatedProfile: UserProfile) => {
     updateProfile(updatedProfile);
     setIsFormOpen(false);
   };
 
-  const getInitials = (name: string) => {
+  const getInitials = (name?: string) => {
     return name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
   }
 
@@ -51,17 +62,19 @@ function ProfileContent() {
               <Mail className="w-4 h-4" />
               <span>{profile.email}</span>
             </div>
-            {profile.rollNo && <div className="flex items-center gap-2 mt-1 text-muted-foreground">
+            {profile.rollNumber && <div className="flex items-center gap-2 mt-1 text-muted-foreground">
               <GraduationCap className="w-4 h-4" />
-              <span>{profile.rollNo}</span>
+              <span>{profile.rollNumber}</span>
             </div>}
           </div>
         </CardHeader>
-        <CardContent className="grid gap-6 md:grid-cols-2 pt-6">
-          <ProfileDetail icon={Building} label="University" value={profile.university} />
+        <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 pt-6">
+          <ProfileDetail icon={Building} label="College" value={profile.collegeName} />
           <ProfileDetail icon={Book} label="Course" value={profile.course} />
-          <ProfileDetail icon={Award} label="Semester" value={profile.semester} />
-          <ProfileDetail icon={Briefcase} label="Department" value={profile.department} />
+          <ProfileDetail icon={Briefcase} label="Branch" value={profile.branch} />
+          <ProfileDetail icon={Award} label="Year" value={profile.year} />
+          <ProfileDetail icon={Phone} label="Phone Number" value={profile.phoneNumber} />
+          <ProfileDetail icon={Cake} label="Date of Birth" value={profile.dateOfBirth ? format(new Date(profile.dateOfBirth), 'PPP') : '-'} />
         </CardContent>
         <CardFooter>
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
@@ -78,6 +91,40 @@ function ProfileContent() {
                 </DialogContent>
             </Dialog>
         </CardFooter>
+      </Card>
+      
+      <Card className="border-destructive">
+          <CardHeader>
+              <CardTitle>Delete Account</CardTitle>
+              <CardDescription>Permanently delete your account and all associated data.</CardDescription>
+          </CardHeader>
+          <CardContent>
+              <p className="text-sm text-muted-foreground">
+                This action is irreversible. All your subjects, timetable, attendance records, assignments, and exams will be permanently deleted.
+              </p>
+          </CardContent>
+          <CardFooter>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">Delete My Account</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your
+                    account and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={deleteAccount} className="bg-destructive hover:bg-destructive/90">
+                    Yes, delete my account
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardFooter>
       </Card>
     </div>
   );

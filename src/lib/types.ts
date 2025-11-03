@@ -47,10 +47,13 @@ export type Subject = {
 export type UserProfile = {
   fullName: string;
   email: string;
-  rollNo: string;
-  university: string;
   course: string;
-  semester: string;
-  department: string;
-  profilePhotoUrl: string;
+  branch: string;
+  year: string;
+  collegeName: string;
+  rollNumber: string;
+  phoneNumber: string;
+  dateOfBirth?: Date;
+  profilePhotoUrl?: string;
+  profileCompleted?: boolean;
 };
