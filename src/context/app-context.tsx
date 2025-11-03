@@ -14,7 +14,7 @@ const getFromLocalStorage = <T,>(key: string, defaultValue: T): T => {
         const item = window.localStorage.getItem(key);
         return item ? JSON.parse(item, (k, v) => {
             // Revive dates from string format
-            if (k === 'date' || k === 'dueDate') {
+            if ((k === 'date' || k === 'dueDate') && v) {
                 return new Date(v);
             }
             return v;
@@ -72,12 +72,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    setSubjects(getFromLocalStorage('subjects', MOCK_SUBJECTS_LIST));
-    setClasses(getFromLocalStorage('classes', MOCK_CLASSES));
-    setAssignments(getFromLocalStorage('assignments', MOCK_ASSIGNMENTS));
-    setExams(getFromLocalStorage('exams', MOCK_EXAMS));
-    setProfile(getFromLocalStorage('profile', MOCK_PROFILE));
-    setLoading(false);
+    // Only run on the client
+    if (typeof window !== 'undefined') {
+        setSubjects(getFromLocalStorage('subjects', MOCK_SUBJECTS_LIST));
+        setClasses(getFromLocalStorage('classes', MOCK_CLASSES));
+        setAssignments(getFromLocalStorage('assignments', MOCK_ASSIGNMENTS));
+        setExams(getFromLocalStorage('exams', MOCK_EXAMS));
+        setProfile(getFromLocalStorage('profile', MOCK_PROFILE));
+        setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -166,10 +169,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   if (loading || !profile) {
     return (
-        <div className="flex min-h-screen items-center justify-center">
+        <div className="flex min-h-screen items-center justify-center bg-background">
             <div className="p-8 space-y-4 w-full max-w-lg">
-                <Skeleton className="h-10 w-3/4" />
-                <Skeleton className="h-6 w-1/2" />
+                <div className="flex items-center space-x-4">
+                    <Skeleton className="h-16 w-16 rounded-full" />
+                    <div className="space-y-2">
+                        <Skeleton className="h-6 w-[250px]" />
+                        <Skeleton className="h-4 w-[200px]" />
+                    </div>
+                </div>
                 <div className="space-y-2 pt-4">
                     <Skeleton className="h-12 w-full" />
                     <Skeleton className="h-12 w-full" />
