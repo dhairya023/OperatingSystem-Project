@@ -136,19 +136,30 @@ export default function TimetablePage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-4 md:p-6 lg:p-8">
+    <div className="mx-auto w-full max-w-2xl flex-col gap-6 p-4 md:p-6 lg:p-8">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight font-headline md:text-3xl">Timetable</h1>
           <p className="mt-1 text-sm text-muted-foreground md:mt-2">Your weekly class schedule.</p>
         </div>
-        <div className="md:hidden">
-          <SidebarTrigger />
+        <div className="flex items-center gap-2">
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                <Button className="hidden sm:inline-flex" size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
+                </DialogTrigger>
+                <DialogContent>
+                <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
+                <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+                </DialogContent>
+            </Dialog>
+            <div className="md:hidden">
+              <SidebarTrigger />
+            </div>
         </div>
       </div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-            <Button className="w-full" size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
+            <Button className="w-full sm:hidden" size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
             </DialogTrigger>
             <DialogContent>
             <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
@@ -156,7 +167,7 @@ export default function TimetablePage() {
             </DialogContent>
         </Dialog>
 
-      <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
+      <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50 mt-4">
         <Button variant="ghost" size="icon" onClick={handlePrevDay}>
           <ChevronLeft className="w-5 h-5" />
         </Button>
@@ -170,13 +181,13 @@ export default function TimetablePage() {
       </div>
 
       {dailyClasses.length > 0 ? (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 mt-4">
           {dailyClasses.map(session => (
             <TimetableCard key={session.id} session={session} />
           ))}
         </div>
       ) : (
-        <div className="flex h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg">
+        <div className="flex h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg mt-4">
           <p className="text-muted-foreground">No classes scheduled for this day.</p>
         </div>
       )}
