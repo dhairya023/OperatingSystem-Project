@@ -18,7 +18,7 @@ export type Assignment = {
 };
 
 export type Exam = {
-  id: string;
+  id:string;
   subject: string;
   date: Date;
   venue: string;
