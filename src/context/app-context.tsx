@@ -201,27 +201,46 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const addClass = async (session: ClassSession) => {
-    const currentClasses = userData?.classes || [];
-    const newSessionData = { ...session, status: undefined };
+    const newClasses: ClassSession[] = [];
+    const baseSession = {
+      subject: session.subject,
+      teacher: session.teacher,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      room: session.room,
+      status: undefined, // Always start as undefined
+    };
 
     if (session.rrule) {
-      const newClasses: ClassSession[] = [];
+      // Logic for weekly recurring classes
       let loopDate = startOfDay(new Date(session.date));
-      const endDate = addMonths(loopDate, 3); // Default to 3 months
-      
+      const endDate = addMonths(loopDate, 3); // Repeats for 3 months
+      const rruleId = crypto.randomUUID();
+
       while (loopDate <= endDate) {
         newClasses.push({
-          ...newSessionData,
+          ...baseSession,
           id: crypto.randomUUID(),
-          date: loopDate,
+          date: new Date(loopDate),
+          rrule: rruleId,
+          repeatUntil: endDate,
         });
         loopDate = addDays(loopDate, 7);
       }
-      await updateUserData('classes', [...currentClasses, ...newClasses]);
     } else {
-      await updateUserData('classes', [...currentClasses, { ...newSessionData, rrule: undefined, repeatUntil: undefined }]);
+      // Logic for a single, non-recurring class
+      newClasses.push({
+        ...baseSession,
+        id: crypto.randomUUID(),
+        date: new Date(session.date),
+      });
     }
+
+    const currentClasses = userData?.classes || [];
+    const updatedClassList = [...currentClasses, ...newClasses];
+    await updateUserData('classes', updatedClassList);
   };
+
 
   const updateClass = async (session: ClassSession, scope: 'single' | 'future' | 'all') => {
       let currentClasses = [...(userData?.classes || [])];
