@@ -189,7 +189,7 @@ function TimetableContent() {
   }
 
   return (
-    <div className="flex flex-col flex-1 w-full">
+    <div className="flex flex-col flex-1">
       <div className="p-4 md:p-6 lg:p-8">
         <PageHeader title="Timetable" description="Your weekly class schedule.">
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -205,8 +205,8 @@ function TimetableContent() {
       </div>
 
 
-      <div className="w-full px-4 md:px-6 lg:px-8">
-        <div className="w-full max-w-2xl mx-auto">
+      <div className="w-full flex-1 flex flex-col px-4 md:px-6 lg:px-8">
+        <div className="w-full flex-1 flex flex-col">
           <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
             <Button variant="ghost" size="icon" onClick={handlePrevDay}>
               <ChevronLeft className="w-5 h-5" />
@@ -220,7 +220,7 @@ function TimetableContent() {
             </Button>
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 flex-1">
             {dailyClasses.length > 0 ? (
               <div className="flex flex-col gap-4">
                 {dailyClasses.map(session => (
@@ -228,7 +228,7 @@ function TimetableContent() {
                 ))}
               </div>
             ) : (
-              <div className="flex h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg">
+              <div className="flex h-full min-h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg">
                 <p className="text-muted-foreground">No classes scheduled for this day.</p>
               </div>
             )}
