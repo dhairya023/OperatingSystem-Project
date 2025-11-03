@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type ProfileFormProps = {
   profile: UserProfile;
@@ -53,47 +54,49 @@ export default function ProfileForm({ profile, onSave }: ProfileFormProps) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
-        <div className="col-span-2 flex flex-col items-center gap-4">
-            <Avatar className="w-32 h-32 border-4 border-primary/50">
-                <AvatarImage src={profilePhotoUrl} />
-                <AvatarFallback className="text-4xl">{getInitials(fullName)}</AvatarFallback>
-            </Avatar>
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-                <Label htmlFor="picture">Profile Photo</Label>
-                <Input id="picture" type="file" onChange={handlePhotoChange} accept="image/*" />
-            </div>
+      <ScrollArea className="h-[60vh] pr-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+          <div className="col-span-2 flex flex-col items-center gap-4">
+              <Avatar className="w-32 h-32 border-4 border-primary/50">
+                  <AvatarImage src={profilePhotoUrl} />
+                  <AvatarFallback className="text-4xl">{getInitials(fullName)}</AvatarFallback>
+              </Avatar>
+              <div className="grid w-full max-w-sm items-center gap-1.5">
+                  <Label htmlFor="picture">Profile Photo</Label>
+                  <Input id="picture" type="file" onChange={handlePhotoChange} accept="image/*" />
+              </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="fullName">Full Name</Label>
+            <Input id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email ID</Label>
+            <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="rollNo">Roll No</Label>
+            <Input id="rollNo" value={rollNo} onChange={e => setRollNo(e.target.value)} required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="university">University</Label>
+            <Input id="university" value={university} onChange={e => setUniversity(e.target.value)} required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="course">Course</Label>
+            <Input id="course" value={course} onChange={e => setCourse(e.target.value)} required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="semester">Semester</Label>
+            <Input id="semester" value={semester} onChange={e => setSemester(e.target.value)} required />
+          </div>
+          <div className="col-span-2 space-y-2">
+            <Label htmlFor="department">Department</Label>
+            <Input id="department" value={department} onChange={e => setDepartment(e.target.value)} required />
+          </div>
         </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="fullName">Full Name</Label>
-          <Input id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email ID</Label>
-          <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="rollNo">Roll No</Label>
-          <Input id="rollNo" value={rollNo} onChange={e => setRollNo(e.target.value)} required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="university">University</Label>
-          <Input id="university" value={university} onChange={e => setUniversity(e.target.value)} required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="course">Course</Label>
-          <Input id="course" value={course} onChange={e => setCourse(e.target.value)} required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="semester">Semester</Label>
-          <Input id="semester" value={semester} onChange={e => setSemester(e.target.value)} required />
-        </div>
-         <div className="col-span-2 space-y-2">
-          <Label htmlFor="department">Department</Label>
-          <Input id="department" value={department} onChange={e => setDepartment(e.target.value)} required />
-        </div>
-      </div>
+      </ScrollArea>
       <DialogFooter className="mt-6">
         <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
