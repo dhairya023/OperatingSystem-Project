@@ -1,54 +1,89 @@
 import type { Assignment, ClassSession, Exam, Subject, SubjectAttendance } from './types';
-import { addDays, subDays } from 'date-fns';
+import { addDays, subDays, set } from 'date-fns';
 
 const today = new Date();
 
 export const MOCK_SUBJECTS_LIST: Subject[] = [
-    { id: 'sub1', name: 'Quantum Physics', teacher: 'Dr. Evelyn Reed', color: '#8B5CF6' },
-    { id: 'sub2', name: 'Advanced Algorithms', teacher: 'Prof. Ken Thompson', color: '#EC4899' },
+    { id: 'sub1', name: 'Quantum Physics', teacher: 'Dr. Evelyn Reed', color: '#3B82F6' },
+    { id: 'sub2', name: 'Advanced Algorithms', teacher: 'Prof. Ken Thompson', color: '#F59E0B' },
     { id: 'sub3', name: 'Modernist Literature', teacher: 'Dr. Helena Shaw', color: '#10B981' },
-    { id: 'sub4', name: 'Organic Chemistry', teacher: 'Dr. Aaron Gable', color: '#F59E0B' },
-    { id: 'sub5', name: 'Data Science', teacher: 'Prof. Jane Goodall', color: '#3B82F6' },
+    { id: 'sub4', name: 'Organic Chemistry', teacher: 'Dr. Aaron Gable', color: '#6366F1' },
+    { id: 'sub5', name: 'Data Science', teacher: 'Prof. Jane Goodall', color: '#EC4899' },
     { id: 'sub6', name: 'Machine Learning', teacher: 'Dr. Alan Turing', color: '#EF4444' },
 ];
 
 export const MOCK_CLASSES: ClassSession[] = [
+  // Today's classes
   {
     id: 'cls1',
     subject: 'Quantum Physics',
     teacher: 'Dr. Evelyn Reed',
-    time: '09:00 - 10:30',
+    time: '08:00 AM - 09:30 AM',
     room: 'Physics Lab 3',
     status: 'attended',
-    date: today,
+    date: set(today, { hours: 8, minutes: 0, seconds: 0, milliseconds: 0 }),
   },
   {
     id: 'cls2',
     subject: 'Advanced Algorithms',
     teacher: 'Prof. Ken Thompson',
-    time: '11:00 - 12:30',
+    time: '09:30 AM - 11:00 AM',
     room: 'CS Building, Room 101',
     status: 'attended',
-    date: today,
+    date: set(today, { hours: 9, minutes: 30, seconds: 0, milliseconds: 0 }),
   },
   {
     id: 'cls3',
     subject: 'Modernist Literature',
     teacher: 'Dr. Helena Shaw',
-    time: '14:00 - 15:30',
-    room: 'Literature Hall 2B',
+    time: '11:00 AM - 02:00 PM',
+    room: 'Room 5.1.2',
     status: 'missed',
-    date: today,
+    date: set(today, { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 }),
   },
-  // Add more data for other days and subjects for better visualization
-  { id: 'cls4', subject: 'Quantum Physics', teacher: 'Dr. Evelyn Reed', time: '09:00 - 10:30', room: 'Physics Lab 3', status: 'attended', date: subDays(today, 1) },
-  { id: 'cls5', subject: 'Advanced Algorithms', teacher: 'Prof. Ken Thompson', time: '11:00 - 12:30', room: 'CS Building, Room 101', status: 'missed', date: subDays(today, 1) },
-  { id: 'cls6', subject: 'Modernist Literature', teacher: 'Dr. Helena Shaw', time: '14:00 - 15:30', room: 'Literature Hall 2B', status: 'attended', date: subDays(today, 1) },
-  { id: 'cls7', subject: 'Organic Chemistry', teacher: 'Dr. Aaron Gable', time: '09:00 - 10:30', room: 'Chem Lab 1', status: 'attended', date: subDays(today, 2) },
-  { id: 'cls8', subject: 'Data Science', teacher: 'Prof. Jane Goodall', time: '11:00 - 12:30', room: 'Data Hub', status: 'holiday', date: subDays(today, 3) },
-  { id: 'cls9', subject: 'Machine Learning', teacher: 'Dr. Alan Turing', time: '14:00 - 15:30', room: 'AI Center', status: 'attended', date: subDays(today, 4) },
-  { id: 'cls10', subject: 'Quantum Physics', teacher: 'Dr. Evelyn Reed', time: '09:00 - 10:30', room: 'Physics Lab 3', status: 'missed', date: addDays(today, 1) },
+   {
+    id: 'cls11',
+    subject: 'Machine Learning',
+    teacher: 'Dr. Alan Turing',
+    time: '02:00 PM - 03:30 PM',
+    room: 'Lab 9b',
+    status: 'attended',
+    date: set(today, { hours: 14, minutes: 0, seconds: 0, milliseconds: 0 }),
+  },
+    {
+    id: 'cls12',
+    subject: 'Data Science',
+    teacher: 'Prof. Jane Goodall',
+    time: '03:30 PM - 05:00 PM',
+    room: 'Building A2',
+    status: 'attended',
+    date: set(today, { hours: 15, minutes: 30, seconds: 0, milliseconds: 0 }),
+  },
+    {
+    id: 'cls13',
+    subject: 'Organic Chemistry',
+    teacher: 'Dr. Aaron Gable',
+    time: '05:00 PM - 06:00 PM',
+    room: 'Room 3.4.1',
+    status: 'attended',
+    date: set(today, { hours: 17, minutes: 0, seconds: 0, milliseconds: 0 }),
+  },
 
+  // Yesterday's classes
+  { id: 'cls4', subject: 'Quantum Physics', teacher: 'Dr. Evelyn Reed', time: '09:00 - 10:30', room: 'Physics Lab 3', status: 'attended', date: set(subDays(today, 1), { hours: 9, minutes: 0, seconds: 0, milliseconds: 0 }) },
+  { id: 'cls5', subject: 'Advanced Algorithms', teacher: 'Prof. Ken Thompson', time: '11:00 - 12:30', room: 'CS Building, Room 101', status: 'missed', date: set(subDays(today, 1), { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 }) },
+  { id: 'cls6', subject: 'Modernist Literature', teacher: 'Dr. Helena Shaw', time: '14:00 - 15:30', room: 'Literature Hall 2B', status: 'attended', date: set(subDays(today, 1), { hours: 14, minutes: 0, seconds: 0, milliseconds: 0 }) },
+  
+  // Two days ago
+  { id: 'cls7', subject: 'Organic Chemistry', teacher: 'Dr. Aaron Gable', time: '09:00 - 10:30', room: 'Chem Lab 1', status: 'attended', date: set(subDays(today, 2), { hours: 9, minutes: 0, seconds: 0, milliseconds: 0 }) },
+  { id: 'cls8', subject: 'Data Science', teacher: 'Prof. Jane Goodall', time: '11:00 - 12:30', room: 'Data Hub', status: 'holiday', date: set(subDays(today, 3), { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 }) },
+  { id: 'cls9', subject: 'Machine Learning', teacher: 'Dr. Alan Turing', time: '14:00 - 15:30', room: 'AI Center', status: 'attended', date: set(subDays(today, 4), { hours: 14, minutes: 0, seconds: 0, milliseconds: 0 }) },
+
+  // Tomorrow's classes
+  { id: 'cls10', subject: 'Quantum Physics', teacher: 'Dr. Evelyn Reed', time: '08:00 AM - 09:30 AM', room: 'Physics Lab 3', status: 'missed', date: set(addDays(today, 1), { hours: 8, minutes: 0, seconds: 0, milliseconds: 0 }) },
+  { id: 'cls14', subject: 'Advanced Algorithms', teacher: 'Prof. Ken Thompson', time: '09:30 AM - 11:00 AM', room: 'CS Building, Room 101', status: 'attended', date: set(addDays(today, 1), { hours: 9, minutes: 30, seconds: 0, milliseconds: 0 })},
+  { id: 'cls15', subject: 'Modernist Literature', teacher: 'Dr. Helena Shaw', time: '11:00 AM - 02:00 PM', room: 'Room 5.1.2', status: 'attended', date: set(addDays(today, 1), { hours: 11, minutes: 0, seconds: 0, milliseconds: 0 })},
+  { id: 'cls16', subject: 'Organic Chemistry', teacher: 'Dr. Aaron Gable', time: '02:00 PM - 03:30 PM', room: 'Lab 9b', status: 'attended', date: set(addDays(today, 1), { hours: 14, minutes: 0, seconds: 0, milliseconds: 0 })},
 ];
 
 export const MOCK_ASSIGNMENTS: Assignment[] = [
