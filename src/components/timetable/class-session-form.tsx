@@ -13,6 +13,7 @@ import { CalendarIcon } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { TimePicker } from '@/components/ui/time-picker';
 
 type ClassSessionFormProps = {
   session?: ClassSession;
@@ -29,7 +30,8 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
   const [room, setRoom] = useState(session?.room || '');
   
   const [repeat, setRepeat] = useState<'once' | 'weekly'>(session?.rrule ? 'weekly' : 'once');
-  const [repeatUntil, setRepeatUntil] = useState<Date | undefined>(session?.repeatUntil ? new Date(session.repeatUntil) : addMonths(new Date(), 3));
+  
+  // Removed repeatUntil state
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
       room,
       status: session?.status || 'attended', // Default status
       date,
-      ...(repeat === 'weekly' && { rrule: session?.rrule || crypto.randomUUID(), repeatUntil: repeatUntil }),
+      ...(repeat === 'weekly' && { rrule: session?.rrule || crypto.randomUUID(), repeatUntil: addMonths(new Date(date), 3) }),
     };
     
     if (session) {
@@ -107,23 +109,6 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
                     <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={date} onSelect={setDate} initialFocus/></PopoverContent>
                 </Popover>
             </div>
-
-            {repeat === 'weekly' && (
-               <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
-                  <Label htmlFor="repeat-until-date" className="text-left md:text-right">Repeat Until</Label>
-                  <Popover>
-                      <PopoverTrigger asChild>
-                          <Button
-                          variant={"outline"}
-                          className={cn("md:col-span-3 justify-start text-left font-normal",!repeatUntil && "text-muted-foreground")}>
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {repeatUntil ? format(repeatUntil, "PPP") : <span>Pick an end date</span>}
-                          </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={repeatUntil} onSelect={setRepeatUntil} initialFocus/></PopoverContent>
-                  </Popover>
-              </div>
-            )}
           </>
         )}
 
@@ -144,12 +129,16 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
 
 
         <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
-          <Label htmlFor="start-time" className="text-left md:text-right">Start Time</Label>
-          <Input id="start-time" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} className="md:col-span-3" required />
+          <Label className="text-left md:text-right">Start Time</Label>
+          <div className="md:col-span-3">
+            <TimePicker value={startTime} onChange={setStartTime} />
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
-          <Label htmlFor="end-time" className="text-left md:text-right">End Time</Label>
-          <Input id="end-time" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="md:col-span-3" required />
+          <Label className="text-left md:text-right">End Time</Label>
+          <div className="md:col-span-3">
+            <TimePicker value={endTime} onChange={setEndTime} />
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
           <Label htmlFor="room" className="text-left md:text-right">Room/Venue</Label>
