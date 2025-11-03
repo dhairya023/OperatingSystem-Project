@@ -125,8 +125,8 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
                     <DialogContent>
                         <DialogHeader><DialogTitle>Edit Class</DialogTitle></DialogHeader>
                         <ClassSessionForm 
-                          session={editScope === 'single' ? {...session, rrule: undefined, repeatUntil: undefined} : session} 
-                          onSave={() => setIsEditDialogOpen(false)} 
+                          session={editScope === 'single' ? {...session, rrule: undefined } : session} 
+                          onSave={() => {}} 
                         />
                     </DialogContent>
                 </Dialog>
@@ -189,9 +189,10 @@ function TimetableContent() {
   }
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 bg-background">
       <div className="p-4 md:p-6 lg:p-8">
         <PageHeader title="Timetable" description="Your weekly class schedule.">
+          <div className="flex-grow"></div>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
                   <Button><PlusCircle className="mr-2" /> Add Class</Button>
