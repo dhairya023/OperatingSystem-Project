@@ -136,11 +136,11 @@ export default function TimetablePage() {
 
   return (
     <div className="flex flex-col gap-8">
-       <div className="flex items-center justify-between">
+       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <PageHeader title="Timetable" description="Your weekly class schedule." />
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button><PlusCircle className="mr-2" /> Add Class</Button>
+                    <Button className="w-full sm:w-auto"><PlusCircle className="mr-2" /> Add Class</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>

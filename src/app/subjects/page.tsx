@@ -103,24 +103,26 @@ export default function SubjectsPage() {
     <div className="flex flex-col gap-8">
       <PageHeader title="Subjects" description="Manage your academic subjects." />
       <Card>
-        <CardHeader className="flex flex-row justify-between items-center">
-          <div>
-            <CardTitle>Your Subjects</CardTitle>
-            <CardDescription>Add, edit, or remove your subjects here.</CardDescription>
+        <CardHeader>
+           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+            <div>
+              <CardTitle>Your Subjects</CardTitle>
+              <CardDescription>Add, edit, or remove your subjects here.</CardDescription>
+            </div>
+            <Dialog open={isNewSubjectDialogOpen} onOpenChange={setIsNewSubjectDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <PlusCircle className="mr-2" /> Add Subject
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Subject</DialogTitle>
+                </DialogHeader>
+                <SubjectForm onSave={handleAddSubject} />
+              </DialogContent>
+            </Dialog>
           </div>
-          <Dialog open={isNewSubjectDialogOpen} onOpenChange={setIsNewSubjectDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <PlusCircle className="mr-2" /> Add Subject
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Subject</DialogTitle>
-              </DialogHeader>
-              <SubjectForm onSave={handleAddSubject} />
-            </DialogContent>
-          </Dialog>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
