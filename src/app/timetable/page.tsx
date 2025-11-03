@@ -40,16 +40,16 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
 
   return (
     <Card
-      className="p-4 flex flex-col gap-2 rounded-xl"
+      className="p-3 md:p-4 flex flex-col gap-2 rounded-xl"
       style={{ backgroundColor: `${color}40`, borderColor: `${color}80` }}
     >
         <div className="flex justify-between items-start">
             <div>
-                 <h3 className="font-bold text-lg">{session.subject}</h3>
-                 <p className="text-sm text-foreground/80">{session.startTime} - {session.endTime}</p>
+                 <h3 className="font-bold text-base md:text-lg">{session.subject}</h3>
+                 <p className="text-xs md:text-sm text-foreground/80">{session.startTime} - {session.endTime}</p>
                  {session.room && (
-                    <div className="flex items-center gap-2 text-sm text-foreground/80 mt-1">
-                    <MapPin className="w-4 h-4" />
+                    <div className="flex items-center gap-2 text-xs md:text-sm text-foreground/80 mt-1">
+                    <MapPin className="w-3 h-3 md:w-4 md:h-4" />
                     <span>{session.room}</span>
                     </div>
                 )}
@@ -57,7 +57,7 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
              <div className="flex gap-1">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon"><MoreVertical className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="w-4 h-4" /></Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                          <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
@@ -136,34 +136,33 @@ export default function TimetablePage() {
   }
 
   return (
-    <div className="flex flex-col gap-8 md:max-w-2xl md:mx-auto">
+    <div className="flex flex-col gap-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-headline md:text-4xl">Timetable</h1>
-          <p className="mt-2 text-muted-foreground">Your weekly class schedule.</p>
+          <h1 className="text-2xl font-bold tracking-tight font-headline md:text-3xl">Timetable</h1>
+          <p className="mt-1 text-sm text-muted-foreground md:mt-2">Your weekly class schedule.</p>
         </div>
         <div className="md:hidden">
           <SidebarTrigger />
         </div>
       </div>
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+            <Button className="w-full"><PlusCircle className="mr-2" /> Add Class</Button>
+            </DialogTrigger>
+            <DialogContent>
+            <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
+            <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+            </DialogContent>
+        </Dialog>
 
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogTrigger asChild>
-          <Button className="w-full"><PlusCircle className="mr-2" /> Add Class</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
-          <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-        </DialogContent>
-      </Dialog>
-      
       <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
         <Button variant="ghost" size="icon" onClick={handlePrevDay}>
           <ChevronLeft className="w-6 h-6" />
         </Button>
         <div className="text-center">
-          <p className="text-xl font-bold">{getRelativeDate(currentDate)}</p>
-          <p className="text-muted-foreground text-sm">{format(currentDate, 'do MMMM yyyy')}</p>
+          <p className="text-lg font-bold md:text-xl">{getRelativeDate(currentDate)}</p>
+          <p className="text-muted-foreground text-xs md:text-sm">{format(currentDate, 'do MMMM yyyy')}</p>
         </div>
         <Button variant="ghost" size="icon" onClick={handleNextDay}>
           <ChevronRight className="w-6 h-6" />
