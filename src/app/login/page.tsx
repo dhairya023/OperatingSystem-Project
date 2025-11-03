@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -30,7 +31,6 @@ export default function LoginPage() {
         toast({ title: "Registration successful!", description: "Please complete your profile." });
       } else {
         await loginUser(email, password);
-        toast({ title: "Login successful!", description: "Welcome back." });
       }
       router.push('/');
     } catch (error: any) {
