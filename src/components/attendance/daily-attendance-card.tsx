@@ -12,7 +12,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
   const color = subject?.color || '#A1A1AA';
 
   const handleStatusChange = (status: 'attended' | 'missed' | 'holiday' | 'cancelled') => {
-    updateClass({ ...session, status });
+    updateClass({ ...session, status }, 'single');
   };
 
   const statusStyles = {

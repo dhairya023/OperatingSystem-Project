@@ -216,12 +216,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           ...session,
           id: crypto.randomUUID(), // Each instance needs a unique ID
           date: classDate,
+          status: undefined, // Ensure new classes have no default status
         };
       });
       await updateUserData('classes', [...currentClasses, ...newClasses]);
     } else {
       // It's a single class
-      await updateUserData('classes', [...currentClasses, session]);
+      await updateUserData('classes', [...currentClasses, {...session, status: undefined}]);
     }
   };
 
@@ -313,7 +314,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     loginUser,
     deleteAccount,
     completeProfileSetup,
-    getSubjectAttendance: () => ({ attended: 0, total: 0 }), // Placeholder
+    getSubjectAttendance: (subjectName: string) => {
+        const subjectClasses = (userData?.classes || []).filter(c => c.subject === subjectName && (c.status === 'attended' || c.status === 'missed'));
+        const attended = subjectClasses.filter(c => c.status === 'attended').length;
+        const total = subjectClasses.length;
+        return { subject: subjectName, attended, total };
+    },
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
