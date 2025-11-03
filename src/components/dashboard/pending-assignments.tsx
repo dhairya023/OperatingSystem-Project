@@ -17,20 +17,20 @@ export default function PendingAssignments() {
       </CardHeader>
       <CardContent>
         {pendingAssignments.length > 0 ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             {pendingAssignments.map((assignment, index) => (
               <div key={assignment.id}>
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-3">
                   <div className="flex-1">
-                    <p className="font-semibold">{assignment.title}</p>
-                    <p className="text-sm text-muted-foreground">{assignment.subject}</p>
+                    <p className="font-semibold text-sm">{assignment.title}</p>
+                    <p className="text-xs text-muted-foreground">{assignment.subject}</p>
                   </div>
                   <div className="text-right text-xs text-primary">
                     <p className="font-semibold">Due in {formatDistanceToNow(assignment.dueDate)}</p>
                     <p className="text-muted-foreground">{assignment.dueDate.toLocaleDateString()}</p>
                   </div>
                 </div>
-                {index < pendingAssignments.length - 1 && <Separator className="mt-4" />}
+                {index < pendingAssignments.length - 1 && <Separator className="mt-3" />}
               </div>
             ))}
           </div>

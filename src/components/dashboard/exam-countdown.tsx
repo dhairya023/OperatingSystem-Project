@@ -67,19 +67,19 @@ export default function ExamCountdown() {
   return (
     <Card className="relative overflow-hidden flex flex-col h-full bg-gradient-to-br from-secondary to-background">
       <CardHeader>
-        <CardTitle>Next Exam: {nextExam.subject}</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-xl md:text-2xl">Next Exam: {nextExam.subject}</CardTitle>
+        <CardDescription className="text-xs md:text-sm">
           {nextExam.date.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex items-center justify-center">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center w-full">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 text-center w-full">
           {timeUnits.map((unit) => (
-            <div key={unit.label} className="p-4 rounded-lg bg-background/50">
-              <div className="text-4xl md:text-5xl font-bold font-headline tabular-nums text-primary neon-icon">
+            <div key={unit.label} className="p-2 md:p-4 rounded-lg bg-background/50">
+              <div className="text-3xl md:text-5xl font-bold font-headline tabular-nums text-primary neon-icon">
                 {String(unit.value).padStart(2, '0')}
               </div>
-              <div className="text-sm text-muted-foreground">{unit.label}</div>
+              <div className="text-xs md:text-sm text-muted-foreground">{unit.label}</div>
             </div>
           ))}
         </div>
