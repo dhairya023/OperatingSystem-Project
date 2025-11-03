@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -24,7 +25,7 @@ export default function ProfileSetupPage() {
     email: profile?.email || '',
     course: '',
     branch: '',
-    year: '',
+    semester: '',
     collegeName: '',
     rollNumber: '',
     phoneNumber: '',
@@ -123,8 +124,8 @@ export default function ProfileSetupPage() {
                         <Input name="branch" value={formData.branch} onChange={handleChange} required />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="year">Year</Label>
-                        <Input name="year" value={formData.year} onChange={handleChange} required />
+                        <Label htmlFor="semester">Semester</Label>
+                        <Input name="semester" value={formData.semester} onChange={handleChange} required />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="collegeName">College Name</Label>

@@ -1,3 +1,4 @@
+
 export type ClassSession = {
   id: string;
   subject: string;
@@ -49,7 +50,7 @@ export type UserProfile = {
   email: string;
   course: string;
   branch: string;
-  year: string;
+  semester: string;
   collegeName: string;
   rollNumber: string;
   phoneNumber: string;

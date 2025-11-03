@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
@@ -57,7 +58,7 @@ const initialProfile: UserProfile = {
   email: '',
   course: '',
   branch: '',
-  year: '',
+  semester: '',
   collegeName: '',
   rollNumber: '',
   phoneNumber: '',

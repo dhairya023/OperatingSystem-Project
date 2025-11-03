@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import type { UserProfile } from '@/lib/types';
@@ -77,8 +78,8 @@ export default function ProfileForm({ profile, onSave }: ProfileFormProps) {
                 <Input name="branch" value={formData.branch} onChange={handleChange} required />
             </div>
             <div className="space-y-2">
-                <Label htmlFor="year">Year</Label>
-                <Input name="year" value={formData.year} onChange={handleChange} required />
+                <Label htmlFor="semester">Semester</Label>
+                <Input name="semester" value={formData.semester} onChange={handleChange} required />
             </div>
             <div className="space-y-2">
                 <Label htmlFor="collegeName">College Name</Label>

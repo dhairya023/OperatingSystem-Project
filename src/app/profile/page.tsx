@@ -1,3 +1,4 @@
+
 'use client';
 import AppLayout from '@/components/app-layout';
 import { useState } from 'react';
@@ -72,7 +73,7 @@ function ProfileContent() {
           <ProfileDetail icon={Building} label="College" value={profile.collegeName} />
           <ProfileDetail icon={Book} label="Course" value={profile.course} />
           <ProfileDetail icon={Briefcase} label="Branch" value={profile.branch} />
-          <ProfileDetail icon={Award} label="Year" value={profile.year} />
+          <ProfileDetail icon={Award} label="Semester" value={profile.semester} />
           <ProfileDetail icon={Phone} label="Phone Number" value={profile.phoneNumber} />
           <ProfileDetail icon={Cake} label="Date of Birth" value={profile.dateOfBirth ? format(new Date(profile.dateOfBirth), 'PPP') : '-'} />
         </CardContent>
