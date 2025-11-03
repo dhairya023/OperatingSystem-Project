@@ -7,6 +7,15 @@ import { useAppContext } from "@/context/app-context";
 import { format, isToday } from "date-fns";
 import Link from "next/link";
 
+const formatTime12h = (time: string) => {
+    if (!time) return '';
+    const [h, m] = time.split(':');
+    const hour = parseInt(h);
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${m} ${period}`;
+};
+
 export default function UpcomingClasses() {
   const { classes } = useAppContext();
   const upcomingClasses = classes.filter(c => isToday(new Date(c.date))).sort((a, b) => {
@@ -32,13 +41,15 @@ export default function UpcomingClasses() {
                         <p className="font-semibold text-sm">{session.subject}</p>
                         <p className="text-xs textmuted-foreground">{session.teacher}</p>
                         <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {session.startTime} - {session.endTime}</span>
+                        <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {formatTime12h(session.startTime)} - {formatTime12h(session.endTime)}</span>
                         <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>
                         </div>
                     </div>
-                    <Badge variant={session.status === 'attended' ? "secondary" : session.status === 'holiday' ? "outline" : "destructive"}>
-                        {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
-                    </Badge>
+                    {session.status && (
+                        <Badge variant={session.status === 'attended' ? "secondary" : session.status === 'holiday' ? "outline" : "destructive"}>
+                            {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
+                        </Badge>
+                    )}
                     </div>
                     {index < upcomingClasses.slice(0,3).length - 1 && <Separator className="mt-3" />}
                 </div>

@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { TimePicker } from '@/components/ui/time-picker';
 
 type ExamFormProps = {
   exam?: Exam;
@@ -32,7 +33,7 @@ export default function ExamForm({ exam, onSave }: ExamFormProps) {
 
     const [hours, minutes] = time.split(':');
     const combinedDate = new Date(date);
-    combinedDate.setHours(parseInt(hours), parseInt(minutes));
+    combinedDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
     const newExam: Exam = {
       id: exam?.id || crypto.randomUUID(),
@@ -90,7 +91,9 @@ export default function ExamForm({ exam, onSave }: ExamFormProps) {
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="time" className="text-right">Time</Label>
-          <Input id="time" type="time" value={time} onChange={(e) => setTime(e.target.value)} className="col-span-3" required />
+          <div className="col-span-3">
+             <TimePicker value={time} onChange={setTime} />
+          </div>
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="venue" className="text-right">Venue</Label>          <Input id="venue" value={venue} onChange={e => setVenue(e.target.value)} className="col-span-3" required />

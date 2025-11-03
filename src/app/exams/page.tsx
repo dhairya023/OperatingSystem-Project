@@ -51,7 +51,7 @@ const ExamItem = ({ exam, onEdit, onDelete }: { exam: Exam, onEdit: () => void, 
         <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4"/>
-                <span>{format(new Date(exam.date), 'PPP, p')}</span>
+                <span>{format(new Date(exam.date), 'PPP, h:mm a')}</span>
             </div>
              <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4"/>

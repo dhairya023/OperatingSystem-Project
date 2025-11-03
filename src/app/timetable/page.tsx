@@ -31,6 +31,15 @@ import {
 import ClassSessionForm from '@/components/timetable/class-session-form';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
+const formatTime12h = (time: string) => {
+    if (!time) return '';
+    const [h, m] = time.split(':');
+    const hour = parseInt(h);
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${m} ${period}`;
+};
+
 const TimetableCard = ({ session }: { session: ClassSession }) => {
   const { subjects, updateClass, deleteClass } = useAppContext();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -59,7 +68,7 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
         <div className="flex justify-between items-start">
             <div>
                  <h3 className="font-bold text-base md:text-lg">{session.subject}</h3>
-                 <p className="text-xs md:text-sm text-foreground/80">{session.startTime} - {session.endTime}</p>
+                 <p className="text-xs md:text-sm text-foreground/80">{formatTime12h(session.startTime)} - {formatTime12h(session.endTime)}</p>
                  {session.room && (
                     <div className="flex items-center gap-2 text-xs md:text-sm text-foreground/80 mt-1">
                     <MapPin className="w-3 h-3 md:w-4 md:h-4" />
@@ -189,7 +198,7 @@ function TimetableContent() {
   }
 
   return (
-    <div className="flex flex-col flex-1 p-4 md:p-6 lg:p-8 w-full">
+    <div className="w-full flex flex-col flex-1 p-4 md:p-6 lg:p-8">
       <PageHeader title="Timetable" description="Your weekly class schedule.">
         <div className="flex-grow"></div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAppContext } from "@/context/app-context";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Clock } from "lucide-react";
-import { isPast } from "date-fns";
+import { isPast, format } from "date-fns";
 
 const calculateTimeLeft = (targetDate: Date) => {
   const difference = +new Date(targetDate) - +new Date();
@@ -69,7 +69,7 @@ export default function ExamCountdown() {
       <CardHeader>
         <CardTitle className="text-base font-bold">Next Exam: {nextExam.subject}</CardTitle>
         <CardDescription className="text-xs">
-          {new Date(nextExam.date).toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+          {format(new Date(nextExam.date), "EEEE, LLLL d, h:mm a")}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex items-center justify-center">
