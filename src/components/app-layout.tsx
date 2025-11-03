@@ -7,10 +7,12 @@ import { Sidebar, SidebarHeader, SidebarContent, SidebarInset, SidebarProvider }
 import { SidebarNav } from '@/components/sidebar-nav';
 import { GraduationCap } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
+import { useAppContext } from '@/context/app-context';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useFirebase();
   const router = useRouter();
+  const { isDataLoading } = useAppContext();
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -18,7 +20,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   }, [user, isUserLoading, router]);
 
-  if (isUserLoading || !user) {
+  if (isUserLoading || !user || isDataLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
           <div className="p-8 space-y-4 w-full max-w-lg">

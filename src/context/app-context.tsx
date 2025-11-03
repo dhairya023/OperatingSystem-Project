@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import {
   doc,
   setDoc,
-  getDoc,
   serverTimestamp,
   updateDoc,
   onSnapshot,
@@ -17,7 +16,6 @@ import {
 
 import type { ClassSession, Subject, Assignment, Exam, UserProfile } from '@/lib/types';
 import { useFirebase } from '@/firebase/provider';
-import { Skeleton } from '@/components/ui/skeleton';
 
 interface UserData {
   profile: UserProfile;
@@ -28,6 +26,7 @@ interface UserData {
 }
 
 interface AppContextType extends UserData {
+  isDataLoading: boolean;
   addSubject: (subject: Subject) => Promise<void>;
   updateSubject: (subject: Subject) => Promise<void>;
   deleteSubject: (id: string) => Promise<void>;
@@ -51,15 +50,14 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const { user, isUserLoading, auth, firestore } = useFirebase();
-  const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
     if (isUserLoading) return;
     if (!user) {
-      setIsLoading(false);
-      // Let individual pages handle redirects if needed, except for a global one in a layout
+      setUserData(null);
+      setIsDataLoading(false);
       return;
     }
 
@@ -71,10 +69,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           const data = docSnap.data();
 
           const parseDates = <T extends { dueDate?: any; date?: any }>(items: T[] = []): T[] => {
+            // Firestore timestamps can be null, check before calling toDate()
             return items.map(item => ({
               ...item,
-              ...(item.dueDate && { dueDate: item.dueDate.toDate() }),
-              ...(item.date && { date: item.date.toDate() }),
+              ...(item.dueDate && item.dueDate.toDate && { dueDate: item.dueDate.toDate() }),
+              ...(item.date && item.date.toDate && { date: item.date.toDate() }),
             }));
           };
 
@@ -86,19 +85,25 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
             exams: parseDates(data.exams),
           });
         } else {
-          // This case might happen briefly if a new user's doc hasn't been created yet
-          console.log("User document doesn't exist yet.");
+          // This case happens for a newly registered user before their doc is created.
+           setUserData({
+            profile: { fullName: user.email, email: user.email, rollNo: '', university: '', course: '', semester: '', department: '', profilePhotoUrl: '' },
+            subjects: [],
+            classes: [],
+            assignments: [],
+            exams: [],
+          });
         }
-        setIsLoading(false);
+        setIsDataLoading(false);
       },
       (error) => {
         console.error('Error listening to user document:', error);
-        setIsLoading(false);
+        setIsDataLoading(false);
       }
     );
 
     return () => unsubscribe();
-  }, [user, isUserLoading, firestore, router]);
+  }, [user, isUserLoading, firestore]);
   
   const updateUserData = async (field: keyof UserData, value: any) => {
       if (!user) throw new Error('User not logged in');
@@ -154,28 +159,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const assignmentUpdater = createItemUpdater<Assignment>('assignments');
   const examUpdater = createItemUpdater<Exam>('exams');
 
-  if (isLoading || isUserLoading || (user && !userData)) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="p-8 space-y-4 w-full max-w-lg">
-          <div className="flex items-center space-x-4">
-            <Skeleton className="h-16 w-16 rounded-full" />
-            <div className="space-y-2">
-              <Skeleton className="h-6 w-[250px]" />
-              <Skeleton className="h-4 w-[200px]" />
-            </div>
-          </div>
-          <div className="space-y-2 pt-4">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   const value: AppContextType = {
+    isDataLoading,
     profile: userData?.profile!,
     subjects: userData?.subjects || [],
     classes: userData?.classes || [],
