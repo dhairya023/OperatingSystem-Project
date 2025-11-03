@@ -45,7 +45,7 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
     >
         <div className="flex justify-between items-start">
             <div>
-                 <h3 className="font-bold text-base md:text-lg">{session.subject}</h3>
+                 <h3 className="font-bold text-sm md:text-lg">{session.subject}</h3>
                  <p className="text-xs md:text-sm text-foreground/80">{session.startTime} - {session.endTime}</p>
                  {session.room && (
                     <div className="flex items-center gap-2 text-xs md:text-sm text-foreground/80 mt-1">
@@ -136,8 +136,8 @@ export default function TimetablePage() {
   }
 
   return (
-    <div className="w-full max-w-lg mx-auto flex flex-col gap-6 p-4 md:p-6 lg:p-8">
-      <div className="flex items-start justify-between gap-4">
+    <div className="flex flex-col w-full max-w-lg mx-auto p-4 md:p-6 lg:p-8 gap-6">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight font-headline md:text-3xl">Timetable</h1>
           <p className="mt-1 text-sm text-muted-foreground md:mt-2">Your weekly class schedule.</p>
@@ -145,11 +145,11 @@ export default function TimetablePage() {
         <div className="flex items-center gap-2">
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
-                <Button className="hidden sm:inline-flex" size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
+                  <Button size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
                 </DialogTrigger>
                 <DialogContent>
-                <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
-                <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+                  <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
+                  <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
                 </DialogContent>
             </Dialog>
             <div className="md:hidden">
@@ -157,17 +157,8 @@ export default function TimetablePage() {
             </div>
         </div>
       </div>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-            <Button className="w-full sm:hidden" size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
-            </DialogTrigger>
-            <DialogContent>
-            <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
-            <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-            </DialogContent>
-        </Dialog>
 
-      <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50 mt-4">
+      <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
         <Button variant="ghost" size="icon" onClick={handlePrevDay}>
           <ChevronLeft className="w-5 h-5" />
         </Button>
@@ -181,13 +172,13 @@ export default function TimetablePage() {
       </div>
 
       {dailyClasses.length > 0 ? (
-        <div className="flex flex-col gap-4 mt-4">
+        <div className="flex flex-col gap-4">
           {dailyClasses.map(session => (
             <TimetableCard key={session.id} session={session} />
           ))}
         </div>
       ) : (
-        <div className="flex h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg mt-4">
+        <div className="flex h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg">
           <p className="text-muted-foreground">No classes scheduled for this day.</p>
         </div>
       )}
