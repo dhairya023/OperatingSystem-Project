@@ -3,7 +3,7 @@ import { useState } from 'react';
 import PageHeader from '@/components/page-header';
 import { useAppContext } from '@/context/app-context';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Edit, Trash2, MoreVertical } from 'lucide-react';
 import { addDays, subDays, format, isToday, isTomorrow, isYesterday } from 'date-fns';
 import { Card } from '@/components/ui/card';
 import type { ClassSession } from '@/lib/types';
@@ -16,6 +16,12 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import ClassSessionForm from '@/components/timetable/class-session-form';
 
 const TimetableCard = ({ session }: { session: ClassSession }) => {
@@ -48,19 +54,29 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
                 )}
             </div>
              <div className="flex gap-1">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon"><MoreVertical className="w-4 h-4" /></Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                         <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            <span>Edit</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => setIsDeleteDialogOpen(true)} className="text-destructive">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            <span>Delete</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
                 <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon"><Edit className="w-4 h-4" /></Button>
-                    </DialogTrigger>
                     <DialogContent>
                         <DialogHeader><DialogTitle>Edit Class</DialogTitle></DialogHeader>
                         <ClassSessionForm session={session} onSave={() => setIsEditDialogOpen(false)} />
                     </DialogContent>
                 </Dialog>
                 <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                    <DialogTrigger asChild>
-                         <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="w-4 h-4" /></Button>
-                    </DialogTrigger>
                     <DialogContent>
                         <DialogHeader><DialogTitle>Delete Class</DialogTitle></DialogHeader>
                         <p>Are you sure you want to delete the class for "{session.subject}"? This action cannot be undone.</p>
