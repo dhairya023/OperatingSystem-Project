@@ -45,15 +45,13 @@ export default function ExamCountdown() {
 
   if (!nextExam || !timeLeft) {
     return (
-      <Card className="flex h-full flex-col justify-center bg-secondary">
+      <Card className="flex h-full flex-col justify-center">
         <CardHeader>
           <CardTitle>Exam Countdown</CardTitle>
-          <CardDescription>No upcoming exams scheduled.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center text-muted-foreground">
-            <Clock className="w-12 h-12" />
-          </div>
+        <CardContent className="flex flex-col items-center justify-center text-center gap-2">
+            <Clock className="w-10 h-10 text-muted-foreground" />
+            <p className="text-muted-foreground">No upcoming exams scheduled.</p>
         </CardContent>
       </Card>
     );
@@ -62,26 +60,26 @@ export default function ExamCountdown() {
   const timeUnits = [
     { label: 'Days', value: timeLeft.days },
     { label: 'Hours', value: timeLeft.hours },
-    { label: 'Minutes', value: timeLeft.minutes },
-    { label: 'Seconds', value: timeLeft.seconds },
+    { label: 'Mins', value: timeLeft.minutes },
+    { label: 'Secs', value: timeLeft.seconds },
   ];
 
   return (
-    <Card className="relative overflow-hidden flex flex-col h-full bg-gradient-to-br from-secondary to-background">
+    <Card className="flex flex-col h-full">
       <CardHeader>
-        <CardTitle className="text-xl md:text-2xl">Next Exam: {nextExam.subject}</CardTitle>
-        <CardDescription className="text-xs md:text-sm">
-          {nextExam.date.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+        <CardTitle className="text-base font-bold">Next Exam: {nextExam.subject}</CardTitle>
+        <CardDescription className="text-xs">
+          {nextExam.date.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex items-center justify-center">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 text-center w-full">
+        <div className="grid grid-cols-4 gap-2 text-center w-full">
           {timeUnits.map((unit) => (
-            <div key={unit.label} className="p-2 md:p-4 rounded-lg bg-background/50">
-              <div className="text-3xl md:text-5xl font-bold font-headline tabular-nums text-primary neon-icon">
+            <div key={unit.label} className="p-2 rounded-lg bg-muted/50">
+              <div className="text-3xl font-bold font-headline tabular-nums text-primary neon-icon">
                 {String(unit.value).padStart(2, '0')}
               </div>
-              <div className="text-xs md:text-sm text-muted-foreground">{unit.label}</div>
+              <div className="text-xs text-muted-foreground">{unit.label}</div>
             </div>
           ))}
         </div>
