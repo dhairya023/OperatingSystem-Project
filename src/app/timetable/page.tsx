@@ -123,7 +123,6 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
                 <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                     <DialogContent>
                         <DialogHeader><DialogTitle>Edit Class</DialogTitle></DialogHeader>
-                        {/* We pass a new session object for single edits, or the original for series edits */}
                         <ClassSessionForm 
                           session={editScope === 'single' ? {...session, rrule: undefined, repeatUntil: undefined} : session} 
                           onSave={() => setIsEditDialogOpen(false)} 

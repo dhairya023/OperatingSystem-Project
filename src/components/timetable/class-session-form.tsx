@@ -31,8 +31,6 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
   
   const [repeat, setRepeat] = useState<'once' | 'weekly'>(session?.rrule ? 'weekly' : 'once');
   
-  // Removed repeatUntil state
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject || !date || !startTime || !endTime) return;
@@ -53,8 +51,6 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
     };
     
     if (session) {
-      // The update logic is handled via a dialog in the timetable page now.
-      // This form is now primarily for single instance edits.
       updateClass(newSession, 'single');
     } else {
       addClass(newSession);
