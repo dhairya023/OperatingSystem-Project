@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import ClassSessionForm from '@/components/timetable/class-session-form';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const TimetableCard = ({ session }: { session: ClassSession }) => {
   const { subjects, deleteClass } = useAppContext();
@@ -109,7 +110,7 @@ export default function TimetablePage() {
     if (isToday(date)) return 'Today';
     if (isTomorrow(date)) return 'Tomorrow';
     if (isYesterday(date)) return 'Yesterday';
-    return format(date, 'EEEE, do MMMM');
+    return format(date, 'EEEE');
   }
 
   const dailyClasses = classes
@@ -136,20 +137,27 @@ export default function TimetablePage() {
 
   return (
     <div className="flex flex-col gap-8">
-       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <PageHeader title="Timetable" description="Your weekly class schedule." />
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                <DialogTrigger asChild>
-                    <Button className="w-full sm:w-auto"><PlusCircle className="mr-2" /> Add Class</Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
-                    <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-                </DialogContent>
-            </Dialog>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight font-headline md:text-4xl">Timetable</h1>
+          <p className="mt-2 text-muted-foreground">Your weekly class schedule.</p>
         </div>
+        <div className="md:hidden">
+          <SidebarTrigger />
+        </div>
+      </div>
+
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogTrigger asChild>
+          <Button className="w-full"><PlusCircle className="mr-2" /> Add Class</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
+          <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+        </DialogContent>
+      </Dialog>
       
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
         <Button variant="ghost" size="icon" onClick={handlePrevDay}>
           <ChevronLeft className="w-6 h-6" />
         </Button>
