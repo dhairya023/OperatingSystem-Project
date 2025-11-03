@@ -3,6 +3,7 @@
 import { MOCK_CLASSES, MOCK_SUBJECTS_LIST, MOCK_ASSIGNMENTS, MOCK_EXAMS, MOCK_PROFILE } from '@/lib/placeholder-data';
 import type { ClassSession, Subject, SubjectAttendance, Assignment, Exam, UserProfile } from '@/lib/types';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Helper to safely get data from localStorage
 const getFromLocalStorage = <T,>(key: string, defaultValue: T): T => {
@@ -63,31 +64,41 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [subjects, setSubjects] = useState<Subject[]>(() => getFromLocalStorage('subjects', MOCK_SUBJECTS_LIST));
-  const [classes, setClasses] = useState<ClassSession[]>(() => getFromLocalStorage('classes', MOCK_CLASSES));
-  const [assignments, setAssignments] = useState<Assignment[]>(() => getFromLocalStorage('assignments', MOCK_ASSIGNMENTS));
-  const [exams, setExams] = useState<Exam[]>(() => getFromLocalStorage('exams', MOCK_EXAMS));
-  const [profile, setProfile] = useState<UserProfile>(() => getFromLocalStorage('profile', MOCK_PROFILE));
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [classes, setClasses] = useState<ClassSession[]>([]);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [exams, setExams] = useState<Exam[]>([]);
+  const [profile, setProfile] = useState<UserProfile>(MOCK_PROFILE);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    setInLocalStorage('subjects', subjects);
-  }, [subjects]);
+    setSubjects(getFromLocalStorage('subjects', MOCK_SUBJECTS_LIST));
+    setClasses(getFromLocalStorage('classes', MOCK_CLASSES));
+    setAssignments(getFromLocalStorage('assignments', MOCK_ASSIGNMENTS));
+    setExams(getFromLocalStorage('exams', MOCK_EXAMS));
+    setProfile(getFromLocalStorage('profile', MOCK_PROFILE));
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    setInLocalStorage('classes', classes);
-  }, [classes]);
+    if (!loading) setInLocalStorage('subjects', subjects);
+  }, [subjects, loading]);
+
+  useEffect(() => {
+    if (!loading) setInLocalStorage('classes', classes);
+  }, [classes, loading]);
   
   useEffect(() => {
-    setInLocalStorage('assignments', assignments);
-  }, [assignments]);
+    if (!loading) setInLocalStorage('assignments', assignments);
+  }, [assignments, loading]);
 
   useEffect(() => {
-    setInLocalStorage('exams', exams);
-  }, [exams]);
+    if (!loading) setInLocalStorage('exams', exams);
+  }, [exams, loading]);
 
   useEffect(() => {
-    setInLocalStorage('profile', profile);
-  }, [profile]);
+    if (!loading) setInLocalStorage('profile', profile);
+  }, [profile, loading]);
 
   const addSubject = (subject: Subject) => {
     setSubjects([...subjects, subject]);
@@ -176,6 +187,22 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     profile,
     updateProfile,
   };
+
+  if (loading) {
+    return (
+        <div className="flex min-h-screen items-center justify-center">
+            <div className="p-8 space-y-4 w-full max-w-lg">
+                <Skeleton className="h-10 w-3/4" />
+                <Skeleton className="h-6 w-1/2" />
+                <div className="space-y-2 pt-4">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                </div>
+            </div>
+        </div>
+    )
+  }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
