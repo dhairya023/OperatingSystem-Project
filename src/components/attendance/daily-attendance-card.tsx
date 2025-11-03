@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button';
 import { useAppContext } from '@/context/app-context';
 import type { ClassSession } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Clock, DoorClosed } from 'lucide-react';
+import { Clock, DoorClosed, XCircle } from 'lucide-react';
 
 const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
   const { updateClass, subjects } = useAppContext();
   const subject = subjects.find(s => s.name === session.subject);
   const color = subject?.color || '#A1A1AA';
 
-  const handleStatusChange = (status: 'attended' | 'missed' | 'holiday') => {
+  const handleStatusChange = (status: 'attended' | 'missed' | 'holiday' | 'cancelled') => {
     updateClass({ ...session, status });
   };
 
@@ -28,10 +28,14 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
       card: `bg-gray-500/20 border-gray-500/40`,
       button: 'bg-gray-500 hover:bg-gray-600 text-white',
     },
+    cancelled: {
+        card: `bg-yellow-500/20 border-yellow-500/40`,
+        button: 'bg-yellow-500 hover:bg-yellow-600 text-white',
+    }
   };
 
   return (
-    <Card className={cn("p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4", statusStyles[session.status].card)}>
+    <Card className={cn("p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4", statusStyles[session.status]?.card)}>
       <div className="flex-1">
         <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }}></div>
@@ -66,7 +70,15 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
           className={cn(session.status === 'holiday' && statusStyles.holiday.button)}
           onClick={() => handleStatusChange('holiday')}
         >
-          X
+          H
+        </Button>
+        <Button
+          size="sm"
+          variant={session.status === 'cancelled' ? 'secondary' : 'outline'}
+          className={cn(session.status === 'cancelled' && statusStyles.cancelled.button)}
+          onClick={() => handleStatusChange('cancelled')}
+        >
+          C
         </Button>
       </div>
     </Card>

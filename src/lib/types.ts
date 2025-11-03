@@ -5,7 +5,7 @@ export type ClassSession = {
   startTime: string;
   endTime: string;
   room: string;
-  status: 'attended' | 'missed' | 'holiday';
+  status: 'attended' | 'missed' | 'holiday' | 'cancelled';
   date: Date;
 };
 

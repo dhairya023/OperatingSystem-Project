@@ -17,6 +17,7 @@ const statusColors = {
   attended: 'bg-green-500/80 text-white',
   missed: 'bg-red-500/80 text-white',
   holiday: 'bg-gray-700 text-white',
+  cancelled: 'bg-yellow-500/80 text-black',
   default: 'bg-card',
 };
 
@@ -24,6 +25,7 @@ const statusRingColors = {
     attended: 'ring-green-500/50',
     missed: 'ring-red-500/50',
     holiday: 'ring-gray-500/50',
+    cancelled: 'ring-yellow-500/50',
     default: 'ring-transparent',
 }
 

@@ -1,7 +1,7 @@
 'use client';
 
-import { MOCK_CLASSES, MOCK_SUBJECTS_LIST } from '@/lib/placeholder-data';
-import type { ClassSession, Subject, SubjectAttendance } from '@/lib/types';
+import { MOCK_CLASSES, MOCK_SUBJECTS_LIST, MOCK_ASSIGNMENTS } from '@/lib/placeholder-data';
+import type { ClassSession, Subject, SubjectAttendance, Assignment } from '@/lib/types';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface AppContextType {
@@ -14,6 +14,11 @@ interface AppContextType {
   updateClass: (session: ClassSession) => void;
   deleteClass: (id: string) => void;
   getSubjectAttendance: (subjectName: string) => SubjectAttendance;
+  assignments: Assignment[];
+  addAssignment: (assignment: Assignment) => void;
+  updateAssignment: (assignment: Assignment) => void;
+  deleteAssignment: (id: string) => void;
+  toggleAssignmentCompletion: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -21,6 +26,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [subjects, setSubjects] = useState<Subject[]>(MOCK_SUBJECTS_LIST);
   const [classes, setClasses] = useState<ClassSession[]>(MOCK_CLASSES);
+  const [assignments, setAssignments] = useState<Assignment[]>(MOCK_ASSIGNMENTS);
 
   const addSubject = (subject: Subject) => {
     setSubjects([...subjects, subject]);
@@ -48,11 +54,28 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const getSubjectAttendance = (subjectName: string) : SubjectAttendance => {
     const subjectClasses = classes.filter(c => c.subject === subjectName);
-    const relevantClasses = subjectClasses.filter(c => c.status !== 'holiday');
+    const relevantClasses = subjectClasses.filter(c => c.status !== 'holiday' && c.status !== 'cancelled');
     const attended = relevantClasses.filter(c => c.status === 'attended').length;
     const total = relevantClasses.length;
     return { subject: subjectName, attended, total };
   }
+  
+  const addAssignment = (assignment: Assignment) => {
+    setAssignments([...assignments, assignment]);
+  };
+
+  const updateAssignment = (updatedAssignment: Assignment) => {
+    setAssignments(assignments.map((a) => (a.id === updatedAssignment.id ? updatedAssignment : a)));
+  };
+
+  const deleteAssignment = (id: string) => {
+    setAssignments(assignments.filter((a) => a.id !== id));
+  };
+  
+  const toggleAssignmentCompletion = (id: string) => {
+    setAssignments(assignments.map(a => a.id === id ? {...a, completed: !a.completed} : a));
+  }
+
 
   const value = {
     subjects,
@@ -64,6 +87,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     updateClass,
     deleteClass,
     getSubjectAttendance,
+    assignments,
+    addAssignment,
+    updateAssignment,
+    deleteAssignment,
+    toggleAssignmentCompletion,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
