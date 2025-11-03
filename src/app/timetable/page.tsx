@@ -136,22 +136,20 @@ export default function TimetablePage() {
   }
 
   return (
-    <div className="flex flex-col flex-1">
-      <div className="p-4 md:p-6 lg:p-8">
-        <PageHeader title="Timetable" description="Your weekly class schedule.">
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                  <Button size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
-              </DialogTrigger>
-              <DialogContent>
-                  <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
-                  <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-              </DialogContent>
-          </Dialog>
-        </PageHeader>
-      </div>
+    <div className="flex flex-col flex-1 p-4 md:p-6 lg:p-8">
+      <PageHeader title="Timetable" description="Your weekly class schedule.">
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+                <Button size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
+                <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+            </DialogContent>
+        </Dialog>
+      </PageHeader>
 
-      <div className="flex flex-col items-center w-full px-4 md:px-6 lg:px-8">
+      <div className="flex flex-col items-center w-full mt-8">
         <div className="w-full max-w-2xl">
           <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
             <Button variant="ghost" size="icon" onClick={handlePrevDay}>
