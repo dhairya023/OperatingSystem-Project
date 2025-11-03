@@ -1,7 +1,7 @@
 'use client';
 
-import { MOCK_CLASSES, MOCK_SUBJECTS_LIST, MOCK_ASSIGNMENTS, MOCK_EXAMS } from '@/lib/placeholder-data';
-import type { ClassSession, Subject, SubjectAttendance, Assignment, Exam } from '@/lib/types';
+import { MOCK_CLASSES, MOCK_SUBJECTS_LIST, MOCK_ASSIGNMENTS, MOCK_EXAMS, MOCK_PROFILE } from '@/lib/placeholder-data';
+import type { ClassSession, Subject, SubjectAttendance, Assignment, Exam, UserProfile } from '@/lib/types';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 // Helper to safely get data from localStorage
@@ -56,6 +56,8 @@ interface AppContextType {
   addExam: (exam: Exam) => void;
   updateExam: (exam: Exam) => void;
   deleteExam: (id: string) => void;
+  profile: UserProfile;
+  updateProfile: (profile: UserProfile) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -65,6 +67,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [classes, setClasses] = useState<ClassSession[]>(() => getFromLocalStorage('classes', MOCK_CLASSES));
   const [assignments, setAssignments] = useState<Assignment[]>(() => getFromLocalStorage('assignments', MOCK_ASSIGNMENTS));
   const [exams, setExams] = useState<Exam[]>(() => getFromLocalStorage('exams', MOCK_EXAMS));
+  const [profile, setProfile] = useState<UserProfile>(() => getFromLocalStorage('profile', MOCK_PROFILE));
   
   useEffect(() => {
     setInLocalStorage('subjects', subjects);
@@ -81,6 +84,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     setInLocalStorage('exams', exams);
   }, [exams]);
+
+  useEffect(() => {
+    setInLocalStorage('profile', profile);
+  }, [profile]);
 
   const addSubject = (subject: Subject) => {
     setSubjects([...subjects, subject]);
@@ -142,6 +149,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setExams(exams.filter((e) => e.id !== id));
   };
 
+  const updateProfile = (updatedProfile: UserProfile) => {
+    setProfile(updatedProfile);
+  };
+
 
   const value = {
     subjects,
@@ -162,6 +173,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     addExam,
     updateExam,
     deleteExam,
+    profile,
+    updateProfile,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

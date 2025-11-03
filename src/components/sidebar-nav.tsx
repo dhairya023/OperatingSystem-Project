@@ -14,6 +14,7 @@ import {
   GraduationCap,
   UserCheck,
   BookCopy,
+  User,
 } from "lucide-react";
 
 const navItems = [
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/assignments", label: "Assignments", icon: BookCheck },
   { href: "/exams", label: "Exams", icon: GraduationCap },
   { href: "/subjects", label: "Subjects", icon: BookCopy },
+  { href: "/profile", label: "Profile", icon: User },
 ];
 
 export function SidebarNav() {

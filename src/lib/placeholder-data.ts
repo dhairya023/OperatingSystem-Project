@@ -1,4 +1,4 @@
-import type { Assignment, ClassSession, Exam, Subject, SubjectAttendance } from './types';
+import type { Assignment, ClassSession, Exam, Subject, SubjectAttendance, UserProfile } from './types';
 import { addDays, subDays, set } from 'date-fns';
 
 const today = new Date();
@@ -139,6 +139,18 @@ export const MOCK_EXAMS: Exam[] = [
     type: 'Mid-term',
   },
 ];
+
+export const MOCK_PROFILE: UserProfile = {
+    fullName: "Alex Doe",
+    email: "alex.doe@example.com",
+    rollNo: "STU12345",
+    university: "Stanford University",
+    course: "B.Sc. Computer Science",
+    semester: "4th",
+    department: "Computer Science",
+    profilePhotoUrl: "https://picsum.photos/seed/1/200/200",
+};
+
 
 export const MOCK_SUBJECTS_ATTENDANCE: SubjectAttendance[] = [
   { subject: 'Quantum Physics', attended: 19, total: 22 },

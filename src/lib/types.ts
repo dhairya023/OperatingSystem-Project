@@ -43,3 +43,14 @@ export type Subject = {
     teacher: string;
     color: string;
 }
+
+export type UserProfile = {
+  fullName: string;
+  email: string;
+  rollNo: string;
+  university: string;
+  course: string;
+  semester: string;
+  department: string;
+  profilePhotoUrl: string;
+};
