@@ -93,7 +93,7 @@
 @layer utilities {
   .splash-screen {
     @apply fixed inset-0 z-50 flex items-center justify-center bg-primary;
-    animation: fade-out 0.5s ease-out 1.5s forwards;
+    animation: fade-out 0.5s ease-out 0.8s forwards;
   }
 
   .splash-logo {

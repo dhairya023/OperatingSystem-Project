@@ -36,7 +36,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     // Hide splash screen after the initial load is done.
     if (!isUserLoading && !(user && isDataLoading)) {
         // Wait for animation to complete
-        const timer = setTimeout(() => setIsSplashActive(false), 2000); 
+        const timer = setTimeout(() => setIsSplashActive(false), 1000); 
         return () => clearTimeout(timer);
     }
   }, [isUserLoading, isDataLoading, user]);
