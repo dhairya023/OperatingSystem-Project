@@ -4,8 +4,8 @@ import { useState } from 'react';
 import PageHeader from '@/components/page-header';
 import { useAppContext } from '@/context/app-context';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Edit, Trash2, MoreVertical } from 'lucide-react';
-import { addDays, subDays, format, isToday, isTomorrow, isYesterday } from 'date-fns';
+import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Edit, Trash2, MoreVertical, Copy, Trash, History } from 'lucide-react';
+import { addDays, subDays, format, isToday, isTomorrow, isYesterday, startOfDay } from 'date-fns';
 import { Card } from '@/components/ui/card';
 import type { ClassSession } from '@/lib/types';
 import {
@@ -22,20 +22,31 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger
 } from '@/components/ui/dropdown-menu';
 import ClassSessionForm from '@/components/timetable/class-session-form';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const TimetableCard = ({ session }: { session: ClassSession }) => {
-  const { subjects, deleteClass } = useAppContext();
+  const { subjects, updateClass, deleteClass } = useAppContext();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editScope, setEditScope] = useState<'single' | 'future' | 'all'>('single');
+  const [deleteScope, setDeleteScope] = useState<'single' | 'future' | 'all'>('single');
 
   const subject = subjects.find(s => s.name === session.subject);
   const color = subject?.color || '#A1A1AA'; // A default gray color
 
+  const handleUpdate = (updatedSession: ClassSession) => {
+    updateClass(updatedSession, editScope);
+    setIsEditDialogOpen(false);
+  }
+  
   const handleDelete = () => {
-    deleteClass(session.id);
+    deleteClass(session, deleteScope);
     setIsDeleteDialogOpen(false);
   }
 
@@ -61,27 +72,68 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
                         <Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="w-4 h-4" /></Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                         <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
+                         <DropdownMenuItem onSelect={() => { setEditScope('single'); setIsEditDialogOpen(true); }}>
                             <Edit className="mr-2 h-4 w-4" />
                             <span>Edit</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => setIsDeleteDialogOpen(true)} className="text-destructive">
+                         <DropdownMenuItem onSelect={() => { setDeleteScope('single'); setIsDeleteDialogOpen(true); }} className="text-destructive">
                             <Trash2 className="mr-2 h-4 w-4" />
                             <span>Delete</span>
                         </DropdownMenuItem>
+                        {session.rrule && (
+                          <>
+                            <DropdownMenuSeparator />
+                             <DropdownMenuSub>
+                              <DropdownMenuSubTrigger>
+                                <History className="mr-2 h-4 w-4" />
+                                <span>Edit Recurring</span>
+                              </DropdownMenuSubTrigger>
+                              <DropdownMenuSubContent>
+                                <DropdownMenuItem onSelect={() => { setEditScope('future'); setIsEditDialogOpen(true); }}>
+                                  <Copy className="mr-2 h-4 w-4" />
+                                  <span>This and future</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onSelect={() => { setEditScope('all'); setIsEditDialogOpen(true); }}>
+                                  <Copy className="mr-2 h-4 w-4" />
+                                  <span>All classes</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuSubContent>
+                            </DropdownMenuSub>
+                            <DropdownMenuSub>
+                              <DropdownMenuSubTrigger>
+                                <Trash className="mr-2 h-4 w-4" />
+                                <span>Delete Recurring</span>
+                              </DropdownMenuSubTrigger>
+                              <DropdownMenuSubContent>
+                                <DropdownMenuItem onSelect={() => { setDeleteScope('future'); setIsDeleteDialogOpen(true); }} className="text-destructive">
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  <span>This and future</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onSelect={() => { setDeleteScope('all'); setIsDeleteDialogOpen(true); }} className="text-destructive">
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  <span>All classes</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuSubContent>
+                            </DropdownMenuSub>
+                          </>
+                        )}
                     </DropdownMenuContent>
                 </DropdownMenu>
 
                 <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                     <DialogContent>
                         <DialogHeader><DialogTitle>Edit Class</DialogTitle></DialogHeader>
-                        <ClassSessionForm session={session} onSave={() => setIsEditDialogOpen(false)} />
+                        {/* We pass a new session object for single edits, or the original for series edits */}
+                        <ClassSessionForm 
+                          session={editScope === 'single' ? {...session, rrule: undefined, repeatUntil: undefined} : session} 
+                          onSave={() => setIsEditDialogOpen(false)} 
+                        />
                     </DialogContent>
                 </Dialog>
                 <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                     <DialogContent>
                         <DialogHeader><DialogTitle>Delete Class</DialogTitle></DialogHeader>
-                        <p>Are you sure you want to delete the class for "{session.subject}"? This action cannot be undone.</p>
+                        <p>Are you sure you want to delete {deleteScope === 'single' ? 'this class' : (deleteScope === 'future' ? 'this and all future classes' : 'all classes in this series')}?</p>
                         <DialogFooter>
                             <DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose>
                             <Button variant="destructive" onClick={handleDelete}>Delete</Button>

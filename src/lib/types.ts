@@ -1,4 +1,5 @@
 
+
 export type ClassSession = {
   id: string;
   subject: string;
@@ -8,6 +9,8 @@ export type ClassSession = {
   room: string;
   status: 'attended' | 'missed' | 'holiday' | 'cancelled';
   date: any; // Allow any for Firestore Timestamps
+  rrule?: string; // Recurrence rule ID
+  repeatUntil?: any; // End date for recurrence
 };
 
 export type Assignment = {
@@ -58,3 +61,4 @@ export type UserProfile = {
   profilePhotoUrl?: string;
   profileCompleted?: boolean;
 };
+

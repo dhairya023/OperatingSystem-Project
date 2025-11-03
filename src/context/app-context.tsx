@@ -10,12 +10,14 @@ import {
   updateDoc,
   onSnapshot,
   deleteDoc,
+  writeBatch
 } from 'firebase/firestore';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   deleteUser,
 } from 'firebase/auth';
+import { addDays, eachWeekOfInterval, startOfDay } from 'date-fns';
 
 import type { ClassSession, Subject, Assignment, Exam, UserProfile } from '@/lib/types';
 import { useFirebase } from '@/firebase/provider';
@@ -34,8 +36,8 @@ interface AppContextType extends UserData {
   updateSubject: (subject: Subject) => Promise<void>;
   deleteSubject: (id: string) => Promise<void>;
   addClass: (session: ClassSession) => Promise<void>;
-  updateClass: (session: ClassSession) => Promise<void>;
-  deleteClass: (id: string) => Promise<void>;
+  updateClass: (session: ClassSession, scope: 'single' | 'future' | 'all') => Promise<void>;
+  deleteClass: (session: ClassSession, scope: 'single' | 'future' | 'all') => Promise<void>;
   addAssignment: (assignment: Assignment) => Promise<void>;
   updateAssignment: (assignment: Assignment) => Promise<void>;
   deleteAssignment: (id: string) => Promise<void>;
@@ -89,11 +91,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
-          const parseDates = <T extends { dueDate?: any; date?: any; dateOfBirth?: any }>(items: T[] = []): T[] => {
+          const parseDates = <T extends { dueDate?: any; date?: any; dateOfBirth?: any; repeatUntil?: any }>(items: T[] = []): T[] => {
             return items.map(item => ({
               ...item,
               ...(item.dueDate && item.dueDate.toDate && { dueDate: item.dueDate.toDate() }),
               ...(item.date && item.date.toDate && { date: item.date.toDate() }),
+              ...(item.repeatUntil && item.repeatUntil.toDate && { repeatUntil: item.repeatUntil.toDate() }),
             }));
           };
 
@@ -196,9 +199,86 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           delete: async (id: string) => updateUserData(field, getItems().filter(i => i.id !== id)),
       }
   }
+
+  const addClass = async (session: ClassSession) => {
+    const currentClasses = userData?.classes || [];
+    if (session.rrule && session.repeatUntil) {
+      // It's a repeating class
+      const weeks = eachWeekOfInterval({
+        start: new Date(session.date),
+        end: new Date(session.repeatUntil),
+      }, { weekStartsOn: 1 /* Monday */ });
+
+      const newClasses = weeks.map(weekStart => {
+        const dayOffset = new Date(session.date).getDay() - (weekStart.getDay());
+        const classDate = addDays(weekStart, dayOffset);
+        return {
+          ...session,
+          id: crypto.randomUUID(), // Each instance needs a unique ID
+          date: classDate,
+        };
+      });
+      await updateUserData('classes', [...currentClasses, ...newClasses]);
+    } else {
+      // It's a single class
+      await updateUserData('classes', [...currentClasses, session]);
+    }
+  };
+
+  const updateClass = async (session: ClassSession, scope: 'single' | 'future' | 'all') => {
+      let currentClasses = [...(userData?.classes || [])];
+      
+      if (scope === 'single' || !session.rrule) {
+          currentClasses = currentClasses.map(c => c.id === session.id ? session : c);
+      } else {
+          const sessionDate = startOfDay(new Date(session.date));
+          currentClasses = currentClasses.map(c => {
+              if (c.rrule === session.rrule) {
+                  const cDate = startOfDay(new Date(c.date));
+                  const shouldUpdate = 
+                      (scope === 'all') ||
+                      (scope === 'future' && (cDate.getTime() >= sessionDate.getTime()));
+                  
+                  if (shouldUpdate) {
+                      return {
+                          ...c,
+                          subject: session.subject,
+                          teacher: session.teacher,
+                          startTime: session.startTime,
+                          endTime: session.endTime,
+                          room: session.room,
+                          repeatUntil: session.repeatUntil
+                      };
+                  }
+              }
+              return c;
+          });
+      }
+      await updateUserData('classes', currentClasses);
+  };
+  
+  const deleteClass = async (session: ClassSession, scope: 'single' | 'future' | 'all') => {
+    let currentClasses = [...(userData?.classes || [])];
+
+    if (scope === 'single' || !session.rrule) {
+        currentClasses = currentClasses.filter(c => c.id !== session.id);
+    } else {
+        const sessionDate = startOfDay(new Date(session.date));
+        currentClasses = currentClasses.filter(c => {
+            if (c.rrule === session.rrule) {
+                const cDate = startOfDay(new Date(c.date));
+                const shouldDelete =
+                    (scope === 'all') ||
+                    (scope === 'future' && (cDate.getTime() >= sessionDate.getTime()));
+                return !shouldDelete;
+            }
+            return true;
+        });
+    }
+    await updateUserData('classes', currentClasses);
+  };
   
   const subjectUpdater = createItemUpdater<Subject>('subjects');
-  const classUpdater = createItemUpdater<ClassSession>('classes');
   const assignmentUpdater = createItemUpdater<Assignment>('assignments');
   const examUpdater = createItemUpdater<Exam>('exams');
 
@@ -213,9 +293,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     addSubject: subjectUpdater.add,
     updateSubject: subjectUpdater.update,
     deleteSubject: subjectUpdater.delete,
-    addClass: classUpdater.add,
-    updateClass: classUpdater.update,
-    deleteClass: classUpdater.delete,
+    addClass,
+    updateClass,
+    deleteClass,
     addAssignment: assignmentUpdater.add,
     updateAssignment: assignmentUpdater.update,
     deleteAssignment: assignmentUpdater.delete,
