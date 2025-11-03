@@ -3,30 +3,75 @@ import { useState } from 'react';
 import PageHeader from '@/components/page-header';
 import { useAppContext } from '@/context/app-context';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Edit, Trash2 } from 'lucide-react';
 import { addDays, subDays, format, isToday, isTomorrow, isYesterday } from 'date-fns';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import type { ClassSession } from '@/lib/types';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
+import ClassSessionForm from '@/components/timetable/class-session-form';
 
 const TimetableCard = ({ session }: { session: ClassSession }) => {
-  const { subjects } = useAppContext();
+  const { subjects, deleteClass } = useAppContext();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const subject = subjects.find(s => s.name === session.subject);
   const color = subject?.color || '#A1A1AA'; // A default gray color
+
+  const handleDelete = () => {
+    deleteClass(session.id);
+    setIsDeleteDialogOpen(false);
+  }
 
   return (
     <Card
       className="p-4 flex flex-col gap-2 rounded-xl"
       style={{ backgroundColor: `${color}40`, borderColor: `${color}80` }}
     >
-      <h3 className="font-bold text-lg">{session.subject}</h3>
-      <p className="text-sm text-foreground/80">{session.time}</p>
-      {session.room && (
-        <div className="flex items-center gap-2 text-sm text-foreground/80">
-          <MapPin className="w-4 h-4" />
-          <span>{session.room}</span>
+        <div className="flex justify-between items-start">
+            <div>
+                 <h3 className="font-bold text-lg">{session.subject}</h3>
+                 <p className="text-sm text-foreground/80">{session.startTime} - {session.endTime}</p>
+                 {session.room && (
+                    <div className="flex items-center gap-2 text-sm text-foreground/80 mt-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>{session.room}</span>
+                    </div>
+                )}
+            </div>
+             <div className="flex gap-1">
+                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" size="icon"><Edit className="w-4 h-4" /></Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader><DialogTitle>Edit Class</DialogTitle></DialogHeader>
+                        <ClassSessionForm session={session} onSave={() => setIsEditDialogOpen(false)} />
+                    </DialogContent>
+                </Dialog>
+                <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                    <DialogTrigger asChild>
+                         <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader><DialogTitle>Delete Class</DialogTitle></DialogHeader>
+                        <p>Are you sure you want to delete the class for "{session.subject}"? This action cannot be undone.</p>
+                        <DialogFooter>
+                            <DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose>
+                            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </div>
-      )}
     </Card>
   );
 };
@@ -34,6 +79,7 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
 export default function TimetablePage() {
   const { subjects, classes } = useAppContext();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const handlePrevDay = () => {
     setCurrentDate(subDays(currentDate, 1));
@@ -47,12 +93,16 @@ export default function TimetablePage() {
     if (isToday(date)) return 'Today';
     if (isTomorrow(date)) return 'Tomorrow';
     if (isYesterday(date)) return 'Yesterday';
-    return format(date, 'EEEE');
+    return format(date, 'EEEE, do MMMM');
   }
 
   const dailyClasses = classes
     .filter((c) => format(c.date, 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+    .sort((a, b) => {
+        const timeA = a.startTime.split(':');
+        const timeB = b.startTime.split(':');
+        return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime()
+    });
 
   if (subjects.length === 0) {
     return (
@@ -70,15 +120,26 @@ export default function TimetablePage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <PageHeader title="Timetable" description="Your weekly class schedule." />
+       <div className="flex items-center justify-between">
+            <PageHeader title="Timetable" description="Your weekly class schedule." />
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button><PlusCircle className="mr-2" /> Add Class</Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
+                    <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+                </DialogContent>
+            </Dialog>
+        </div>
       
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="icon" onClick={handlePrevDay}>
           <ChevronLeft className="w-6 h-6" />
         </Button>
         <div className="text-center">
-          <p className="text-xl font-bold">{format(currentDate, 'EEEE')}</p>
-          <p className="text-muted-foreground text-sm">{getRelativeDate(currentDate)}</p>
+          <p className="text-xl font-bold">{getRelativeDate(currentDate)}</p>
+          <p className="text-muted-foreground text-sm">{format(currentDate, 'do MMMM yyyy')}</p>
         </div>
         <Button variant="ghost" size="icon" onClick={handleNextDay}>
           <ChevronRight className="w-6 h-6" />

@@ -2,7 +2,8 @@ export type ClassSession = {
   id: string;
   subject: string;
   teacher: string;
-  time: string;
+  startTime: string;
+  endTime: string;
   room: string;
   status: 'attended' | 'missed' | 'holiday';
   date: Date;

@@ -10,6 +10,9 @@ interface AppContextType {
   updateSubject: (subject: Subject) => void;
   deleteSubject: (id: string) => void;
   classes: ClassSession[];
+  addClass: (session: ClassSession) => void;
+  updateClass: (session: ClassSession) => void;
+  deleteClass: (id: string) => void;
   getSubjectAttendance: (subjectName: string) => SubjectAttendance;
 }
 
@@ -31,6 +34,18 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setSubjects(subjects.filter((s) => s.id !== id));
   };
   
+  const addClass = (session: ClassSession) => {
+    setClasses([...classes, session]);
+  }
+
+  const updateClass = (updatedSession: ClassSession) => {
+    setClasses(classes.map(c => c.id === updatedSession.id ? updatedSession : c));
+  }
+
+  const deleteClass = (id: string) => {
+    setClasses(classes.filter(c => c.id !== id));
+  }
+
   const getSubjectAttendance = (subjectName: string) : SubjectAttendance => {
     const subjectClasses = classes.filter(c => c.subject === subjectName);
     const attended = subjectClasses.filter(c => c.status === 'attended').length;
@@ -44,6 +59,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     updateSubject,
     deleteSubject,
     classes,
+    addClass,
+    updateClass,
+    deleteClass,
     getSubjectAttendance,
   };
 

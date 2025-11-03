@@ -4,10 +4,15 @@ import { Separator } from "@/components/ui/separator";
 import { Bell, Clock, DoorClosed } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/app-context";
+import { format, isToday } from "date-fns";
 
 export default function UpcomingClasses() {
   const { classes } = useAppContext();
-  const upcomingClasses = classes.filter(c => c.date.toDateString() === new Date().toDateString());
+  const upcomingClasses = classes.filter(c => isToday(c.date)).sort((a, b) => {
+    const timeA = a.startTime.split(':');
+    const timeB = b.startTime.split(':');
+    return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime()
+  });
 
   return (
     <Card className="h-full">
@@ -25,7 +30,7 @@ export default function UpcomingClasses() {
                     <p className="font-semibold">{session.subject}</p>
                     <p className="text-sm text-muted-foreground">{session.teacher}</p>
                     <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {session.time}</span>
+                      <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {session.startTime} - {session.endTime}</span>
                       <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>
                     </div>
                   </div>
