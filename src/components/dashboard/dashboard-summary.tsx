@@ -16,7 +16,7 @@ export default function DashboardSummary() {
 
     const summaryItems = [
         { icon: CalendarDays, label: "Lectures", value: lecturesToday },
-        { icon: BookCheck, label: "Assignments Due", value: assignmentsDueToday },
+        { icon: BookCheck, label: "Assignments", value: assignmentsDueToday },
         { icon: PercentCircle, label: "Attendance", value: `${overallAttendance}%` },
     ]
     
@@ -30,11 +30,11 @@ export default function DashboardSummary() {
                         <h2 className="text-2xl font-bold font-headline">Hey {firstName}, ready for class?</h2>
                         <p className="text-muted-foreground">Here is your summary for today.</p>
                     </div>
-                    <div className="grid grid-cols-3 gap-2 md:gap-4 text-center w-full md:w-auto">
+                    <div className="grid grid-cols-3 gap-2 md:gap-3 text-center w-full md:w-auto">
                         {summaryItems.map(item => (
-                             <div key={item.label} className="p-3 rounded-lg bg-muted/50 flex flex-col items-center justify-center">
+                             <div key={item.label} className="p-2 rounded-lg bg-muted/50 flex flex-col items-center justify-center">
                                 <item.icon className="w-5 h-5 mb-1 text-primary"/>
-                                <div className="text-xl font-bold text-foreground">{item.value}</div>
+                                <div className="text-lg font-bold text-foreground">{item.value}</div>
                                 <div className="text-xs text-muted-foreground">{item.label}</div>
                             </div>
                         ))}
