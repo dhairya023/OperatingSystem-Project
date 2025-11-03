@@ -136,44 +136,51 @@ export default function TimetablePage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 w-full p-4 md:p-6 lg:p-8 gap-6">
-      <PageHeader title="Timetable" description="Your weekly class schedule.">
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-                <Button size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
-                <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-            </DialogContent>
-        </Dialog>
-      </PageHeader>
-      
-
-      <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-        <Button variant="ghost" size="icon" onClick={handlePrevDay}>
-          <ChevronLeft className="w-5 h-5" />
-        </Button>
-        <div className="text-center">
-          <p className="font-bold text-base md:text-lg">{getRelativeDate(currentDate)}</p>
-          <p className="text-muted-foreground text-xs">{format(currentDate, 'do MMMM yyyy')}</p>
-        </div>
-        <Button variant="ghost" size="icon" onClick={handleNextDay}>
-          <ChevronRight className="w-5 h-5" />
-        </Button>
+    <div className="flex flex-col flex-1">
+      <div className="p-4 md:p-6 lg:p-8">
+        <PageHeader title="Timetable" description="Your weekly class schedule.">
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                  <Button size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
+              </DialogTrigger>
+              <DialogContent>
+                  <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
+                  <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+              </DialogContent>
+          </Dialog>
+        </PageHeader>
       </div>
 
-      {dailyClasses.length > 0 ? (
-        <div className="flex flex-col gap-4">
-          {dailyClasses.map(session => (
-            <TimetableCard key={session.id} session={session} />
-          ))}
+      <div className="flex flex-col items-center w-full px-4 md:px-6 lg:px-8">
+        <div className="w-full max-w-2xl">
+          <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
+            <Button variant="ghost" size="icon" onClick={handlePrevDay}>
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            <div className="text-center">
+              <p className="font-bold text-base md:text-lg">{getRelativeDate(currentDate)}</p>
+              <p className="text-muted-foreground text-xs">{format(currentDate, 'do MMMM yyyy')}</p>
+            </div>
+            <Button variant="ghost" size="icon" onClick={handleNextDay}>
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+          </div>
+
+          <div className="mt-6">
+            {dailyClasses.length > 0 ? (
+              <div className="flex flex-col gap-4">
+                {dailyClasses.map(session => (
+                  <TimetableCard key={session.id} session={session} />
+                ))}
+              </div>
+            ) : (
+              <div className="flex h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg">
+                <p className="text-muted-foreground">No classes scheduled for this day.</p>
+              </div>
+            )}
+          </div>
         </div>
-      ) : (
-        <div className="flex h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg">
-          <p className="text-muted-foreground">No classes scheduled for this day.</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
