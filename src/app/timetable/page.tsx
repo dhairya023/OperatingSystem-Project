@@ -136,7 +136,7 @@ export default function TimetablePage() {
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-2xl mx-auto px-4">
+    <div className="flex flex-col gap-8 w-full max-w-xl mx-auto">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight font-headline md:text-4xl">Timetable</h1>
