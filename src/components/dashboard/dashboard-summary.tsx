@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BookCheck, CalendarDays, PercentCircle } from "lucide-react";
 
 export default function DashboardSummary() {
-    const { classes, assignments } = useAppContext();
+    const { classes, assignments, profile } = useAppContext();
 
     const lecturesToday = classes.filter(c => isToday(c.date)).length;
     const assignmentsDueToday = assignments.filter(a => isToday(a.dueDate) && !a.completed).length;
@@ -19,13 +19,15 @@ export default function DashboardSummary() {
         { icon: BookCheck, label: "Assignments Due", value: assignmentsDueToday },
         { icon: PercentCircle, label: "Attendance", value: `${overallAttendance}%` },
     ]
+    
+    const firstName = profile.fullName.split(' ')[0];
 
     return (
         <Card>
             <CardContent className="p-4 md:p-6">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                     <div className="mb-4 md:mb-0">
-                        <h2 className="text-2xl font-bold font-headline">👋 Hey there, ready for class?</h2>
+                        <h2 className="text-2xl font-bold font-headline">Hey {firstName}, ready for class?</h2>
                         <p className="text-muted-foreground">Here is your summary for today.</p>
                     </div>
                     <div className="grid grid-cols-3 gap-2 md:gap-4 text-center w-full md:w-auto">
