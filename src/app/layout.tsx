@@ -41,7 +41,7 @@ export default function RootLayout({
                 </SidebarContent>
               </Sidebar>
               <SidebarInset>
-                <main className="p-4 sm:p-6 md:p-8">
+                <main className="px-0 py-4 sm:p-6 md:p-8">
                   {children}
                 </main>
               </SidebarInset>
