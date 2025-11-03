@@ -41,7 +41,7 @@ export default function RootLayout({
                 </SidebarContent>
               </Sidebar>
               <SidebarInset>
-                <main>
+                <main className="md:p-0">
                   {children}
                 </main>
               </SidebarInset>
