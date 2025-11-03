@@ -202,23 +202,24 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const addClass = async (session: ClassSession) => {
     const currentClasses = userData?.classes || [];
-    if (session.rrule && session.repeatUntil) {
+    const newSessionData = { ...session, status: undefined };
+
+    if (session.rrule) {
       const newClasses: ClassSession[] = [];
-      let currentDate = startOfDay(new Date(session.date));
-      const endDate = startOfDay(new Date(session.repeatUntil));
+      let loopDate = startOfDay(new Date(session.date));
+      const endDate = addMonths(loopDate, 3); // Default to 3 months
       
-      while (currentDate <= endDate) {
+      while (loopDate <= endDate) {
         newClasses.push({
-          ...session,
+          ...newSessionData,
           id: crypto.randomUUID(),
-          date: currentDate,
-          status: undefined,
+          date: loopDate,
         });
-        currentDate = addDays(currentDate, 7);
+        loopDate = addDays(loopDate, 7);
       }
       await updateUserData('classes', [...currentClasses, ...newClasses]);
     } else {
-      await updateUserData('classes', [...currentClasses, {...session, rrule: undefined, repeatUntil: undefined, status: undefined }]);
+      await updateUserData('classes', [...currentClasses, { ...newSessionData, rrule: undefined, repeatUntil: undefined }]);
     }
   };
 
