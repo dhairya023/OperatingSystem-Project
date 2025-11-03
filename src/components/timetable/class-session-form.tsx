@@ -45,7 +45,7 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
       startTime,
       endTime,
       room,
-      status: session?.status || 'attended', // Default status
+      status: session?.status, // Default status
       date,
       ...(repeat === 'weekly' && { rrule: session?.rrule || crypto.randomUUID(), repeatUntil: addMonths(new Date(date), 3) }),
     };

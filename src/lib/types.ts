@@ -7,7 +7,7 @@ export type ClassSession = {
   startTime: string;
   endTime: string;
   room: string;
-  status: 'attended' | 'missed' | 'holiday' | 'cancelled';
+  status?: 'attended' | 'missed' | 'holiday' | 'cancelled';
   date: any; // Allow any for Firestore Timestamps
   rrule?: string; // Recurrence rule ID
   repeatUntil?: any; // End date for recurrence
@@ -61,4 +61,3 @@ export type UserProfile = {
   profilePhotoUrl?: string;
   profileCompleted?: boolean;
 };
-

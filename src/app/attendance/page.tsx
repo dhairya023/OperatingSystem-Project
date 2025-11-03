@@ -110,9 +110,9 @@ function AttendanceContent() {
                   <SelectValue placeholder="Select a subject" />
                 </SelectTrigger>
                 <SelectContent>
-                  {subjectAttendance.map((subject) => (
-                    <SelectItem key={subject.subject} value={subject.subject}>
-                      {subject.subject}
+                  {subjects.map((subject) => (
+                    <SelectItem key={subject.id} value={subject.name}>
+                      {subject.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
