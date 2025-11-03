@@ -59,7 +59,7 @@ export default function ProfileSetupPage() {
     try {
       await updateProfile(formData as UserProfile);
       await completeProfileSetup();
-      toast({ title: 'Profile setup complete!', description: 'Welcome to ScholarSphere.' });
+      toast({ title: 'Profile setup complete!', description: 'Welcome to Grad.' });
       router.push('/');
     } catch (error: any) {
       console.error('Profile setup failed:', error);
@@ -86,7 +86,7 @@ export default function ProfileSetupPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
               <GraduationCap className="h-8 w-8 text-primary-foreground" />
               </div>
-              <h1 className="text-3xl font-bold font-headline">ScholarSphere</h1>
+              <h1 className="text-3xl font-bold font-headline">Grad</h1>
           </div>
           <CardTitle>Complete Your Profile</CardTitle>
           <CardDescription>

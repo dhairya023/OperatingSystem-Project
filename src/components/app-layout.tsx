@@ -66,7 +66,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
                 <GraduationCap className="h-6 w-6 text-primary-foreground" />
               </div>
-              <h1 className="text-xl font-bold font-headline">ScholarSphere</h1>
+              <h1 className="text-xl font-bold font-headline">Grad</h1>
             </div>
           </SidebarHeader>
           <SidebarContent className="p-0">

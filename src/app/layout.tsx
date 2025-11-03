@@ -5,7 +5,7 @@ import { AppProvider } from '@/context/app-context';
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'ScholarSphere',
+  title: 'Grad',
   description: 'Your academic life, organized.',
 };
 
