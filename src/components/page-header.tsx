@@ -18,16 +18,12 @@ export default function PageHeader({ title, description, children }: PageHeaderP
                 {title}
                 </h1>
             </div>
-             <div className="hidden md:flex items-center gap-2">{children}</div>
+             <div className="flex items-center gap-2">{children}</div>
         </div>
         
         {description && (
-          <p className="text-muted-foreground -mt-2">{description}</p>
+          <p className="text-muted-foreground -mt-2 ml-11 md:ml-0">{description}</p>
         )}
-
-      <div className="md:hidden w-full flex-shrink-0">
-        {children}
-      </div>
     </div>
   );
 }
