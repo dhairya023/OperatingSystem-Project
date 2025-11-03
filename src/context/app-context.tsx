@@ -48,8 +48,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const getSubjectAttendance = (subjectName: string) : SubjectAttendance => {
     const subjectClasses = classes.filter(c => c.subject === subjectName);
-    const attended = subjectClasses.filter(c => c.status === 'attended').length;
-    const total = subjectClasses.length;
+    const relevantClasses = subjectClasses.filter(c => c.status !== 'holiday');
+    const attended = relevantClasses.filter(c => c.status === 'attended').length;
+    const total = relevantClasses.length;
     return { subject: subjectName, attended, total };
   }
 
