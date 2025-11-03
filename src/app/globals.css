@@ -89,3 +89,35 @@
     @apply drop-shadow-[0_0_4px_hsl(var(--primary)/0.7)];
   }
 }
+
+@layer utilities {
+  .splash-screen {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-primary;
+    animation: fade-out 0.5s ease-out 1.5s forwards;
+  }
+
+  .splash-logo {
+    animation: scale-in 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+
+  @keyframes scale-in {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+}

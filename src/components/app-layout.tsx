@@ -1,19 +1,20 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useFirebase } from '@/firebase';
 import { Sidebar, SidebarHeader, SidebarContent, SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { SidebarNav } from '@/components/sidebar-nav';
 import { GraduationCap } from 'lucide-react';
-import { Skeleton } from './ui/skeleton';
 import { useAppContext } from '@/context/app-context';
+import SplashScreen from './splash-screen';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useFirebase();
   const { isDataLoading, profile } = useAppContext();
   const router = useRouter();
   const pathname = usePathname();
+  const [isSplashActive, setIsSplashActive] = useState(true);
 
   useEffect(() => {
     if (isUserLoading || isDataLoading) return;
@@ -31,32 +32,29 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   }, [user, isUserLoading, isDataLoading, profile, pathname, router]);
 
-  const showLoading = isUserLoading || (user && isDataLoading) || (user && !profile?.profileCompleted && pathname !== '/profile-setup');
+  useEffect(() => {
+    // Hide splash screen after the initial load is done.
+    if (!isUserLoading && !(user && isDataLoading)) {
+        // Wait for animation to complete
+        const timer = setTimeout(() => setIsSplashActive(false), 2000); 
+        return () => clearTimeout(timer);
+    }
+  }, [isUserLoading, isDataLoading, user]);
 
-  if (showLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-          <div className="p-8 space-y-4 w-full max-w-lg">
-              <div className="flex items-center space-x-4">
-                  <Skeleton className="h-16 w-16 rounded-full" />
-                  <div className="space-y-2">
-                      <Skeleton className="h-6 w-[250px]" />
-                      <Skeleton className="h-4 w-[200px]" />
-                  </div>
-              </div>
-              <div className="space-y-2 pt-4">
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
-              </div>
-          </div>
-      </div>
-    )
+
+  const showLoadingContent = isUserLoading || (user && isDataLoading) || (user && !profile?.profileCompleted && pathname !== '/profile-setup');
+  
+  if (isSplashActive) {
+      return <SplashScreen />;
   }
 
   // If user is not logged in and we are not on the login page, we show nothing to prevent flashes of content.
   if (!user) {
     return null;
+  }
+  
+  if (showLoadingContent) {
+      return null; // Show nothing, as splash screen has just finished or we are redirecting
   }
 
   return (
