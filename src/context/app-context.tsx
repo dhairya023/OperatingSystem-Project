@@ -17,7 +17,7 @@ import {
   signInWithEmailAndPassword,
   deleteUser,
 } from 'firebase/auth';
-import { addDays, addMonths, eachWeekOfInterval, startOfDay } from 'date-fns';
+import { addDays, addMonths, eachWeekOfInterval, startOfDay, getDay } from 'date-fns';
 
 import type { ClassSession, Subject, Assignment, Exam, UserProfile } from '@/lib/types';
 import { useFirebase } from '@/firebase/provider';
@@ -203,20 +203,19 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const addClass = async (session: ClassSession) => {
     const currentClasses = userData?.classes || [];
     if (session.rrule && session.repeatUntil) {
-      const weeks = eachWeekOfInterval({
-        start: new Date(session.date),
-        end: new Date(session.repeatUntil),
-      }, { weekStartsOn: new Date(session.date).getDay() as any });
+      const newClasses: ClassSession[] = [];
+      let currentDate = startOfDay(new Date(session.date));
+      const endDate = startOfDay(new Date(session.repeatUntil));
 
-      const newClasses = weeks.map(weekStart => {
-        const classDate = startOfDay(weekStart);
-        return {
+      while (currentDate <= endDate) {
+        newClasses.push({
           ...session,
           id: crypto.randomUUID(),
-          date: classDate,
+          date: currentDate,
           status: undefined,
-        };
-      });
+        });
+        currentDate = addDays(currentDate, 7);
+      }
       await updateUserData('classes', [...currentClasses, ...newClasses]);
     } else {
       await updateUserData('classes', [...currentClasses, {...session, status: undefined}]);
