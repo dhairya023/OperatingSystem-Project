@@ -68,8 +68,6 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
                         <div key={day.toString()} className={cn(
                             "w-8 h-8 rounded-full flex items-center justify-center text-xs",
                             isToday(day) && "ring-2 ring-primary ring-offset-2 ring-offset-background",
-                            status !== 'default' && statusRingColors[status],
-                            status !== 'default' && 'ring-1'
                         )}>
                             {getDate(day)}
                         </div>
