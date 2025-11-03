@@ -5,6 +5,7 @@ export type ClassSession = {
   time: string;
   room: string;
   attended: boolean;
+  date: Date;
 };
 
 export type Assignment = {
@@ -21,4 +22,16 @@ export type Exam = {
   date: Date;
   venue: string;
   type: 'Mid-term' | 'Final' | 'Quiz';
+};
+
+export type SubjectAttendance = {
+  subject: string;
+  attended: number;
+  total: number;
+};
+
+export type DailyAttendance = {
+  date: Date;
+  present: number;
+  total: number;
 };

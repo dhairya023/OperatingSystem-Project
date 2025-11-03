@@ -1,4 +1,4 @@
-import type { Assignment, ClassSession, Exam } from './types';
+import type { Assignment, ClassSession, Exam, SubjectAttendance } from './types';
 
 const today = new Date();
 
@@ -10,6 +10,7 @@ export const MOCK_CLASSES: ClassSession[] = [
     time: '09:00 - 10:30',
     room: 'Physics Lab 3',
     attended: true,
+    date: new Date(),
   },
   {
     id: 'cls2',
@@ -18,6 +19,7 @@ export const MOCK_CLASSES: ClassSession[] = [
     time: '11:00 - 12:30',
     room: 'CS Building, Room 101',
     attended: true,
+    date: new Date(),
   },
   {
     id: 'cls3',
@@ -26,6 +28,7 @@ export const MOCK_CLASSES: ClassSession[] = [
     time: '14:00 - 15:30',
     room: 'Literature Hall 2B',
     attended: false,
+    date: new Date(),
   },
 ];
 
@@ -76,6 +79,16 @@ export const MOCK_EXAMS: Exam[] = [
     type: 'Mid-term',
   },
 ];
+
+export const MOCK_SUBJECTS_ATTENDANCE: SubjectAttendance[] = [
+  { subject: 'Quantum Physics', attended: 18, total: 20 },
+  { subject: 'Advanced Algorithms', attended: 22, total: 24 },
+  { subject: 'Modernist Literature', attended: 15, total: 20 },
+  { subject: 'Organic Chemistry', attended: 25, total: 25 },
+  { subject: 'Data Science', attended: 28, total: 30 },
+  { subject: 'Machine Learning', attended: 23, total: 26 },
+];
+
 
 export const getAttendancePercentage = () => {
   const totalClasses = MOCK_CLASSES.length;

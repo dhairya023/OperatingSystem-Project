@@ -3,6 +3,9 @@ import ExamCountdown from "@/components/dashboard/exam-countdown";
 import PendingAssignments from "@/components/dashboard/pending-assignments";
 import UpcomingClasses from "@/components/dashboard/upcoming-classes";
 import PageHeader from "@/components/page-header";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardPage() {
   return (
@@ -13,7 +16,9 @@ export default function DashboardPage() {
           <ExamCountdown />
         </div>
         <div className="lg:col-span-1">
-          <AttendanceOverview />
+           <div className="h-full">
+            <AttendanceOverview />
+          </div>
         </div>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
