@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MOCK_EXAMS } from "@/lib/placeholder-data";
+import { useAppContext } from "@/context/app-context";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Clock } from "lucide-react";
+import { isPast } from "date-fns";
 
 const calculateTimeLeft = (targetDate: Date) => {
   const difference = +targetDate - +new Date();
@@ -26,7 +27,8 @@ const calculateTimeLeft = (targetDate: Date) => {
 };
 
 export default function ExamCountdown() {
-  const upcomingExams = MOCK_EXAMS.filter(exam => exam.date > new Date()).sort((a, b) => a.date.getTime() - b.date.getTime());
+  const { exams } = useAppContext();
+  const upcomingExams = exams.filter(exam => !isPast(exam.date)).sort((a, b) => a.date.getTime() - b.date.getTime());
   const nextExam = upcomingExams.length > 0 ? upcomingExams[0] : null;
 
   const [timeLeft, setTimeLeft] = useState(nextExam ? calculateTimeLeft(nextExam.date) : null);

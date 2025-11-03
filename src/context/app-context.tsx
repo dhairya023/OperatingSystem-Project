@@ -1,7 +1,7 @@
 'use client';
 
-import { MOCK_CLASSES, MOCK_SUBJECTS_LIST, MOCK_ASSIGNMENTS } from '@/lib/placeholder-data';
-import type { ClassSession, Subject, SubjectAttendance, Assignment } from '@/lib/types';
+import { MOCK_CLASSES, MOCK_SUBJECTS_LIST, MOCK_ASSIGNMENTS, MOCK_EXAMS } from '@/lib/placeholder-data';
+import type { ClassSession, Subject, SubjectAttendance, Assignment, Exam } from '@/lib/types';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface AppContextType {
@@ -19,6 +19,10 @@ interface AppContextType {
   updateAssignment: (assignment: Assignment) => void;
   deleteAssignment: (id: string) => void;
   toggleAssignmentCompletion: (id: string) => void;
+  exams: Exam[];
+  addExam: (exam: Exam) => void;
+  updateExam: (exam: Exam) => void;
+  deleteExam: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -27,6 +31,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [subjects, setSubjects] = useState<Subject[]>(MOCK_SUBJECTS_LIST);
   const [classes, setClasses] = useState<ClassSession[]>(MOCK_CLASSES);
   const [assignments, setAssignments] = useState<Assignment[]>(MOCK_ASSIGNMENTS);
+  const [exams, setExams] = useState<Exam[]>(MOCK_EXAMS);
 
   const addSubject = (subject: Subject) => {
     setSubjects([...subjects, subject]);
@@ -76,6 +81,18 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setAssignments(assignments.map(a => a.id === id ? {...a, completed: !a.completed} : a));
   }
 
+  const addExam = (exam: Exam) => {
+    setExams([...exams, exam]);
+  };
+
+  const updateExam = (updatedExam: Exam) => {
+    setExams(exams.map((e) => (e.id === updatedExam.id ? updatedExam : e)));
+  };
+
+  const deleteExam = (id: string) => {
+    setExams(exams.filter((e) => e.id !== id));
+  };
+
 
   const value = {
     subjects,
@@ -92,6 +109,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     updateAssignment,
     deleteAssignment,
     toggleAssignmentCompletion,
+    exams,
+    addExam,
+    updateExam,
+    deleteExam,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
