@@ -112,7 +112,7 @@ export default function ProfileSetupPage() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
-                        <Input name="email" type="email" value={formData.email} disabled />
+                        <Input name="email" type="email" value={formData.email} onChange={handleChange} required />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="course">Course</Label>
