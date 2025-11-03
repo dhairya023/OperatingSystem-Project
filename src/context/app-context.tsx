@@ -16,6 +16,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   deleteUser,
+  signOut,
 } from 'firebase/auth';
 import { addDays, addMonths, startOfDay, getDay } from 'date-fns';
 
@@ -48,6 +49,7 @@ interface AppContextType extends UserData {
   updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
   registerUser: (email: string, password: string, fullName: string) => Promise<void>;
   loginUser: (email: string, password: string) => Promise<void>;
+  logoutUser: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   completeProfileSetup: () => Promise<void>;
   getSubjectAttendance: any; // Simplified for now
@@ -169,6 +171,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
   
+  const logoutUser = async () => {
+    await signOut(auth);
+    router.push('/login');
+  }
+
   const deleteAccount = async () => {
     if (!user) throw new Error("No user is logged in to delete.");
 
@@ -202,9 +209,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const addClass = async (session: ClassSession) => {
     if (!user) throw new Error('User not logged in');
-
     const newClasses: Omit<ClassSession, 'status'>[] = [];
-    
+  
     const baseSession = {
       subject: session.subject,
       teacher: session.teacher,
@@ -212,13 +218,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       endTime: session.endTime,
       room: session.room,
     };
-
+  
     if (session.rrule) {
-      // Logic for weekly recurring classes
-      let loopDate = startOfDay(new Date(session.date));
-      const endDate = addMonths(loopDate, 3); // Repeats for 3 months
       const rruleId = crypto.randomUUID();
-
+      const endDate = addMonths(new Date(session.date), 3);
+      let loopDate = startOfDay(new Date(session.date));
+  
       while (loopDate <= endDate) {
         newClasses.push({
           ...baseSession,
@@ -230,7 +235,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         loopDate = addDays(loopDate, 7);
       }
     } else {
-      // Logic for a single, non-recurring class
       newClasses.push({
         ...baseSession,
         id: crypto.randomUUID(),
@@ -238,8 +242,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       });
     }
     
-    const currentClasses = userData?.classes || [];
-    await updateUserData('classes', [...currentClasses, ...newClasses]);
+    await updateUserData('classes', [
+      ...(userData?.classes || []),
+      ...newClasses,
+    ]);
   };
 
 
@@ -329,6 +335,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     deleteExam: examUpdater.delete,
     registerUser,
     loginUser,
+    logoutUser,
     deleteAccount,
     completeProfileSetup,
     getSubjectAttendance: (subjectName: string) => {

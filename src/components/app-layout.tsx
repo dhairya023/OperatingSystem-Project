@@ -3,15 +3,15 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useFirebase } from '@/firebase';
-import { Sidebar, SidebarHeader, SidebarContent, SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { Sidebar, SidebarHeader, SidebarContent, SidebarInset, SidebarProvider, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { SidebarNav } from '@/components/sidebar-nav';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, LogOut } from 'lucide-react';
 import { useAppContext } from '@/context/app-context';
 import SplashScreen from './splash-screen';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useFirebase();
-  const { isDataLoading, profile } = useAppContext();
+  const { isDataLoading, profile, logoutUser } = useAppContext();
   const router = useRouter();
   const pathname = usePathname();
   const [isSplashActive, setIsSplashActive] = useState(true);
@@ -72,6 +72,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <SidebarContent className="p-0">
             <SidebarNav />
           </SidebarContent>
+           <SidebarFooter>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={logoutUser} tooltip={{ children: 'Log Out', side: 'right', align: 'center' }}>
+                  <LogOut />
+                  <span>Log Out</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarFooter>
         </Sidebar>
         <SidebarInset>
             {children}
