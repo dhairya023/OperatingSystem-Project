@@ -57,11 +57,11 @@ const SubjectForm = ({ subject, onSave }: { subject?: Subject; onSave: (subject:
             required
           />
         </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="color" className="text-right">
+        <div className="grid grid-cols-4 items-start gap-4">
+          <Label htmlFor="color" className="text-right pt-2">
             Color
           </Label>
-          <div className="col-span-3 flex gap-4 items-center">
+          <div className="col-span-3 flex flex-col sm:flex-row gap-4 items-center">
             <HexColorPicker color={color} onChange={setColor} />
             <div className="w-8 h-8 rounded-full border" style={{ backgroundColor: color }}></div>
           </div>

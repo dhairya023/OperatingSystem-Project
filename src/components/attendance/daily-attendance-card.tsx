@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAppContext } from '@/context/app-context';
 import type { ClassSession } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Clock, DoorClosed, XCircle } from 'lucide-react';
+import { Clock, DoorClosed } from 'lucide-react';
 
 const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
   const { updateClass, subjects } = useAppContext();
@@ -35,7 +35,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
   };
 
   return (
-    <Card className={cn("p-4 flex flex-col md:flex-row md:items-center justify-between gap-4", statusStyles[session.status]?.card)}>
+    <Card className={cn("p-4 flex flex-col md:flex-row md:items-center justify-between gap-4", session.status && statusStyles[session.status]?.card)}>
       <div className="flex-1">
         <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }}></div>
@@ -51,7 +51,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
         <Button
           size="sm"
           variant={session.status === 'attended' ? 'default' : 'outline'}
-          className={cn("h-8 w-8", session.status === 'attended' && statusStyles.attended.button)}
+          className={cn("h-8 w-8 text-xs", session.status === 'attended' && statusStyles.attended.button)}
           onClick={() => handleStatusChange('attended')}
         >
           P
@@ -59,7 +59,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
         <Button
           size="sm"
           variant={session.status === 'missed' ? 'destructive' : 'outline'}
-          className={cn("h-8 w-8", session.status === 'missed' && statusStyles.missed.button)}
+          className={cn("h-8 w-8 text-xs", session.status === 'missed' && statusStyles.missed.button)}
           onClick={() => handleStatusChange('missed')}
         >
           A
@@ -67,7 +67,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
         <Button
           size="sm"
           variant={session.status === 'holiday' ? 'secondary' : 'outline'}
-          className={cn("h-8 w-8", session.status === 'holiday' && statusStyles.holiday.button)}
+          className={cn("h-8 w-8 text-xs", session.status === 'holiday' && statusStyles.holiday.button)}
           onClick={() => handleStatusChange('holiday')}
         >
           H
@@ -75,7 +75,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
         <Button
           size="sm"
           variant={session.status === 'cancelled' ? 'secondary' : 'outline'}
-          className={cn("h-8 w-8", session.status === 'cancelled' && statusStyles.cancelled.button)}
+          className={cn("h-8 w-8 text-xs", session.status === 'cancelled' && statusStyles.cancelled.button)}
           onClick={() => handleStatusChange('cancelled')}
         >
           C

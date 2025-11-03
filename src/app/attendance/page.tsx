@@ -72,7 +72,7 @@ function AttendanceContent() {
                     <PopoverTrigger asChild>
                         <Button
                         variant={"outline"}
-                        className={cn("w-[280px] justify-start text-left font-normal",!currentDate && "text-muted-foreground")}>
+                        className={cn("w-full max-w-[240px] justify-start text-left font-normal",!currentDate && "text-muted-foreground")}>
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {currentDate ? format(currentDate, "PPP") : <span>Pick a date</span>}
                         </Button>

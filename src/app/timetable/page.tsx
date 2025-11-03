@@ -46,7 +46,7 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
     >
         <div className="flex justify-between items-start">
             <div>
-                 <h3 className="font-bold text-sm md:text-lg">{session.subject}</h3>
+                 <h3 className="font-bold text-base md:text-lg">{session.subject}</h3>
                  <p className="text-xs md:text-sm text-foreground/80">{session.startTime} - {session.endTime}</p>
                  {session.room && (
                     <div className="flex items-center gap-2 text-xs md:text-sm text-foreground/80 mt-1">
@@ -141,7 +141,7 @@ function TimetableContent() {
       <PageHeader title="Timetable" description="Your weekly class schedule.">
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-                <Button size="sm"><PlusCircle className="mr-2" /> Add Class</Button>
+                <Button><PlusCircle className="mr-2" /> Add Class</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>

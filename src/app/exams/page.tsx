@@ -4,7 +4,7 @@ import { useState } from 'react';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, Edit, Trash2, MoreVertical, Calendar, MapPin, Tag } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, MoreVertical, Calendar, MapPin } from 'lucide-react';
 import {
   Dialog,
   DialogContent,

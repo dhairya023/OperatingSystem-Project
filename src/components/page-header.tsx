@@ -14,7 +14,7 @@ export default function PageHeader({ title, description, children }: PageHeaderP
                  <div className="md:hidden">
                     <SidebarTrigger className="h-8 w-8" />
                 </div>
-                <h1 className="text-3xl font-bold tracking-tight font-headline md:text-4xl">
+                <h1 className="text-2xl font-bold tracking-tight font-headline md:text-3xl lg:text-4xl">
                 {title}
                 </h1>
             </div>
@@ -22,7 +22,7 @@ export default function PageHeader({ title, description, children }: PageHeaderP
         </div>
         
         {description && (
-          <p className="text-muted-foreground -mt-2 ml-11 md:ml-0">{description}</p>
+          <p className="text-muted-foreground -mt-2 ml-11 md:ml-0 text-sm md:text-base">{description}</p>
         )}
     </div>
   );
