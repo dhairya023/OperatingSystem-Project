@@ -4,7 +4,7 @@ export type ClassSession = {
   teacher: string;
   time: string;
   room: string;
-  attended: boolean;
+  status: 'attended' | 'missed' | 'holiday';
   date: Date;
 };
 

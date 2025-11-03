@@ -5,7 +5,7 @@ import { Bell, Clock, DoorClosed } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function UpcomingClasses() {
-  const upcomingClasses = MOCK_CLASSES; // Using all mock classes for demonstration
+  const upcomingClasses = MOCK_CLASSES.filter(c => c.date.toDateString() === new Date().toDateString());
 
   return (
     <Card className="h-full">
@@ -27,8 +27,8 @@ export default function UpcomingClasses() {
                       <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>
                     </div>
                   </div>
-                  <Badge variant={session.attended ? "secondary" : "destructive"}>
-                    {session.attended ? "Attended" : "Missed"}
+                  <Badge variant={session.status === 'attended' ? "secondary" : session.status === 'holiday' ? "outline" : "destructive"}>
+                    {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
                   </Badge>
                 </div>
                 {index < upcomingClasses.length - 1 && <Separator className="mt-4" />}
