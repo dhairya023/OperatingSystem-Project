@@ -126,7 +126,7 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
                         <DialogHeader><DialogTitle>Edit Class</DialogTitle></DialogHeader>
                         <ClassSessionForm 
                           session={editScope === 'single' ? {...session, rrule: undefined } : session} 
-                          onSave={() => {}} 
+                          onSave={() => setIsEditDialogOpen(false)} 
                         />
                     </DialogContent>
                 </Dialog>
@@ -189,24 +189,22 @@ function TimetableContent() {
   }
 
   return (
-    <div className="flex flex-col flex-1 bg-background">
-      <div className="p-4 md:p-6 lg:p-8">
-        <PageHeader title="Timetable" description="Your weekly class schedule.">
-          <div className="flex-grow"></div>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                  <Button><PlusCircle className="mr-2" /> Add Class</Button>
-              </DialogTrigger>
-              <DialogContent>
-                  <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
-                  <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-              </DialogContent>
-          </Dialog>
-        </PageHeader>
-      </div>
+    <div className="flex flex-col flex-1 p-4 md:p-6 lg:p-8 w-full">
+      <PageHeader title="Timetable" description="Your weekly class schedule.">
+        <div className="flex-grow"></div>
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+                <Button><PlusCircle className="mr-2" /> Add Class</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
+                <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+            </DialogContent>
+        </Dialog>
+      </PageHeader>
 
 
-      <div className="w-full flex-1 flex flex-col px-4 md:px-6 lg:px-8">
+      <div className="w-full flex-1 flex flex-col mt-8">
         <div className="w-full flex-1 flex flex-col">
           <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
             <Button variant="ghost" size="icon" onClick={handlePrevDay}>
