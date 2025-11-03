@@ -201,14 +201,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const addClass = async (session: ClassSession) => {
-    const newClasses: ClassSession[] = [];
+    if (!user) throw new Error('User not logged in');
+
+    const newClasses: Omit<ClassSession, 'status'>[] = [];
+    
     const baseSession = {
       subject: session.subject,
       teacher: session.teacher,
       startTime: session.startTime,
       endTime: session.endTime,
       room: session.room,
-      status: undefined, // Always start as undefined
     };
 
     if (session.rrule) {
@@ -235,10 +237,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         date: new Date(session.date),
       });
     }
-
+    
     const currentClasses = userData?.classes || [];
-    const updatedClassList = [...currentClasses, ...newClasses];
-    await updateUserData('classes', updatedClassList);
+    await updateUserData('classes', [...currentClasses, ...newClasses]);
   };
 
 
