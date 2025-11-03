@@ -68,7 +68,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [classes, setClasses] = useState<ClassSession[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
-  const [profile, setProfile] = useState<UserProfile>(MOCK_PROFILE);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
@@ -97,7 +97,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   }, [exams, loading]);
 
   useEffect(() => {
-    if (!loading) setInLocalStorage('profile', profile);
+    if (!loading && profile) setInLocalStorage('profile', profile);
   }, [profile, loading]);
 
   const addSubject = (subject: Subject) => {
@@ -164,6 +164,21 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setProfile(updatedProfile);
   };
 
+  if (loading || !profile) {
+    return (
+        <div className="flex min-h-screen items-center justify-center">
+            <div className="p-8 space-y-4 w-full max-w-lg">
+                <Skeleton className="h-10 w-3/4" />
+                <Skeleton className="h-6 w-1/2" />
+                <div className="space-y-2 pt-4">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                </div>
+            </div>
+        </div>
+    )
+  }
 
   const value = {
     subjects,
@@ -187,22 +202,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     profile,
     updateProfile,
   };
-
-  if (loading) {
-    return (
-        <div className="flex min-h-screen items-center justify-center">
-            <div className="p-8 space-y-4 w-full max-w-lg">
-                <Skeleton className="h-10 w-3/4" />
-                <Skeleton className="h-6 w-1/2" />
-                <div className="space-y-2 pt-4">
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                </div>
-            </div>
-        </div>
-    )
-  }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
