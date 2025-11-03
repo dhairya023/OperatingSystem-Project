@@ -1,0 +1,440 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user within the ScholarSphere application.",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user.",
+          "format": "email"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user account was created.",
+          "format": "date-time"
+        },
+        "timetable": {
+          "type": "array",
+          "description": "References to TimetableEntry entities. (Relationship: User 1:N TimetableEntry)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assignments": {
+          "type": "array",
+          "description": "References to Assignment entities. (Relationship: User 1:N Assignment)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exams": {
+          "type": "array",
+          "description": "References to Exam entities. (Relationship: User 1:N Exam)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attendance": {
+          "type": "array",
+          "description": "References to Attendance entities. (Relationship: User 1:N Attendance)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attendanceStats": {
+          "type": "string",
+          "description": "Reference to the AttendanceStats entity. (Relationship: User 1:1 AttendanceStats)"
+        },
+        "analytics": {
+          "type": "string",
+          "description": "Reference to the Analytics entity. (Relationship: User 1:1 Analytics)"
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "createdAt"
+      ]
+    },
+    "TimetableEntry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "TimetableEntry",
+      "type": "object",
+      "description": "Represents a single entry in a user's timetable.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the TimetableEntry entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N TimetableEntry)"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Name of the subject."
+        },
+        "teacher": {
+          "type": "string",
+          "description": "Name of the teacher."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "Start time of the class (e.g., '09:00')."
+        },
+        "endTime": {
+          "type": "string",
+          "description": "End time of the class (e.g., '10:00')."
+        },
+        "classroom": {
+          "type": "string",
+          "description": "Classroom details."
+        },
+        "dayOfWeek": {
+          "type": "string",
+          "description": "Day of the week for this class."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "subject",
+        "startTime",
+        "endTime",
+        "dayOfWeek"
+      ]
+    },
+    "Assignment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Assignment",
+      "type": "object",
+      "description": "Represents an assignment for a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Assignment entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Assignment)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the assignment."
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject of the assignment."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the assignment."
+        },
+        "dueDate": {
+          "type": "string",
+          "description": "Due date of the assignment.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "title",
+        "subject",
+        "dueDate"
+      ]
+    },
+    "Exam": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Exam",
+      "type": "object",
+      "description": "Represents an exam scheduled by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Exam entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Exam)"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject of the exam."
+        },
+        "date": {
+          "type": "string",
+          "description": "Date of the exam.",
+          "format": "date-time"
+        },
+        "time": {
+          "type": "string",
+          "description": "Time of the exam."
+        },
+        "venue": {
+          "type": "string",
+          "description": "Venue of the exam."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the exam (e.g., Midterm, Final)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "subject",
+        "date",
+        "time",
+        "venue",
+        "type"
+      ]
+    },
+    "Attendance": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Attendance",
+      "type": "object",
+      "description": "Represents a single attendance record for a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Attendance entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Attendance)"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date of the attendance record.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "Attendance status (e.g., Present, Absent, Late)."
+        },
+        "timetableEntryId": {
+          "type": "string",
+          "description": "Reference to TimetableEntry. (Relationship: TimetableEntry 1:N Attendance)"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "date",
+        "status",
+        "timetableEntryId"
+      ]
+    },
+    "AttendanceStats": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AttendanceStats",
+      "type": "object",
+      "description": "Represents attendance statistics for a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AttendanceStats entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 AttendanceStats)"
+        },
+        "overallPercentage": {
+          "type": "number",
+          "description": "Overall attendance percentage."
+        },
+        "currentStreak": {
+          "type": "number",
+          "description": "Current attendance streak (number of consecutive days present)."
+        }
+      },
+      "required": [
+        "id",
+        "userId"
+      ]
+    },
+    "Analytics": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Analytics",
+      "type": "object",
+      "description": "Represents user analytics data.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Analytics entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Analytics)"
+        },
+        "loginCount": {
+          "type": "number",
+          "description": "Number of times the user has logged in."
+        },
+        "lastLogin": {
+          "type": "string",
+          "description": "Timestamp of the last login.",
+          "format": "date-time"
+        },
+        "featuresUsed": {
+          "type": "array",
+          "description": "List of features used by the user.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "userId"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores core user information. Contains fields like uid, email, createdAt, and references to subcollections.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/timetable/{timetableId}",
+        "definition": {
+          "entityName": "TimetableEntry",
+          "schema": {
+            "$ref": "#/backend/entities/TimetableEntry"
+          },
+          "description": "Stores timetable entries for a user. Includes denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "timetableId",
+              "description": "The unique identifier for the timetable entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/assignments/{assignmentId}",
+        "definition": {
+          "entityName": "Assignment",
+          "schema": {
+            "$ref": "#/backend/entities/Assignment"
+          },
+          "description": "Stores assignments for a user. Includes denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "assignmentId",
+              "description": "The unique identifier for the assignment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/exams/{examId}",
+        "definition": {
+          "entityName": "Exam",
+          "schema": {
+            "$ref": "#/backend/entities/Exam"
+          },
+          "description": "Stores exam schedules for a user. Includes denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "examId",
+              "description": "The unique identifier for the exam."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/attendance/{attendanceId}",
+        "definition": {
+          "entityName": "Attendance",
+          "schema": {
+            "$ref": "#/backend/entities/Attendance"
+          },
+          "description": "Stores attendance records for a user. Includes denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "attendanceId",
+              "description": "The unique identifier for the attendance record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/attendanceStats",
+        "definition": {
+          "entityName": "AttendanceStats",
+          "schema": {
+            "$ref": "#/backend/entities/AttendanceStats"
+          },
+          "description": "Stores attendance statistics for a user.  Denormalized 'userId'.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/analytics",
+        "definition": {
+          "entityName": "Analytics",
+          "schema": {
+            "$ref": "#/backend/entities/Analytics"
+          },
+          "description": "Stores analytics data for a user. Denormalized 'userId'.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to manage user data and associated entities (TimetableEntry, Assignment, Exam, Attendance, AttendanceStats, and Analytics) within the ScholarSphere application. The core principle is Authorization Independence, ensuring that security rules can be evaluated without relying on hierarchical `get()` calls. This is achieved through path-based ownership and denormalization of user IDs within subcollections. Each user has their own dedicated space under `/users/{userId}`, which houses all their data. This design facilitates straightforward security rules, ensuring users can only access their own data.\n\n*   **/users/{userId}:** Stores the user's core information. This structure provides a secure and easily manageable way to store user-specific data. The subcollections under each user document ensure that data is logically grouped and access can be controlled at a granular level using Firestore security rules.\n*   **/users/{userId}/timetable/{timetableId}:** Stores the user's timetable entries. Each entry contains a `userId` field, which is crucial for authorization independence. Security rules can enforce that only the user with the matching `userId` can access these entries.\n*   **/users/{userId}/assignments/{assignmentId}:** Stores the user's assignments. Each assignment also includes the `userId` field, enabling independent authorization.\n*   **/users/{userId}/exams/{examId}:** Stores the user's exam schedules. The `userId` field in each exam document supports authorization independence.\n*   **/users/{userId}/attendance/{attendanceId}:** Stores the user's attendance records. The `userId` and `timetableEntryId` fields facilitate secure access and enable linking attendance records to specific timetable entries.\n*   **/users/{userId}/attendanceStats:** Stores the user's attendance statistics. This is a 1:1 relationship with the user, ensuring a dedicated space for attendance-related calculations.\n*   **/users/{userId}/analytics:** Stores the user's analytics data. Similar to attendanceStats, this provides a dedicated space for tracking user activity.\n\nThis structure supports the required QAPs (Queries Are Permissions) by ensuring that all data is segregated by user ID, preventing unauthorized access. The path-based ownership model simplifies security rules and makes them more robust. The denormalization of the `userId` in subcollections eliminates the need for complex `get()` calls in security rules, ensuring atomic operations and easier debugging."
+  }
+}
