@@ -2,7 +2,40 @@
 
 import { MOCK_CLASSES, MOCK_SUBJECTS_LIST, MOCK_ASSIGNMENTS, MOCK_EXAMS } from '@/lib/placeholder-data';
 import type { ClassSession, Subject, SubjectAttendance, Assignment, Exam } from '@/lib/types';
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+
+// Helper to safely get data from localStorage
+const getFromLocalStorage = <T,>(key: string, defaultValue: T): T => {
+    if (typeof window === 'undefined') {
+        return defaultValue;
+    }
+    try {
+        const item = window.localStorage.getItem(key);
+        return item ? JSON.parse(item, (k, v) => {
+            // Revive dates from string format
+            if (k === 'date' || k === 'dueDate') {
+                return new Date(v);
+            }
+            return v;
+        }) : defaultValue;
+    } catch (error) {
+        console.warn(`Error reading localStorage key “${key}”:`, error);
+        return defaultValue;
+    }
+};
+
+// Helper to safely set data in localStorage
+const setInLocalStorage = <T,>(key: string, value: T) => {
+    if (typeof window === 'undefined') {
+        return;
+    }
+    try {
+        window.localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.warn(`Error setting localStorage key “${key}”:`, error);
+    }
+};
+
 
 interface AppContextType {
   subjects: Subject[];
@@ -28,10 +61,26 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [subjects, setSubjects] = useState<Subject[]>(MOCK_SUBJECTS_LIST);
-  const [classes, setClasses] = useState<ClassSession[]>(MOCK_CLASSES);
-  const [assignments, setAssignments] = useState<Assignment[]>(MOCK_ASSIGNMENTS);
-  const [exams, setExams] = useState<Exam[]>(MOCK_EXAMS);
+  const [subjects, setSubjects] = useState<Subject[]>(() => getFromLocalStorage('subjects', MOCK_SUBJECTS_LIST));
+  const [classes, setClasses] = useState<ClassSession[]>(() => getFromLocalStorage('classes', MOCK_CLASSES));
+  const [assignments, setAssignments] = useState<Assignment[]>(() => getFromLocalStorage('assignments', MOCK_ASSIGNMENTS));
+  const [exams, setExams] = useState<Exam[]>(() => getFromLocalStorage('exams', MOCK_EXAMS));
+  
+  useEffect(() => {
+    setInLocalStorage('subjects', subjects);
+  }, [subjects]);
+
+  useEffect(() => {
+    setInLocalStorage('classes', classes);
+  }, [classes]);
+  
+  useEffect(() => {
+    setInLocalStorage('assignments', assignments);
+  }, [assignments]);
+
+  useEffect(() => {
+    setInLocalStorage('exams', exams);
+  }, [exams]);
 
   const addSubject = (subject: Subject) => {
     setSubjects([...subjects, subject]);
