@@ -63,7 +63,7 @@ export default function ProfilePage() {
           <ProfileDetail icon={Award} label="Semester" value={profile.semester} />
           <ProfileDetail icon={Briefcase} label="Department" value={profile.department} />
         </CardContent>
-        <CardFooter className="justify-end">
+        <CardFooter>
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
                 <DialogTrigger asChild>
                     <Button>
