@@ -35,3 +35,10 @@ export type DailyAttendance = {
   present: number;
   total: number;
 };
+
+export type Subject = {
+    id: string;
+    name: string;
+    teacher: string;
+    color: string;
+}

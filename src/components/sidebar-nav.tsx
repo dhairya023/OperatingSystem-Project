@@ -13,11 +13,13 @@ import {
   BookCheck,
   GraduationCap,
   UserCheck,
+  BookCopy,
 } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/timetable", label: "Timetable", icon: CalendarDays },
+  { href: "/subjects", label: "Subjects", icon: BookCopy },
   { href: "/assignments", label: "Assignments", icon: BookCheck },
   { href: "/exams", label: "Exams", icon: GraduationCap },
   { href: "/attendance", label: "Attendance", icon: UserCheck },

@@ -1,7 +1,16 @@
-import type { Assignment, ClassSession, Exam, SubjectAttendance } from './types';
+import type { Assignment, ClassSession, Exam, Subject, SubjectAttendance } from './types';
 import { addDays, subDays } from 'date-fns';
 
 const today = new Date();
+
+export const MOCK_SUBJECTS_LIST: Subject[] = [
+    { id: 'sub1', name: 'Quantum Physics', teacher: 'Dr. Evelyn Reed', color: '#8B5CF6' },
+    { id: 'sub2', name: 'Advanced Algorithms', teacher: 'Prof. Ken Thompson', color: '#EC4899' },
+    { id: 'sub3', name: 'Modernist Literature', teacher: 'Dr. Helena Shaw', color: '#10B981' },
+    { id: 'sub4', name: 'Organic Chemistry', teacher: 'Dr. Aaron Gable', color: '#F59E0B' },
+    { id: 'sub5', name: 'Data Science', teacher: 'Prof. Jane Goodall', color: '#3B82F6' },
+    { id: 'sub6', name: 'Machine Learning', teacher: 'Dr. Alan Turing', color: '#EF4444' },
+];
 
 export const MOCK_CLASSES: ClassSession[] = [
   {

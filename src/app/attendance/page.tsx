@@ -1,18 +1,36 @@
 'use client';
 import PageHeader from '@/components/page-header';
-import { MOCK_CLASSES, MOCK_SUBJECTS_ATTENDANCE } from '@/lib/placeholder-data';
+import { MOCK_CLASSES } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SubjectAttendanceCalendar from '@/components/attendance/subject-attendance-calendar';
+import { useAppContext } from '@/context/app-context';
 
 export default function AttendancePage() {
-  const [selectedSubject, setSelectedSubject] = useState(MOCK_SUBJECTS_ATTENDANCE[0].subject);
+  const { subjects, getSubjectAttendance, classes } = useAppContext();
+  const [selectedSubject, setSelectedSubject] = useState(subjects.length > 0 ? subjects[0].name : '');
 
-  const subjectData = MOCK_SUBJECTS_ATTENDANCE.find(s => s.subject === selectedSubject);
+  const subjectAttendance = subjects.map(s => getSubjectAttendance(s.name));
+  
+  const subjectData = subjectAttendance.find(s => s.subject === selectedSubject);
 
-  const subjectClasses = MOCK_CLASSES.filter(c => c.subject === selectedSubject);
+  const subjectClasses = classes.filter(c => c.subject === selectedSubject);
+
+  if (subjects.length === 0) {
+    return (
+       <div className="flex flex-col gap-8">
+        <PageHeader title="Attendance" description="Track your attendance for all subjects." />
+         <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
+           <div className="text-center">
+             <p className="text-lg font-medium text-muted-foreground">No subjects found.</p>
+             <p className="text-sm text-muted-foreground/80">Please add subjects in the 'Subjects' page first.</p>
+           </div>
+         </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -30,7 +48,7 @@ export default function AttendancePage() {
                   <SelectValue placeholder="Select a subject" />
                 </SelectTrigger>
                 <SelectContent>
-                  {MOCK_SUBJECTS_ATTENDANCE.map((subject) => (
+                  {subjectAttendance.map((subject) => (
                     <SelectItem key={subject.subject} value={subject.subject}>
                       {subject.subject}
                     </SelectItem>

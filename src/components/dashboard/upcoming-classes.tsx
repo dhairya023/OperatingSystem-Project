@@ -1,11 +1,13 @@
-import { MOCK_CLASSES } from "@/lib/placeholder-data";
+'use client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Bell, Clock, DoorClosed } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useAppContext } from "@/context/app-context";
 
 export default function UpcomingClasses() {
-  const upcomingClasses = MOCK_CLASSES.filter(c => c.date.toDateString() === new Date().toDateString());
+  const { classes } = useAppContext();
+  const upcomingClasses = classes.filter(c => c.date.toDateString() === new Date().toDateString());
 
   return (
     <Card className="h-full">
