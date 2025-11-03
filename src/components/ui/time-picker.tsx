@@ -33,21 +33,28 @@ export function TimePicker({ value, onChange }: TimePickerProps) {
     const formattedTime = `${String(hour24).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
     onChange(formattedTime);
   }, [onChange]);
-  
+
   React.useEffect(() => {
-    updateTime(hour, minute, period);
-  }, [hour, minute, period, updateTime]);
+    if (!value) {
+      updateTime(hour, minute, period);
+    }
+  }, []); // Run only on initial mount if value is not set
 
   const handleHourChange = (amount: number) => {
-    setHour((prevHour) => (prevHour + amount + 11) % 12 + 1);
+    const newHour = (hour + amount + 11) % 12 + 1;
+    setHour(newHour);
+    updateTime(newHour, minute, period);
   };
 
   const handleMinuteChange = (amount: number) => {
-    setMinute((prevMinute) => (prevMinute + amount + 60) % 60);
+    const newMinute = (minute + amount + 60) % 60;
+    setMinute(newMinute);
+    updateTime(hour, newMinute, period);
   };
   
   const handlePeriodChange = (newPeriod: 'AM' | 'PM') => {
     setPeriod(newPeriod);
+    updateTime(hour, minute, newPeriod);
   };
 
   const formatDisplayTime = () => {
