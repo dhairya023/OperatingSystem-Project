@@ -5,6 +5,7 @@ import { Bell, Clock, DoorClosed } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/app-context";
 import { format, isToday } from "date-fns";
+import Link from "next/link";
 
 export default function UpcomingClasses() {
   const { classes } = useAppContext();
@@ -15,40 +16,42 @@ export default function UpcomingClasses() {
   });
 
   return (
-    <Card className="h-full">
-      <CardHeader>
-        <CardTitle>Today's Classes</CardTitle>
-        <CardDescription>Here are your classes for today.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {upcomingClasses.length > 0 ? (
-          <div className="flex flex-col gap-3">
-            {upcomingClasses.map((session, index) => (
-              <div key={session.id}>
-                <div className="flex items-start gap-3">
-                  <div className="flex-1">
-                    <p className="font-semibold text-sm">{session.subject}</p>
-                    <p className="text-xs text-muted-foreground">{session.teacher}</p>
-                    <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {session.startTime} - {session.endTime}</span>
-                      <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>
+    <Link href="/timetable" className="block h-full">
+        <Card className="h-full hover:border-primary/50 transition-colors">
+        <CardHeader>
+            <CardTitle>Today's Classes</CardTitle>
+            <CardDescription>Here are your classes for today.</CardDescription>
+        </CardHeader>
+        <CardContent>
+            {upcomingClasses.length > 0 ? (
+            <div className="flex flex-col gap-3">
+                {upcomingClasses.slice(0,3).map((session, index) => (
+                <div key={session.id}>
+                    <div className="flex items-start gap-3">
+                    <div className="flex-1">
+                        <p className="font-semibold text-sm">{session.subject}</p>
+                        <p className="text-xs text-muted-foreground">{session.teacher}</p>
+                        <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {session.startTime} - {session.endTime}</span>
+                        <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>
+                        </div>
                     </div>
-                  </div>
-                  <Badge variant={session.status === 'attended' ? "secondary" : session.status === 'holiday' ? "outline" : "destructive"}>
-                    {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
-                  </Badge>
+                    <Badge variant={session.status === 'attended' ? "secondary" : session.status === 'holiday' ? "outline" : "destructive"}>
+                        {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
+                    </Badge>
+                    </div>
+                    {index < upcomingClasses.slice(0,3).length - 1 && <Separator className="mt-3" />}
                 </div>
-                {index < upcomingClasses.length - 1 && <Separator className="mt-3" />}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-48 text-center bg-muted/50 rounded-lg">
-            <Bell className="w-8 h-8 text-muted-foreground" />
-            <p className="mt-2 text-muted-foreground">No classes scheduled for today.</p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                ))}
+            </div>
+            ) : (
+            <div className="flex flex-col items-center justify-center h-48 text-center bg-muted/50 rounded-lg">
+                <Bell className="w-8 h-8 text-muted-foreground" />
+                <p className="mt-2 text-muted-foreground">No classes scheduled for today.</p>
+            </div>
+            )}
+        </CardContent>
+        </Card>
+    </Link>
   );
 }
