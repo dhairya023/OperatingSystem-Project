@@ -37,12 +37,16 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
 
   return (
     <Card className={cn("p-4 flex flex-col gap-3", session.status && statusStyles[session.status]?.card)}>
-        <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }}></div>
+        <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3">
+                <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: color }}></div>
                 <div>
                     <h3 className="font-bold">{session.subject}</h3>
                     <p className="text-sm text-foreground/80">{session.teacher}</p>
+                     <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
+                        <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {session.startTime} - {session.endTime}</span>
+                        {session.room && <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>}
+                    </div>
                 </div>
             </div>
              <div className="flex items-center gap-1 shrink-0">
@@ -80,12 +84,6 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
                 </Button>
             </div>
         </div>
-      <div className="pl-4">
-        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {session.startTime} - {session.endTime}</span>
-            {session.room && <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>}
-        </div>
-      </div>
     </Card>
   );
 };
