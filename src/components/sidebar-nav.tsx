@@ -1,6 +1,8 @@
+
 "use client";
 
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import {
   SidebarGroup,
   SidebarMenu,
@@ -42,10 +44,10 @@ export function SidebarNav() {
                 isActive={isActive}
                 tooltip={{ children: item.label, side: "right", align: "center" }}
               >
-                <a href={item.href}>
+                <Link href={item.href}>
                   <item.icon className={isActive ? 'neon-icon' : ''} />
                   <span>{item.label}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           );
