@@ -50,11 +50,11 @@ export function AssignmentDetailsDrawer({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] flex flex-col p-0">
         <SheetHeader className="p-6 pb-4">
-          <SheetTitle className="flex items-center gap-3">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }}></div>
-            <span>{assignment.title}</span>
-          </SheetTitle>
-          <SheetDescription>{assignment.subject}</SheetDescription>
+          <SheetTitle className="text-xl font-semibold">{assignment.title}</SheetTitle>
+          <SheetDescription className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }}></div>
+            <span>{assignment.subject}</span>
+          </SheetDescription>
         </SheetHeader>
         
         <ScrollArea className="flex-1 px-6">
