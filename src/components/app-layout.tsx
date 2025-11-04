@@ -32,24 +32,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   }, [user, isUserLoading, isDataLoading, profile, pathname, router]);
 
-  // Determine if we should show a loading state or content.
-  // This helps prevent flashes of content during redirects or initial data load.
-  const isRedirecting = 
-    (isUserLoading || (user && isDataLoading)) || 
-    (!user && pathname !== '/login') || 
-    (user && !profile?.profileCompleted && pathname !== '/profile-setup') ||
-    (user && profile?.profileCompleted && (pathname === '/login' || pathname === '/profile-setup'));
-
-  // If we are redirecting or loading critical data, render nothing to avoid content flashes.
-  if (isRedirecting) {
+  // Determine if we are in a state where content shouldn't be shown yet.
+  const isLoading = isUserLoading || (user && isDataLoading);
+  
+  // If we are loading data, or if the user is not yet available, don't render the layout.
+  // The RootLayout will handle showing the splash screen or nothing.
+  if (isLoading || !user) {
       return null;
   }
   
-  // If not logged in, and we are on a page that doesn't need the full AppLayout (like login)
-  // we can just show the children directly. This case is mostly handled by redirection, but
-  // it is a safe fallback.
-  if (!user) {
-    return <>{children}</>;
+  // If the user is logged in, but the profile isn't complete, and they aren't on the setup page,
+  // we also render nothing to prevent a flash of the wrong content before the redirect happens.
+  if (!profile?.profileCompleted && pathname !== '/profile-setup') {
+    return null;
   }
 
 

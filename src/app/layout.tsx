@@ -16,31 +16,55 @@ import { usePathname, useRouter } from 'next/navigation';
 // within the body, while still allowing the RootLayout to provide metadata.
 function AppBody({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useFirebase();
-  const { isDataLoading } = useAppContext();
+  const { isDataLoading, profile } = useAppContext();
   const [isSplashActive, setIsSplashActive] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
 
   // This effect handles showing the splash screen only on initial load.
   useEffect(() => {
+    // Wait until both user and app data are done loading.
     if (!isUserLoading && !isDataLoading) {
       const timer = setTimeout(() => setIsSplashActive(false), 1000);
       return () => clearTimeout(timer);
     }
-  }, [isUserLoading, isDataLoading, user]);
-  
-  // This logic handles routing and prevents content flashes, but doesn't control the splash screen.
+  }, [isUserLoading, isDataLoading]);
+
+  // This effect handles the initial routing logic.
   useEffect(() => {
+    // Don't do anything until all data is loaded.
     if (isUserLoading || isDataLoading) return;
 
+    // If the user is not logged in, and they are not on a public page, redirect to login.
     if (!user && pathname !== '/login' && pathname !== '/profile-setup') {
-        router.push('/login');
+      router.push('/login');
     }
-  }, [user, isUserLoading, isDataLoading, pathname, router]);
+    // If the user is logged in but hasn't completed their profile, send them to setup.
+    else if (user && !profile?.profileCompleted && pathname !== '/profile-setup') {
+      router.push('/profile-setup');
+    }
+    // If the user is logged in, profile is complete, but they land on a public-only page, send to dashboard.
+    else if (user && profile?.profileCompleted && (pathname === '/login' || pathname === '/profile-setup')) {
+      router.push('/');
+    }
 
+  }, [user, profile, isUserLoading, isDataLoading, pathname, router]);
+
+  // Determine if we should show the splash screen or the content.
+  // This prevents content flashes during initial load or redirects.
+  const showContent = !isSplashActive && (
+    (user && profile?.profileCompleted) || // Regular authenticated user
+    pathname === '/login' || // Login page is always accessible
+    (user && !profile?.profileCompleted && pathname === '/profile-setup') // Profile setup is accessible
+  );
 
   if (isSplashActive) {
     return <SplashScreen />;
+  }
+  
+  if (!showContent) {
+    // Render nothing while waiting for auth state or during redirects to prevent flashes.
+    return null;
   }
 
   return <>{children}</>;
