@@ -20,8 +20,8 @@ export default function Dashboard() {
       </div>
       
       <div className="grid gap-6 md:grid-cols-2">
-        <AttendanceOverview />
         <UpcomingClasses />
+        <AttendanceOverview />
       </div>
 
       <div className="grid gap-6">
