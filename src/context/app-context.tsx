@@ -41,6 +41,7 @@ interface AppContextType extends UserData {
   deleteSubject: (id: string) => Promise<void>;
   addClass: (session: ClassSession) => Promise<void>;
   updateClass: (session: ClassSession, scope: 'single' | 'future' | 'all') => Promise<void>;
+  updateClassStatus: (sessionId: string, status: ClassSession['status']) => Promise<void>;
   deleteClass: (session: ClassSession, scope: 'single' | 'future' | 'all') => Promise<void>;
   addAssignment: (assignment: Assignment) => Promise<void>;
   updateAssignment: (assignment: Assignment) => Promise<void>;
@@ -301,6 +302,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       await updateUserData('classes', currentClasses);
   };
   
+  const updateClassStatus = async (sessionId: string, status: ClassSession['status']) => {
+    const currentClasses = [...(userData?.classes || [])];
+    const classIndex = currentClasses.findIndex(c => c.id === sessionId);
+    if (classIndex !== -1) {
+        currentClasses[classIndex].status = status;
+        await updateUserData('classes', currentClasses);
+    }
+  };
+
   const deleteClass = async (session: ClassSession, scope: 'single' | 'future' | 'all') => {
     let currentClasses = [...(userData?.classes || [])];
 
@@ -378,6 +388,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     deleteSubject: subjectUpdater.delete,
     addClass,
     updateClass,
+    updateClassStatus,
     deleteClass,
     addAssignment: assignmentUpdater.add,
     updateAssignment: assignmentUpdater.update,
@@ -422,5 +433,3 @@ export const useAppContext = () => {
   }
   return context;
 };
-
-    

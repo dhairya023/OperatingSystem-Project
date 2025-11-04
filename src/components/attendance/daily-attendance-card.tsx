@@ -1,24 +1,37 @@
+
 'use client';
 import { Card } from '@/components/ui/card';
 import { useAppContext } from '@/context/app-context';
 import type { ClassSession } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Clock, DoorClosed } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Separator } from '../ui/separator';
 
 const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
-  const { subjects } = useAppContext();
+  const { subjects, updateClassStatus } = useAppContext();
   const subject = subjects.find(s => s.name === session.subject);
   const color = subject?.color || '#A1A1AA';
 
   const statusCardStyles = {
-    attended: `bg-green-500/10 border-green-500/30`,
-    missed: `bg-red-500/10 border-red-500/30`,
-    holiday: `bg-gray-500/10 border-gray-500/30`,
-    cancelled: `bg-yellow-500/10 border-yellow-500/30`,
+    attended: 'bg-green-500/10 border-green-500/30',
+    missed: 'bg-red-500/10 border-red-500/30',
+    holiday: 'bg-gray-500/10 border-gray-500/30',
+    cancelled: 'bg-yellow-500/10 border-yellow-500/30',
+  };
+
+  const statusButtonStyles: Record<string, string> = {
+    attended: 'bg-green-500/20 text-green-500 hover:bg-green-500/30',
+    missed: 'bg-red-500/20 text-red-500 hover:bg-red-500/30',
+    holiday: 'bg-gray-500/20 text-gray-400 hover:bg-gray-500/30',
+    cancelled: 'bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30',
   }
 
+  const attendanceOptions: ('attended' | 'missed' | 'holiday' | 'cancelled')[] = ['attended', 'missed', 'holiday', 'cancelled'];
+
+
   return (
-    <Card className={cn("p-4 flex flex-col gap-3", session.status && statusCardStyles[session.status])}>
+    <Card className={cn("p-4 flex flex-col gap-3 transition-all", session.status && statusCardStyles[session.status])}>
         <div className="flex items-start gap-3">
             <div className="w-1.5 h-full rounded-full shrink-0 self-stretch" style={{ backgroundColor: color }}></div>
             <div className='flex-grow'>
