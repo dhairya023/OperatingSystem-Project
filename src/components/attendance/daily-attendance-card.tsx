@@ -35,51 +35,53 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
   };
 
   return (
-    <Card className={cn("p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4", session.status && statusStyles[session.status]?.card)}>
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }}></div>
-            <h3 className="font-bold">{session.subject}</h3>
+    <Card className={cn("p-4 flex flex-col gap-3", session.status && statusStyles[session.status]?.card)}>
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }}></div>
+                <h3 className="font-bold">{session.subject}</h3>
+            </div>
+             <div className="flex items-center gap-1 shrink-0">
+                <Button
+                size="sm"
+                variant={session.status === 'attended' ? 'default' : 'outline'}
+                className={cn("h-7 w-7 text-xs", session.status === 'attended' && statusStyles.attended.button)}
+                onClick={() => handleStatusChange('attended')}
+                >
+                P
+                </Button>
+                <Button
+                size="sm"
+                variant={session.status === 'missed' ? 'destructive' : 'outline'}
+                className={cn("h-7 w-7 text-xs", session.status === 'missed' && statusStyles.missed.button)}
+                onClick={() => handleStatusChange('missed')}
+                >
+                A
+                </Button>
+                <Button
+                size="sm"
+                variant={session.status === 'holiday' ? 'secondary' : 'outline'}
+                className={cn("h-7 w-7 text-xs", session.status === 'holiday' && statusStyles.holiday.button)}
+                onClick={() => handleStatusChange('holiday')}
+                >
+                H
+                </Button>
+                <Button
+                size="sm"
+                variant={session.status === 'cancelled' ? 'secondary' : 'outline'}
+                className={cn("h-7 w-7 text-xs", session.status === 'cancelled' && statusStyles.cancelled.button)}
+                onClick={() => handleStatusChange('cancelled')}
+                >
+                C
+                </Button>
+            </div>
         </div>
-        <p className="text-sm text-foreground/80 pl-4">{session.teacher}</p>
-        <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground pl-4">
+      <div className="pl-4">
+        <p className="text-sm text-foreground/80">{session.teacher}</p>
+        <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {session.startTime} - {session.endTime}</span>
             {session.room && <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>}
         </div>
-      </div>
-      <div className="flex items-center justify-end gap-2 shrink-0">
-        <Button
-          size="sm"
-          variant={session.status === 'attended' ? 'default' : 'outline'}
-          className={cn("h-8 w-8 text-xs", session.status === 'attended' && statusStyles.attended.button)}
-          onClick={() => handleStatusChange('attended')}
-        >
-          P
-        </Button>
-        <Button
-          size="sm"
-          variant={session.status === 'missed' ? 'destructive' : 'outline'}
-          className={cn("h-8 w-8 text-xs", session.status === 'missed' && statusStyles.missed.button)}
-          onClick={() => handleStatusChange('missed')}
-        >
-          A
-        </Button>
-        <Button
-          size="sm"
-          variant={session.status === 'holiday' ? 'secondary' : 'outline'}
-          className={cn("h-8 w-8 text-xs", session.status === 'holiday' && statusStyles.holiday.button)}
-          onClick={() => handleStatusChange('holiday')}
-        >
-          H
-        </Button>
-        <Button
-          size="sm"
-          variant={session.status === 'cancelled' ? 'secondary' : 'outline'}
-          className={cn("h-8 w-8 text-xs", session.status === 'cancelled' && statusStyles.cancelled.button)}
-          onClick={() => handleStatusChange('cancelled')}
-        >
-          C
-        </Button>
       </div>
     </Card>
   );
