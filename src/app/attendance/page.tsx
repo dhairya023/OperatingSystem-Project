@@ -166,7 +166,11 @@ function AttendanceContent() {
                           </div>
                       )}
                       
-                      <SubjectAttendanceCalendar classes={subjectClasses} />
+                      <SubjectAttendanceCalendar 
+                        classes={subjectClasses} 
+                        viewingDate={currentDate}
+                        setViewingDate={setCurrentDate}
+                      />
                   </CardContent>
               </Card>
           </div>

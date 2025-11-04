@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, getDate, isSameMonth, addMonths, subMonths, isToday } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, getDate, isSameMonth, addMonths, subMonths, isToday, isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 type SubjectAttendanceCalendarProps = {
   classes: ClassSession[];
   isMini?: boolean;
+  viewingDate: Date;
+  setViewingDate: (date: Date) => void;
 };
 
 const statusColors = {
@@ -31,11 +33,11 @@ const statusRingColors = {
 }
 
 
-export default function SubjectAttendanceCalendar({ classes, isMini = false }: SubjectAttendanceCalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
+export default function SubjectAttendanceCalendar({ classes, isMini = false, viewingDate, setViewingDate }: SubjectAttendanceCalendarProps) {
+  const [calendarMonth, setCalendarMonth] = useState(viewingDate);
 
-  const firstDay = startOfMonth(currentDate);
-  const lastDay = endOfMonth(currentDate);
+  const firstDay = startOfMonth(calendarMonth);
+  const lastDay = endOfMonth(calendarMonth);
   const daysInMonth = eachDayOfInterval({ start: firstDay, end: lastDay });
   const startingDay = getDay(firstDay);
 
@@ -48,8 +50,8 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
     return acc;
   }, {} as Record<string, ClassSession[]>);
 
-  const handlePrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
-  const handleNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
+  const handlePrevMonth = () => setCalendarMonth(subMonths(calendarMonth, 1));
+  const handleNextMonth = () => setCalendarMonth(addMonths(calendarMonth, 1));
 
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -83,7 +85,7 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
     <TooltipProvider>
       <div className="w-full">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">{format(currentDate, 'MMMM yyyy')}</h3>
+          <h3 className="text-lg font-semibold">{format(calendarMonth, 'MMMM yyyy')}</h3>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" className="h-7 w-7" onClick={handlePrevMonth}>
               <ChevronLeft className="w-4 h-4" />
@@ -109,10 +111,11 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
               <Tooltip key={day.toString()}>
                 <TooltipTrigger asChild>
                     <div
+                        onClick={() => setViewingDate(day)}
                         className={cn(
                         'w-9 h-9 rounded-full flex items-center justify-center cursor-pointer border text-xs',
-                        isToday(day) && 'border-primary border-2',
-                        !isSameMonth(day, currentDate) && 'text-muted-foreground',
+                         isSameDay(day, viewingDate) && 'border-primary border-2',
+                        !isSameMonth(day, calendarMonth) && 'text-muted-foreground',
                          status && statusColors[status]
                         )}
                     >
