@@ -69,6 +69,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
         <title>Grad</title>
+        <meta property="og:title" content="Grad" />
+        <meta property="og:site_name" content="Grad" />
+        <meta property="og:description" content="Your academic life, organized." />
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
         <FirebaseClientProvider>
