@@ -1,4 +1,6 @@
 
+import * as React from 'react';
+
 type PageHeaderProps = {
   title: string;
   description?: string;
@@ -7,8 +9,8 @@ type PageHeaderProps = {
 
 export default function PageHeader({ title, description, children }: PageHeaderProps) {
   const childrenArray = React.Children.toArray(children);
-  const primaryActions = childrenArray.slice(0, -1);
-  const secondaryActions = childrenArray.slice(-1);
+  const primaryActions = childrenArray.slice(0, 1);
+  const secondaryActions = childrenArray.slice(1);
 
   return (
     <div className="flex flex-col w-full">
