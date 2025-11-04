@@ -17,7 +17,7 @@ import { useAppContext } from "@/context/app-context"
 export default function AttendanceOverview() {
   const { classes } = useAppContext();
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full hover:border-primary/50 transition-colors">
       <CardHeader>
         <CardTitle>Attendance</CardTitle>
         <CardDescription>A quick look at your monthly attendance.</CardDescription>

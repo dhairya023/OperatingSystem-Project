@@ -45,7 +45,7 @@ export default function ExamCountdown() {
 
   if (!nextExam || !timeLeft) {
     return (
-      <Card className="flex h-full flex-col justify-center">
+      <Card className="flex h-full flex-col justify-center hover:border-primary/50 transition-colors">
         <CardHeader>
           <CardTitle>Exam Countdown</CardTitle>
           <CardDescription>Your next major assessment.</CardDescription>
@@ -66,7 +66,7 @@ export default function ExamCountdown() {
   ];
 
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full hover:border-primary/50 transition-colors">
       <CardHeader className="text-center">
         <CardTitle className="text-base font-bold">Next Exam: {nextExam.subject}</CardTitle>
         <CardDescription className="text-xs">

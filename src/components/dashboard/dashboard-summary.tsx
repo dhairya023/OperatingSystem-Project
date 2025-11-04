@@ -25,7 +25,7 @@ export default function DashboardSummary() {
     const firstName = profile.fullName ? profile.fullName.split(' ')[0] : 'there';
 
     return (
-        <Card>
+        <Card className="hover:border-primary/50 transition-colors">
             <CardContent className="p-4 md:p-6">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                     <div className="mb-4 md:mb-0">
