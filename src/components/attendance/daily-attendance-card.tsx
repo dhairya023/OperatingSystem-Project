@@ -1,32 +1,18 @@
 
 'use client';
 import { Card } from '@/components/ui/card';
-import { useAppContext } from '@/context/app-context';
 import type { ClassSession } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Clock, DoorClosed } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 
 const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
-  const { updateClassStatus } = useAppContext();
-
   const statusCardStyles = {
     attended: 'bg-green-500/10 border-green-500/30',
     missed: 'bg-red-500/10 border-red-500/30',
     holiday: 'bg-gray-500/10 border-gray-500/30',
     cancelled: 'bg-yellow-500/10 border-yellow-500/30',
   };
-
-  const handleStatusChange = (status: 'attended' | 'missed' | 'holiday' | 'cancelled') => {
-    updateClassStatus(session.id, status);
-  };
-
-  const attendanceButtons: { status: 'attended' | 'missed' | 'holiday' | 'cancelled', label: string, style: string, variant: 'default' | 'destructive' | 'outline' | 'secondary' }[] = [
-    { status: 'attended', label: 'P', style: 'bg-green-500 text-white hover:bg-green-600', variant: 'default'},
-    { status: 'missed', label: 'A', style: 'bg-red-500 text-white hover:bg-red-600', variant: 'destructive'},
-    { status: 'holiday', label: 'H', style: 'bg-gray-500 text-white hover:bg-gray-600', variant: 'secondary'},
-    { status: 'cancelled', label: 'C', style: 'bg-yellow-500 text-white hover:bg-yellow-600', variant: 'secondary'},
-  ]
 
   return (
     <Card
@@ -50,23 +36,12 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
           </div>
         </div>
 
-        {/* Button Section */}
-        <div className="flex items-center shrink-0 gap-1">
-            {attendanceButtons.map(btn => (
-                 <Button
-                    key={btn.status}
-                    size="icon"
-                    variant={session.status === btn.status ? btn.variant : 'outline'}
-                    className={cn(
-                        'h-6 w-6 rounded-full text-[10px] font-semibold',
-                        session.status === btn.status && btn.style
-                    )}
-                    onClick={() => handleStatusChange(btn.status)}
-                    >
-                    {btn.label}
-                </Button>
-            ))}
-        </div>
+        {/* Status Badge Section */}
+        {session.status && (
+            <Badge variant={session.status === 'attended' ? "secondary" : session.status === 'holiday' ? "outline" : "destructive"}>
+                {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
+            </Badge>
+        )}
       </div>
     </Card>
   );

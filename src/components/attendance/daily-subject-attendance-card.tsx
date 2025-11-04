@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppContext } from '@/context/app-context';
 import type { ClassSession } from '@/lib/types';
 import DailyAttendanceCard from './daily-attendance-card';
-import { Separator } from '../ui/separator';
 
 type DailySubjectAttendanceCardProps = {
   subjectName: string;
@@ -12,10 +11,14 @@ type DailySubjectAttendanceCardProps = {
 };
 
 const DailySubjectAttendanceCard = ({ subjectName, sessions }: DailySubjectAttendanceCardProps) => {
-  const { subjects } = useAppContext();
+  const { subjects, updateClassStatus } = useAppContext();
   const subject = subjects.find(s => s.name === subjectName);
   const color = subject?.color || '#A1A1AA';
   const teacher = sessions[0]?.teacher || '';
+  
+  const handleStatusChange = (sessionId: string, status: ClassSession['status']) => {
+    updateClassStatus(sessionId, status);
+  };
 
   return (
     <Card className="w-full overflow-hidden">
@@ -29,11 +32,8 @@ const DailySubjectAttendanceCard = ({ subjectName, sessions }: DailySubjectAtten
         </div>
       </CardHeader>
       <CardContent className="p-3 space-y-2">
-        {sessions.sort((a,b) => a.startTime.localeCompare(b.startTime)).map((session, index) => (
-          <>
+        {sessions.sort((a,b) => a.startTime.localeCompare(b.startTime)).map((session) => (
             <DailyAttendanceCard key={session.id} session={session} />
-            {index < sessions.length - 1 && <Separator />}
-          </>
         ))}
       </CardContent>
     </Card>
