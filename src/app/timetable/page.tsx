@@ -62,7 +62,7 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
 
   return (
     <Card
-      className="p-3 md:p-4 flex flex-col gap-2 rounded-xl"
+      className="p-4 md:p-6 flex flex-col gap-2 rounded-xl"
       style={{ backgroundColor: `${color}40`, borderColor: `${color}80` }}
     >
         <div className="flex justify-between items-start">
@@ -198,49 +198,50 @@ function TimetableContent() {
   }
 
   return (
-    <div className="w-full flex flex-col flex-1 p-4 md:p-6 lg:p-8">
-      <PageHeader title="Timetable" description="Your weekly class schedule.">
-        <div className="flex-grow"></div>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-                <Button><PlusCircle className="mr-2" /> Add Class</Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
-                <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-            </DialogContent>
-        </Dialog>
-      </PageHeader>
+    <div className="flex flex-col flex-1 p-4 md:p-6 lg:p-8">
+      <div className="max-w-4xl w-full mx-auto">
+        <PageHeader title="Timetable" description="Your weekly class schedule.">
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button><PlusCircle className="mr-2" /> Add Class</Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
+                    <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+                </DialogContent>
+            </Dialog>
+        </PageHeader>
 
 
-      <div className="w-full flex-1 flex flex-col mt-8">
-        <div className="w-full flex-1 flex flex-col">
-          <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-            <Button variant="ghost" size="icon" onClick={handlePrevDay}>
-              <ChevronLeft className="w-5 h-5" />
-            </Button>
-            <div className="text-center">
-              <p className="font-bold text-base md:text-lg">{getRelativeDate(currentDate)}</p>
-              <p className="text-muted-foreground text-xs">{format(currentDate, 'do MMMM yyyy')}</p>
+        <div className="w-full flex-1 flex flex-col mt-8">
+            <div className="w-full flex-1 flex flex-col">
+            <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
+                <Button variant="ghost" size="icon" onClick={handlePrevDay}>
+                <ChevronLeft className="w-5 h-5" />
+                </Button>
+                <div className="text-center">
+                <p className="font-bold text-base md:text-lg">{getRelativeDate(currentDate)}</p>
+                <p className="text-muted-foreground text-xs">{format(currentDate, 'do MMMM yyyy')}</p>
+                </div>
+                <Button variant="ghost" size="icon" onClick={handleNextDay}>
+                <ChevronRight className="w-5 h-5" />
+                </Button>
             </div>
-            <Button variant="ghost" size="icon" onClick={handleNextDay}>
-              <ChevronRight className="w-5 h-5" />
-            </Button>
-          </div>
 
-          <div className="mt-6 flex-1">
-            {dailyClasses.length > 0 ? (
-              <div className="flex flex-col gap-4">
-                {dailyClasses.map(session => (
-                  <TimetableCard key={session.id} session={session} />
-                ))}
-              </div>
-            ) : (
-              <div className="flex h-full min-h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg">
-                <p className="text-muted-foreground">No classes scheduled for this day.</p>
-              </div>
-            )}
-          </div>
+            <div className="mt-6 flex-1">
+                {dailyClasses.length > 0 ? (
+                <div className="flex flex-col gap-4">
+                    {dailyClasses.map(session => (
+                    <TimetableCard key={session.id} session={session} />
+                    ))}
+                </div>
+                ) : (
+                <div className="flex h-full min-h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg">
+                    <p className="text-muted-foreground">No classes scheduled for this day.</p>
+                </div>
+                )}
+            </div>
+            </div>
         </div>
       </div>
     </div>
