@@ -11,6 +11,7 @@ import { useAppContext } from '@/context/app-context';
 import SubjectForm from './subject-form';
 import SubjectListItem from './subject-list-item';
 import { Badge } from '../ui/badge';
+import { ScrollArea } from '../ui/scroll-area';
 
 type SemesterCardProps = {
   semester: Semester;
@@ -61,41 +62,43 @@ const SemesterCard = ({ semester }: SemesterCardProps) => {
           </div>
         </AccordionTrigger>
         <AccordionContent className="p-6 pt-0">
-          <div className="space-y-4">
-            {semester.subjects.map((subject) => (
-              <SubjectListItem
-                key={subject.id}
-                subject={subject}
-                onEdit={() => handleEdit(subject)}
-                onDelete={() => deleteGradeSubject(subject.id)}
-              />
-            ))}
-
-            {semester.subjects.length === 0 && (
-              <div className="text-center text-muted-foreground py-8">
-                <p>No subjects added for this semester yet.</p>
-              </div>
-            )}
-
-            <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="w-full mt-4" onClick={openNewDialog}>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  {selectedSubject ? 'Edit Subject' : 'Add Subject'}
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{selectedSubject ? 'Edit' : 'Add'} Subject</DialogTitle>
-                </DialogHeader>
-                <SubjectForm
-                  semesterNumber={semester.semester}
-                  subject={selectedSubject}
-                  onSave={handleSave}
+          <ScrollArea className="max-h-96 pr-4">
+            <div className="space-y-4">
+              {semester.subjects.map((subject) => (
+                <SubjectListItem
+                  key={subject.id}
+                  subject={subject}
+                  onEdit={() => handleEdit(subject)}
+                  onDelete={() => deleteGradeSubject(subject.id)}
                 />
-              </DialogContent>
-            </Dialog>
-          </div>
+              ))}
+
+              {semester.subjects.length === 0 && (
+                <div className="text-center text-muted-foreground py-8">
+                  <p>No subjects added for this semester yet.</p>
+                </div>
+              )}
+
+              <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="w-full mt-4" onClick={openNewDialog}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    {selectedSubject ? 'Edit Subject' : 'Add Subject'}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{selectedSubject ? 'Edit' : 'Add'} Subject</DialogTitle>
+                  </DialogHeader>
+                  <SubjectForm
+                    semesterNumber={semester.semester}
+                    subject={selectedSubject}
+                    onSave={handleSave}
+                  />
+                </DialogContent>
+              </Dialog>
+            </div>
+          </ScrollArea>
         </AccordionContent>
       </AccordionItem>
     </Card>

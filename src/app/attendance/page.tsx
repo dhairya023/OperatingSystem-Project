@@ -165,12 +165,6 @@ function AttendanceContent() {
                               </div>
                           </div>
                       )}
-                      
-                      <SubjectAttendanceCalendar 
-                        classes={subjectClasses} 
-                        viewingDate={currentDate}
-                        setViewingDate={setCurrentDate}
-                      />
                   </CardContent>
               </Card>
           </div>
