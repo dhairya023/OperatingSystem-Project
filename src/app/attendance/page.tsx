@@ -4,18 +4,19 @@ import AppLayout from '@/components/app-layout';
 import PageHeader from '@/components/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SubjectAttendanceCalendar from '@/components/attendance/subject-attendance-calendar';
 import { useAppContext } from '@/context/app-context';
 import { addDays, subDays, format, isToday } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
-import DailyAttendanceCard from '@/components/attendance/daily-attendance-card';
+import DailySubjectAttendanceCard from '@/components/attendance/daily-subject-attendance-card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import type { ClassSession } from '@/lib/types';
 
 function AttendanceContent() {
   const { subjects, getSubjectAttendance, classes } = useAppContext();
@@ -36,13 +37,18 @@ function AttendanceContent() {
     setCurrentDate(addDays(currentDate, 1));
   };
   
-  const dailyClasses = classes
-    .filter((c) => format(new Date(c.date), 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
-    .sort((a, b) => {
-        const timeA = a.startTime.split(':');
-        const timeB = b.startTime.split(':');
-        return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime()
-    });
+  const dailyClassesBySubject = useMemo(() => {
+    const daily = classes
+      .filter((c) => format(new Date(c.date), 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'));
+
+    return daily.reduce((acc, session) => {
+      if (!acc[session.subject]) {
+        acc[session.subject] = [];
+      }
+      acc[session.subject].push(session);
+      return acc;
+    }, {} as Record<string, ClassSession[]>);
+  }, [classes, currentDate]);
 
   const getProgressColor = (percentage: number) => {
     if (percentage >= 90) return 'bg-green-500';
@@ -100,11 +106,11 @@ function AttendanceContent() {
                         </Popover>
                         <Button variant="ghost" size="icon" onClick={handleNextDay} className="h-8 w-8"><ChevronRight className="w-5 h-5" /></Button>
                     </div>
-                    {dailyClasses.length > 0 ? (
+                    {Object.keys(dailyClassesBySubject).length > 0 ? (
                         <ScrollArea className="h-[400px] pr-3">
                             <div className="flex flex-col gap-3">
-                            {dailyClasses.map(session => (
-                                <DailyAttendanceCard key={session.id} session={session} />
+                            {Object.entries(dailyClassesBySubject).map(([subject, sessions]) => (
+                                <DailySubjectAttendanceCard key={subject} subjectName={subject} sessions={sessions} />
                             ))}
                             </div>
                         </ScrollArea>
