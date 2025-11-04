@@ -7,7 +7,6 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AppProvider } from '@/context/app-context';
 import { FirebaseClientProvider } from '@/firebase';
-import SplashScreen from '@/components/splash-screen';
 import { useAppContext } from '@/context/app-context';
 import { useFirebase } from '@/firebase';
 import { usePathname, useRouter } from 'next/navigation';
@@ -17,18 +16,8 @@ import { usePathname, useRouter } from 'next/navigation';
 function AppBody({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useFirebase();
   const { isDataLoading, profile } = useAppContext();
-  const [isSplashActive, setIsSplashActive] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-
-  // This effect handles showing the splash screen only on initial load.
-  useEffect(() => {
-    // Wait until both user and app data are done loading.
-    if (!isUserLoading && !isDataLoading) {
-      const timer = setTimeout(() => setIsSplashActive(false), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [isUserLoading, isDataLoading]);
 
   // This effect handles the initial routing logic.
   useEffect(() => {
@@ -50,23 +39,19 @@ function AppBody({ children }: { children: React.ReactNode }) {
 
   }, [user, profile, isUserLoading, isDataLoading, pathname, router]);
 
-  // Determine if we should show the splash screen or the content.
+  // Determine if we should show the content.
   // This prevents content flashes during initial load or redirects.
-  const showContent = !isSplashActive && (
+  const showContent = (
     (user && profile?.profileCompleted) || // Regular authenticated user
     pathname === '/login' || // Login page is always accessible
     (user && !profile?.profileCompleted && pathname === '/profile-setup') // Profile setup is accessible
   );
 
-  if (isSplashActive) {
-    return <SplashScreen />;
-  }
-  
-  if (!showContent) {
-    // Render nothing while waiting for auth state or during redirects to prevent flashes.
+  // While user or app data is loading, or during redirects, we render nothing to prevent flashes.
+  if (isUserLoading || isDataLoading || !showContent) {
     return null;
   }
-
+  
   return <>{children}</>;
 }
 
