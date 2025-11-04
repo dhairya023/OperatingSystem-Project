@@ -33,27 +33,27 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
   return (
     <Card
       className={cn(
-        'p-2 transition-all w-full',
+        'p-1.5 transition-all w-full',
         session.status && statusCardStyles[session.status]
       )}
     >
       <div className="flex items-center justify-between gap-2">
         {/* Info Section */}
-        <div className="flex items-start gap-2 flex-1 min-w-0">
+        <div className="flex items-start gap-1.5 flex-1 min-w-0">
           <div
             className="w-1 rounded-full shrink-0 self-stretch mt-1"
             style={{ backgroundColor: color }}
           ></div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-sm truncate">{session.subject}</h3>
-            <p className="text-xs text-foreground/80 truncate">{session.teacher}</p>
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground mt-1">
+            <h3 className="font-bold text-xs truncate">{session.subject}</h3>
+            <p className="text-[10px] text-foreground/80 truncate">{session.teacher}</p>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-muted-foreground mt-0.5">
               <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" /> {session.startTime} - {session.endTime}
+                <Clock className="w-2.5 h-2.5" /> {session.startTime} - {session.endTime}
               </span>
               {session.room && (
                 <span className="flex items-center gap-1">
-                  <DoorClosed className="w-3 h-3" /> {session.room}
+                  <DoorClosed className="w-2.5 h-2.5" /> {session.room}
                 </span>
               )}
             </div>
@@ -68,7 +68,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
                     size="icon"
                     variant={session.status === btn.status ? btn.variant : 'outline'}
                     className={cn(
-                        'h-7 w-7 rounded-full text-xs font-semibold',
+                        'h-6 w-6 rounded-full text-[10px] font-semibold',
                         session.status === btn.status && btn.style
                     )}
                     onClick={() => handleStatusChange(btn.status)}
