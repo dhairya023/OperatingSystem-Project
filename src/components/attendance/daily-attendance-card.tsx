@@ -1,3 +1,4 @@
+
 'use client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,7 +40,10 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }}></div>
-                <h3 className="font-bold">{session.subject}</h3>
+                <div>
+                    <h3 className="font-bold">{session.subject}</h3>
+                    <p className="text-sm text-foreground/80">{session.teacher}</p>
+                </div>
             </div>
              <div className="flex items-center gap-1 shrink-0">
                 <Button
@@ -77,8 +81,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
             </div>
         </div>
       <div className="pl-4">
-        <p className="text-sm text-foreground/80">{session.teacher}</p>
-        <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
+        <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {session.startTime} - {session.endTime}</span>
             {session.room && <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>}
         </div>
