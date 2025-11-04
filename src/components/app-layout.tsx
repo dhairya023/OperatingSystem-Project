@@ -102,14 +102,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                               className={cn(
                                 "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-3 md:gap-3",
                                 isActive
-                                  ? "bg-primary/15 text-primary border border-primary/50 shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
+                                  ? "bg-white/5 text-foreground border border-white/10 shadow-lg backdrop-blur-sm"
                                   : "text-muted-foreground"
                               )}
                               isActive={isActive}
                             >
                               <route.icon
                                 className={cn(
-                                  "h-6 w-6 md:h-5 md:w-5"
+                                  "h-6 w-6 md:h-5 md:w-5",
+                                  isActive ? 'text-primary' : ''
                                 )}
                               />
                               <span>{route.label}</span>
