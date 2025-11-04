@@ -102,7 +102,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                               className={cn(
                                 "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-3 md:gap-3",
                                 isActive
-                                  ? "bg-white/5 text-foreground border border-white/10 shadow-lg backdrop-blur-sm"
+                                  ? "bg-primary/20 text-primary-foreground border border-primary/30"
                                   : "text-muted-foreground"
                               )}
                               isActive={isActive}
