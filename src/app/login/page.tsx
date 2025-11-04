@@ -92,82 +92,84 @@ export default function LoginPage() {
             </div>
             <h1 className="text-3xl font-bold font-headline">Grad</h1>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">{isRegisterMode ? 'Create an Account' : 'Sign In'}</CardTitle>
-            <CardDescription>
-              {isRegisterMode ? 'Enter your details to get started.' : 'Enter your credentials to access your dashboard.'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleAuthSubmit} className="space-y-4">
-              {isRegisterMode && (
+        <div className="relative rounded-2xl p-[2px] bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 animate-gradient-border shadow-lg">
+          <Card className="border-none rounded-[10px] overflow-hidden">
+            <CardHeader className="bg-background">
+              <CardTitle className="text-2xl">{isRegisterMode ? 'Create an Account' : 'Sign In'}</CardTitle>
+              <CardDescription>
+                {isRegisterMode ? 'Enter your details to get started.' : 'Enter your credentials to access your dashboard.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="bg-background">
+              <form onSubmit={handleAuthSubmit} className="space-y-4">
+                {isRegisterMode && (
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder="your_username"
+                      required
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      disabled={isLoading}
+                    />
+                  </div>
+                )}
                 <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="email">Email</Label>
                   <Input
-                    id="username"
-                    type="text"
-                    placeholder="your_username"
+                    id="email"
+                    type="email"
+                    placeholder="name@example.com"
                     required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
                   />
                 </div>
-              )}
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                />
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    minLength={6}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                  />
+                  {!isRegisterMode && (
+                      <div className="flex justify-end">
+                          <Button
+                              type="button"
+                              variant="link"
+                              className="p-0 h-auto text-sm text-primary/80 hover:text-primary"
+                              onClick={() => setIsForgotPasswordOpen(true)}
+                          >
+                              Forgot Password?
+                          </Button>
+                      </div>
+                  )}
+                </div>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : isRegisterMode ? 'Register' : 'Sign In'}
+                </Button>
+              </form>
+              <div className="mt-4 text-center text-sm">
+                {isRegisterMode ? 'Already have an account?' : "Don't have an account?"}
+                <Button variant="link" onClick={() => setIsRegisterMode(!isRegisterMode)} className="px-1">
+                  {isRegisterMode ? 'Sign In' : 'Register'}
+                </Button>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading}
-                />
-                 {!isRegisterMode && (
-                     <div className="flex justify-end">
-                        <Button
-                            type="button"
-                            variant="link"
-                            className="p-0 h-auto text-sm text-primary/80 hover:text-primary"
-                            onClick={() => setIsForgotPasswordOpen(true)}
-                        >
-                            Forgot Password?
-                        </Button>
-                    </div>
-                )}
-              </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : isRegisterMode ? 'Register' : 'Sign In'}
-              </Button>
-            </form>
-            <div className="mt-4 text-center text-sm">
-              {isRegisterMode ? 'Already have an account?' : "Don't have an account?"}
-              <Button variant="link" onClick={() => setIsRegisterMode(!isRegisterMode)} className="px-1">
-                {isRegisterMode ? 'Sign In' : 'Register'}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
        <Dialog open={isForgotPasswordOpen} onOpenChange={setIsForgotPasswordOpen}>
