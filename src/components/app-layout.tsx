@@ -100,7 +100,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                           <Link href={route.href}>
                             <SidebarMenuButton
                               className={cn(
-                                "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 ease-out",
+                                "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-2 md:gap-3",
                                 isActive
                                   ? "bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary)/0.5)]"
                                   : "text-muted-foreground hover:bg-primary/20 hover:text-foreground hover:scale-[1.02]"
@@ -109,7 +109,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                             >
                               <route.icon
                                 className={cn(
-                                  "h-5 w-5",
+                                  "h-6 w-6 md:h-5 md:w-5",
                                   isActive ? "text-primary-foreground" : "text-muted-foreground group-hover/menu-item:text-foreground"
                                 )}
                               />
