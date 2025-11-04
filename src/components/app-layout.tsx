@@ -102,7 +102,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                               className={cn(
                                 "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-3 md:gap-3",
                                 isActive
-                                  ? "bg-primary/10 text-primary border-l-4 border-primary"
+                                  ? "bg-primary/15 text-primary border border-primary/50 shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
                                   : "text-muted-foreground hover:bg-primary/10 hover:text-foreground hover:scale-[1.02]"
                               )}
                               isActive={isActive}
@@ -110,7 +110,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                               <route.icon
                                 className={cn(
                                   "h-6 w-6 md:h-5 md:w-5",
-                                  isActive ? "text-primary" : "text-muted-foreground group-hover/menu-item:text-foreground"
+                                   !isActive && "group-hover/menu-item:text-foreground"
                                 )}
                               />
                               <span>{route.label}</span>
