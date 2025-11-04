@@ -50,14 +50,6 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
               {subject && <div className="w-2 h-2 rounded-full" style={{backgroundColor: subject.color}}></div>}
               <p className="text-sm text-muted-foreground">{assignment.subject}</p>
           </div>
-          {assignment.description && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
-                <FileText className="w-4 h-4 shrink-0" />
-                <p>
-                    {assignment.description.substring(0, 6)}{assignment.description.length > 6 ? '...' : ''}
-                </p>
-              </div>
-          )}
           <p className={cn("text-sm mt-2", isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
               Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })}
           </p>
@@ -84,11 +76,16 @@ function AssignmentsContent() {
   const pendingAssignments = assignments.filter(a => !a.completed).sort((a,b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
   const completedAssignments = assignments.filter(a => a.completed).sort((a,b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
 
-  const handleSaveAssignment = (assignment: Assignment) => {
+  const handleSaveAssignment = (assignment: Omit<Assignment, 'description'>) => {
+    const assignmentWithDesc: Assignment = {
+      ...assignment,
+      description: selectedAssignment?.description || undefined,
+    }
+
     if (selectedAssignment) {
-      updateAssignment(assignment);
+      updateAssignment(assignmentWithDesc);
     } else {
-      addAssignment(assignment);
+      addAssignment(assignmentWithDesc);
     }
     setIsFormOpen(false);
     setSelectedAssignment(undefined);

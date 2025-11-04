@@ -63,12 +63,6 @@ export function AssignmentDetailsDrawer({
                 <Calendar className="w-5 h-5"/>
                 <span>Due on {format(new Date(assignment.dueDate), 'PPP')}</span>
             </div>
-            {assignment.description && (
-                <div className="flex items-start gap-4 text-muted-foreground">
-                    <FileText className="w-5 h-5 mt-1 flex-shrink-0"/>
-                    <p className="flex-1 whitespace-pre-wrap break-words">{assignment.description}</p>
-                </div>
-            )}
             </div>
         </ScrollArea>
         
