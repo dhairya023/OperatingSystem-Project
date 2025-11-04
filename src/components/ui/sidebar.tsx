@@ -551,10 +551,7 @@ const SidebarMenuButton = React.forwardRef<
         className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
         {...props}
       >
-        {children}
-        <span className={cn("transition-opacity duration-200", sidebarState === "collapsed" && "opacity-0 w-0")}>
-           {/* This span is for the text when expanded */}
-        </span>
+        <>{children}</>
       </Comp>
     )
 
