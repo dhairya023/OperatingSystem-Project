@@ -109,8 +109,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                             >
                               <route.icon
                                 className={cn(
-                                  "h-6 w-6 md:h-5 md:w-5",
-                                   !isActive && "group-hover/menu-item:text-foreground"
+                                  "h-6 w-6 md:h-5 md:w-5"
                                 )}
                               />
                               <span>{route.label}</span>
