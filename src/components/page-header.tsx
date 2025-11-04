@@ -1,4 +1,3 @@
-import { SidebarTrigger } from "@/components/ui/sidebar";
 
 type PageHeaderProps = {
   title: string;
