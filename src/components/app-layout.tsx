@@ -157,8 +157,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </Sidebar>
 
-        <SidebarInset className="flex-1 p-2 md:p-4 overflow-y-auto bg-transparent text-white rounded-2xl md:ml-0">
-          <div className="md:hidden flex items-center justify-between mb-4">
+        <SidebarInset className="flex-1 overflow-y-auto bg-transparent text-white md:ml-0">
+          <div className="md:hidden flex items-center justify-between mb-4 p-4">
             <SidebarTrigger />
           </div>
            {children}
