@@ -51,7 +51,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen bg-background">
-        <Sidebar className="border-r border-border/20">
+        <Sidebar variant="inset">
           <SidebarHeader>
             <div className="flex items-center gap-2 p-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
