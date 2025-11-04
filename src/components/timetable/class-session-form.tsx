@@ -1,6 +1,6 @@
 
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppContext } from '@/context/app-context';
 import type { ClassSession } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
-import { format, addMonths } from 'date-fns';
+import { format, addMonths, addHours, addMinutes } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { TimePicker } from '@/components/ui/time-picker';
@@ -36,6 +36,17 @@ export default function ClassSessionForm({ session, onSave, defaultDate, isRecur
   const [repeat, setRepeat] = useState<'once' | 'weekly'>(session?.rrule ? 'weekly' : 'once');
   const [editScope, setEditScope] = useState<'single' | 'future' | 'all'>('single');
   
+  useEffect(() => {
+    if (startTime && !session) { // only on creation and when startTime is set
+        const [hour, minute] = startTime.split(':').map(Number);
+        const startDate = new Date();
+        startDate.setHours(hour, minute);
+        const endDate = addMinutes(startDate, 60);
+        setEndTime(`${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`);
+    }
+  }, [startTime, session]);
+
+
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!subject || !date || !startTime || !endTime) return;
@@ -56,11 +67,12 @@ export default function ClassSessionForm({ session, onSave, defaultDate, isRecur
       ...(session?.rrule && { rrule: session.rrule, repeatUntil: session.repeatUntil })
     };
     
+    const scope = (e.currentTarget.dataset.scope as 'single' | 'future' | 'all') || 'single';
     if (session) {
-      const scope = (e.currentTarget.dataset.scope as 'single' | 'future' | 'all') || 'single';
       onSave(newSession, scope);
     } else {
       addClass(newSession); // addClass handles recurrence itself
+      onSave(newSession, 'single'); // To close the dialog
     }
   };
 
