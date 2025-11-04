@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import ClassSessionForm from '@/components/timetable/class-session-form';
 import { ClassDetailsDrawer } from '@/components/timetable/ClassDetailsDrawer';
