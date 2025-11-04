@@ -62,7 +62,7 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
 
   return (
     <Card
-      className="p-4 md:p-6 flex flex-col gap-2 rounded-xl"
+      className="p-6 flex flex-col gap-2 rounded-xl"
       style={{ backgroundColor: `${color}40`, borderColor: `${color}80` }}
     >
         <div className="flex justify-between items-start">
@@ -185,7 +185,7 @@ function TimetableContent() {
 
   if (subjects.length === 0) {
     return (
-      <div className="flex flex-col flex-1 p-4 md:p-6 lg:p-8">
+      <div className="flex flex-col flex-1">
         <PageHeader title="Timetable" description="Manage your class schedule." />
         <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
           <div className="text-center">
