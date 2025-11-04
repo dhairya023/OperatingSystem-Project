@@ -43,7 +43,7 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
             />
         </div>
         <div className="flex-1">
-          <label htmlFor={`ass-${assignment.id}`} className={cn("font-semibold", assignment.completed && "line-through text-muted-foreground")}>
+          <label htmlFor={`ass-${assignment.id}`} className={cn("font-semibold text-base", assignment.completed && "line-through text-muted-foreground")}>
               {assignment.title}
           </label>
           <div className="flex items-center gap-2 mt-1">
@@ -58,8 +58,8 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
                 </p>
               </div>
           )}
-          <p className={cn("text-xs mt-2", isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
-              Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })} ({format(new Date(assignment.dueDate), 'PPP')})
+          <p className={cn("text-sm mt-2", isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
+              Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })}
           </p>
         </div>
       </div>
