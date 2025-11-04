@@ -50,7 +50,7 @@
     --secondary: 285 36% 15%;
     --secondary-foreground: 0 0% 98%;
     --muted: 285 36% 20%;
-    --muted-foreground: 0 0% 63.9%;
+    --muted-foreground: 0 0% 98%;
     --accent: 275 87% 63%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
@@ -64,7 +64,7 @@
     --chart-4: 285 36% 30%;
     --chart-5: 285 36% 40%;
     --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 95.9%;
+    --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 275 87% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 15.9%;
