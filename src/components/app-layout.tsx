@@ -77,7 +77,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div
             data-sidebar="sidebar"
             className={cn(
-              "flex h-full w-full flex-col bg-card/50 backdrop-blur-md border border-border/40 rounded-xl shadow-xl transition-all duration-300 ease-in-out overflow-hidden",
+              "flex h-full w-full flex-col bg-card/50 backdrop-blur-md border border-border/40 rounded-3xl shadow-xl transition-all duration-300 ease-in-out overflow-hidden",
             )}
           >
             <SidebarHeader className="p-4 border-b border-border/40">
