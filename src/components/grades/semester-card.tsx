@@ -10,7 +10,6 @@ import type { Semester, GradeSubject } from '@/lib/types';
 import { useAppContext } from '@/context/app-context';
 import SubjectForm from './subject-form';
 import SubjectListItem from './subject-list-item';
-import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
 
 type SemesterCardProps = {
@@ -18,16 +17,12 @@ type SemesterCardProps = {
 };
 
 const SemesterCard = ({ semester }: SemesterCardProps) => {
-  const { addGradeSubject, updateGradeSubject, deleteGradeSubject } = useAppContext();
+  const { updateGradeSubject, deleteGradeSubject } = useAppContext();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<GradeSubject | undefined>(undefined);
 
   const handleSave = (subject: GradeSubject) => {
-    if (selectedSubject) {
-      updateGradeSubject(subject);
-    } else {
-      addGradeSubject(subject);
-    }
+    updateGradeSubject(subject);
     setIsFormOpen(false);
     setSelectedSubject(undefined);
   };
@@ -36,11 +31,6 @@ const SemesterCard = ({ semester }: SemesterCardProps) => {
     setSelectedSubject(subject);
     setIsFormOpen(true);
   };
-
-  const openNewDialog = () => {
-    setSelectedSubject(undefined);
-    setIsFormOpen(true);
-  }
 
   return (
     <Card>
@@ -80,18 +70,11 @@ const SemesterCard = ({ semester }: SemesterCardProps) => {
               )}
 
               <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full mt-4" onClick={openNewDialog}>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    {selectedSubject ? 'Edit Subject' : 'Add Subject'}
-                  </Button>
-                </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>{selectedSubject ? 'Edit' : 'Add'} Subject</DialogTitle>
+                    <DialogTitle>Edit Subject</DialogTitle>
                   </DialogHeader>
                   <SubjectForm
-                    semesterNumber={semester.semester}
                     subject={selectedSubject}
                     onSave={handleSave}
                   />

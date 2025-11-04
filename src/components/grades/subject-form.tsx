@@ -6,14 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../ui/select';
 
 type SubjectFormProps = {
-  semesterNumber: number;
   subject?: GradeSubject;
   onSave: (subject: GradeSubject) => void;
 };
 
-const SubjectForm = ({ semesterNumber, subject, onSave }: SubjectFormProps) => {
+const SubjectForm = ({ subject, onSave }: SubjectFormProps) => {
+  const [semester, setSemester] = useState(subject?.semester?.toString() || '');
   const [subjectName, setSubjectName] = useState(subject?.subjectName || '');
   const [credits, setCredits] = useState(subject?.credits?.toString() || '');
   const [midSemMarks, setMidSemMarks] = useState(subject?.midSemMarks?.toString() || '');
@@ -22,13 +23,13 @@ const SubjectForm = ({ semesterNumber, subject, onSave }: SubjectFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!subjectName || !credits) return;
+    if (!subjectName || !credits || !semester) return;
 
     const parseOptionalNumber = (val: string) => (val === '' ? undefined : Number(val));
 
     onSave({
       id: subject?.id || crypto.randomUUID(),
-      semester: semesterNumber,
+      semester: Number(semester),
       subjectName,
       credits: Number(credits),
       midSemMarks: parseOptionalNumber(midSemMarks),
@@ -40,6 +41,21 @@ const SubjectForm = ({ semesterNumber, subject, onSave }: SubjectFormProps) => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="grid gap-4 py-4">
+        {!subject && (
+            <div className="space-y-2">
+            <Label htmlFor="semester">Semester</Label>
+            <Select onValueChange={setSemester} defaultValue={semester}>
+                <SelectTrigger>
+                <SelectValue placeholder="Select a semester" />
+                </SelectTrigger>
+                <SelectContent>
+                {Array.from({ length: 8 }, (_, i) => i + 1).map(sem => (
+                    <SelectItem key={sem} value={sem.toString()}>{sem}</SelectItem>
+                ))}
+                </SelectContent>
+            </Select>
+            </div>
+        )}
         <div className="space-y-2">
           <Label htmlFor="subjectName">Subject Name</Label>
           <Input id="subjectName" value={subjectName} onChange={(e) => setSubjectName(e.target.value)} required />
