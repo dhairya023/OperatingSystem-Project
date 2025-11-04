@@ -43,7 +43,7 @@ const GradesContent = () => {
 
   return (
     <div className="space-y-8">
-       <div className="flex justify-end">
+       <div className="flex justify-start">
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
             <Button>
