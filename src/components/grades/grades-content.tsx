@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useAppContext } from '@/context/app-context';
 import type { Semester, GradeSubject } from '@/lib/types';
-import { calculateCgpa } from '@/lib/grade-calculator';
+import { calculateCgpa, calculateSgpa } from '@/lib/grade-calculator';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion } from '@/components/ui/accordion';
 import SemesterCard from './semester-card';
