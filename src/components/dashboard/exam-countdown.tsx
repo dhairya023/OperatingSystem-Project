@@ -66,7 +66,7 @@ export default function ExamCountdown() {
 
   return (
     <Card className="flex flex-col h-full">
-      <CardHeader>
+      <CardHeader className="text-center">
         <CardTitle className="text-base font-bold">Next Exam: {nextExam.subject}</CardTitle>
         <CardDescription className="text-xs">
           {format(new Date(nextExam.date), "EEEE, LLLL d, h:mm a")}
