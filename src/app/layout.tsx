@@ -20,6 +20,26 @@ function AppBody({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
+  const [isSplashActive, setIsSplashActive] = useState(true);
+
+  // This effect handles the initial splash screen timing.
+  useEffect(() => {
+    // Check if the splash screen has already been shown in this session.
+    const splashShown = sessionStorage.getItem('splashShown');
+    if (splashShown) {
+      setIsSplashActive(false);
+      return;
+    }
+    
+    // Show splash screen for 1.2 seconds, then hide it and mark as shown.
+    const timer = setTimeout(() => {
+      setIsSplashActive(false);
+      sessionStorage.setItem('splashShown', 'true');
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // This effect handles the initial routing logic.
   useEffect(() => {
     // Don't do anything until all data is loaded.
@@ -49,7 +69,7 @@ function AppBody({ children }: { children: React.ReactNode }) {
   );
 
   // While user or app data is loading, or during redirects, we render nothing to prevent flashes.
-  if (isUserLoading || isDataLoading || !showContent) {
+  if (isSplashActive || isUserLoading || isDataLoading || !showContent) {
     return <SplashScreen />;
   }
   
