@@ -1,3 +1,4 @@
+
 'use client';
 import AppLayout from '@/components/app-layout';
 import { useState } from 'react';
@@ -49,6 +50,7 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
             {subject && <div className="w-2 h-2 rounded-full" style={{backgroundColor: subject.color}}></div>}
             <p className="text-sm text-muted-foreground">{assignment.subject}</p>
         </div>
+        {assignment.description && <p className="text-sm text-muted-foreground mt-2">{assignment.description}</p>}
         <p className={cn("text-xs mt-2", isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
             Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })} ({format(new Date(assignment.dueDate), 'PPP')})
         </p>

@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import { useAppContext } from '@/context/app-context';
@@ -23,6 +24,7 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
   const { subjects } = useAppContext();
   const [title, setTitle] = useState(assignment?.title || '');
   const [subject, setSubject] = useState(assignment?.subject || '');
+  const [description, setDescription] = useState(assignment?.description || '');
   const [dueDate, setDueDate] = useState<Date | undefined>(assignment ? new Date(assignment.dueDate) : new Date());
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
@@ -34,6 +36,7 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
       id: assignment?.id || crypto.randomUUID(),
       title,
       subject,
+      description,
       dueDate,
       completed: assignment?.completed || false,
     };
@@ -58,6 +61,10 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
               {subjects.map(s => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
             </SelectContent>
           </Select>
+        </div>
+        <div className="grid grid-cols-4 items-start gap-4">
+          <Label htmlFor="description" className="text-right pt-2">Description</Label>
+          <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} className="col-span-3" placeholder="Optional: Add more details..." />
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="date" className="text-right">Due Date</Label>

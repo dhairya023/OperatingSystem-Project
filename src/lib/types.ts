@@ -17,6 +17,7 @@ export type Assignment = {
   id: string;
   title: string;
   subject: string;
+  description?: string;
   dueDate: any; // Allow any for Firestore Timestamps
   completed: boolean;
 };
