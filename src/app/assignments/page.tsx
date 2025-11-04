@@ -76,16 +76,11 @@ function AssignmentsContent() {
   const pendingAssignments = assignments.filter(a => !a.completed).sort((a,b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
   const completedAssignments = assignments.filter(a => a.completed).sort((a,b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
 
-  const handleSaveAssignment = (assignment: Omit<Assignment, 'description'>) => {
-    const assignmentWithDesc: Assignment = {
-      ...assignment,
-      description: selectedAssignment?.description || undefined,
-    }
-
+  const handleSaveAssignment = (assignment: Assignment) => {
     if (selectedAssignment) {
-      updateAssignment(assignmentWithDesc);
+      updateAssignment(assignment);
     } else {
-      addAssignment(assignmentWithDesc);
+      addAssignment(assignment);
     }
     setIsFormOpen(false);
     setSelectedAssignment(undefined);

@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 
 type AssignmentFormProps = {
   assignment?: Assignment;
-  onSave: (assignment: Omit<Assignment, 'description'>) => void;
+  onSave: (assignment: Assignment) => void;
 };
 
 export default function AssignmentForm({ assignment, onSave }: AssignmentFormProps) {
@@ -25,17 +25,19 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
   const [title, setTitle] = useState(assignment?.title || '');
   const [subject, setSubject] = useState(assignment?.subject || '');
   const [dueDate, setDueDate] = useState<Date | undefined>(assignment ? new Date(assignment.dueDate) : new Date());
+  const [description, setDescription] = useState(assignment?.description || '');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !subject || !dueDate) return;
 
-    const newAssignment: Omit<Assignment, 'description'> = {
+    const newAssignment: Assignment = {
       id: assignment?.id || crypto.randomUUID(),
       title,
       subject,
       dueDate,
+      description,
       completed: assignment?.completed || false,
     };
     
@@ -87,6 +89,16 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
                     />
                 </PopoverContent>
             </Popover>
+        </div>
+        <div className="grid grid-cols-4 items-start gap-4">
+          <Label htmlFor="description" className="text-right pt-2">Description</Label>
+          <Textarea 
+            id="description" 
+            value={description} 
+            onChange={e => setDescription(e.target.value)} 
+            className="col-span-3" 
+            placeholder="Add any extra details..."
+          />
         </div>
       </div>
       <DialogFooter>
