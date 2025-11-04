@@ -53,8 +53,14 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await loginUser(email, password);
-      router.push('/');
+      if (isRegisterMode) {
+        await registerUser(email, password, username);
+        toast({ title: "Registration successful!", description: "Please complete your profile." });
+        router.push('/profile-setup');
+      } else {
+        await loginUser(email, password);
+        router.push('/');
+      }
     } catch (error: any) {
       console.error(error);
       toast({
@@ -301,5 +307,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
