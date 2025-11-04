@@ -55,13 +55,13 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
 
         {/* Button Section */}
         <div
-          className="flex items-center flex-wrap sm:flex-nowrap shrink-0 gap-2 justify-end sm:justify-start"
+          className="flex flex-col sm:flex-row items-center shrink-0 gap-2 justify-end sm:justify-start"
         >
           <Button
             size="sm"
             variant={session.status === 'attended' ? 'default' : 'outline'}
             className={cn(
-              'h-8 text-xs min-w-[70px] flex-grow sm:flex-grow-0',
+              'h-8 text-xs w-full sm:w-auto sm:min-w-[70px]',
               session.status === 'attended' && 'bg-green-500 text-white hover:bg-green-600'
             )}
             onClick={() => handleStatusChange('attended')}
@@ -73,7 +73,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
             size="sm"
             variant={session.status === 'missed' ? 'destructive' : 'outline'}
             className={cn(
-              'h-8 text-xs min-w-[70px] flex-grow sm:flex-grow-0',
+              'h-8 text-xs w-full sm:w-auto sm:min-w-[70px]',
               session.status === 'missed' && 'bg-red-500 text-white hover:bg-red-600'
             )}
             onClick={() => handleStatusChange('missed')}
@@ -85,7 +85,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
             size="sm"
             variant={session.status === 'holiday' ? 'secondary' : 'outline'}
             className={cn(
-              'h-8 text-xs min-w-[70px] flex-grow sm:flex-grow-0',
+              'h-8 text-xs w-full sm:w-auto sm:min-w-[70px]',
               session.status === 'holiday' && 'bg-gray-500 text-white hover:bg-gray-600'
             )}
             onClick={() => handleStatusChange('holiday')}
@@ -97,7 +97,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
             size="sm"
             variant={session.status === 'cancelled' ? 'secondary' : 'outline'}
             className={cn(
-              'h-8 text-xs min-w-[70px] flex-grow sm:flex-grow-0',
+              'h-8 text-xs w-full sm:w-auto sm:min-w-[70px]',
               session.status === 'cancelled' && 'bg-yellow-500 text-white hover:bg-yellow-600'
             )}
             onClick={() => handleStatusChange('cancelled')}
