@@ -111,10 +111,11 @@ function AssignmentsContent() {
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title="Assignments" description="Keep track of all your assignments.">
+      <div className="flex flex-col gap-4">
+        <PageHeader title="Assignments" description="Keep track of all your assignments." />
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
-                <Button onClick={openNewDialog}>
+                <Button onClick={openNewDialog} className="self-start">
                     <PlusCircle className="mr-2" /> Add Assignment
                 </Button>
             </DialogTrigger>
@@ -125,7 +126,7 @@ function AssignmentsContent() {
                 <AssignmentForm onSave={handleSaveAssignment} assignment={selectedAssignment} />
             </DialogContent>
         </Dialog>
-      </PageHeader>
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-2">
         <Card>
