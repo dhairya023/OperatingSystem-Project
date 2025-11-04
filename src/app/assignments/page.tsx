@@ -58,7 +58,7 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
                 className="text-sm text-muted-foreground mt-2 cursor-pointer"
                 onClick={() => setIsExpanded(!isExpanded)}
             >
-                {isExpanded ? assignment.description : `${assignment.description!.substring(0, 7)}...`}
+                {isExpanded ? assignment.description : `${assignment.description!.substring(0, 7)}${assignment.description!.length > 7 ? '...' : ''}`}
             </p>
         )}
         <p className={cn("text-xs mt-2", isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
