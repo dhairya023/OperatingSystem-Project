@@ -47,7 +47,7 @@ export function SidebarNav() {
                 tooltip={{ children: item.label, side: "right", align: "center" }}
               >
                 <Link href={item.href}>
-                  <item.icon className={isActive ? 'neon-icon' : ''} />
+                  <item.icon />
                   <span>{item.label}</span>
                 </Link>
               </SidebarMenuButton>

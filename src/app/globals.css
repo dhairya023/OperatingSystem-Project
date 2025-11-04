@@ -85,8 +85,19 @@
     @apply bg-background text-foreground;
     min-height: 100vh;
   }
+}
+
+@layer components {
   .neon-icon {
     @apply drop-shadow-[0_0_4px_hsl(var(--primary)/0.7)];
+  }
+
+  [data-sidebar='menu-button'] > svg {
+      @apply stroke-[2.5px] text-primary/70;
+  }
+  
+  [data-sidebar='menu-button'][data-active='true'] > svg {
+      @apply text-primary neon-icon;
   }
 }
 
