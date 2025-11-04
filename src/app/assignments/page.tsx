@@ -5,7 +5,7 @@ import { useState } from 'react';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, FileText } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -51,9 +51,12 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
               <p className="text-sm text-muted-foreground">{assignment.subject}</p>
           </div>
           {assignment.description && (
-              <p className="text-sm text-muted-foreground mt-2">
-                  {assignment.description.substring(0, 50)}{assignment.description.length > 50 ? '...' : ''}
-              </p>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
+                <FileText className="w-4 h-4 shrink-0" />
+                <p>
+                    {assignment.description.substring(0, 6)}{assignment.description.length > 6 ? '...' : ''}
+                </p>
+              </div>
           )}
           <p className={cn("text-xs mt-2", isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
               Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })} ({format(new Date(assignment.dueDate), 'PPP')})
