@@ -1,21 +1,15 @@
 'use client';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useAppContext } from '@/context/app-context';
 import type { ClassSession } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Clock, DoorClosed } from 'lucide-react';
-import { Separator } from '../ui/separator';
 
 const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
-  const { updateClass, subjects } = useAppContext();
+  const { subjects } = useAppContext();
   const subject = subjects.find(s => s.name === session.subject);
   const color = subject?.color || '#A1A1AA';
 
-  const handleStatusChange = (status: 'attended' | 'missed' | 'holiday' | 'cancelled') => {
-    updateClass({ ...session, status }, 'single');
-  };
-  
   const statusCardStyles = {
     attended: `bg-green-500/10 border-green-500/30`,
     missed: `bg-red-500/10 border-red-500/30`,
