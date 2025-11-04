@@ -11,7 +11,7 @@ export default function PageHeader({ title, description, children }: PageHeaderP
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
                 <div className="flex flex-col gap-1">
-                    <h1 className="text-2xl font-bold tracking-tight font-headline md:text-3xl text-white/90">
+                    <h1 className="text-2xl font-bold tracking-tight font-headline md:text-3xl text-white">
                         {title}
                     </h1>
                     {description && (
