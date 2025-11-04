@@ -31,13 +31,13 @@ export default function ExamCountdown() {
   const upcomingExams = exams.filter(exam => !isPast(new Date(exam.date))).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   const nextExam = upcomingExams.length > 0 ? upcomingExams[0] : null;
 
-  const [timeLeft, setTimeLeft] = useState(nextExam ? calculateTimeLeft(nextExam.date) : null);
+  const [timeLeft, setTimeLeft] = useState(nextExam ? calculateTimeLeft(new Date(nextExam.date)) : null);
 
   useEffect(() => {
     if (!nextExam) return;
 
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft(nextExam.date));
+      setTimeLeft(calculateTimeLeft(new Date(nextExam.date)));
     }, 1000);
 
     return () => clearInterval(timer);
@@ -48,8 +48,9 @@ export default function ExamCountdown() {
       <Card className="flex h-full flex-col justify-center">
         <CardHeader>
           <CardTitle>Exam Countdown</CardTitle>
+          <CardDescription>Your next major assessment.</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center text-center gap-2">
+        <CardContent className="flex flex-1 flex-col items-center justify-center text-center gap-2">
             <Clock className="w-10 h-10 text-muted-foreground" />
             <p className="text-muted-foreground">No upcoming exams scheduled.</p>
         </CardContent>

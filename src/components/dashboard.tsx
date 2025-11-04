@@ -2,6 +2,7 @@
 import AttendanceOverview from "@/components/dashboard/attendance-overview";
 import DashboardSummary from "@/components/dashboard/dashboard-summary";
 import ExamCountdown from "@/components/dashboard/exam-countdown";
+import NextLecture from "@/components/dashboard/next-lecture";
 import PendingAssignments from "@/components/dashboard/pending-assignments";
 import UpcomingClasses from "@/components/dashboard/upcoming-classes";
 import PageHeader from "@/components/page-header";
@@ -13,7 +14,8 @@ export default function Dashboard() {
       
       <DashboardSummary />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <NextLecture />
         <ExamCountdown />
         <AttendanceOverview />
       </div>
