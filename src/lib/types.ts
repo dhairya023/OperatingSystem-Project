@@ -62,3 +62,19 @@ export type UserProfile = {
   profilePhotoUrl?: string;
   profileCompleted?: boolean;
 };
+
+export type GradeSubject = {
+  id: string;
+  semester: number;
+  subjectName: string;
+  credits: number;
+  midSemMarks?: number;
+  iaMarks?: number;
+  endSemMarks?: number;
+};
+
+export type Semester = {
+  semester: number;
+  subjects: GradeSubject[];
+  sgpa?: number;
+};

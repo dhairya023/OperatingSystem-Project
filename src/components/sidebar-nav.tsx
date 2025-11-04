@@ -17,6 +17,7 @@ import {
   UserCheck,
   BookCopy,
   User,
+  BarChart,
 } from "lucide-react";
 
 const navItems = [
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/attendance", label: "Attendance", icon: UserCheck },
   { href: "/assignments", label: "Assignments", icon: BookCheck },
   { href: "/exams", label: "Exams", icon: GraduationCap },
+  { href: "/grades", label: "Grades", icon: BarChart },
   { href: "/subjects", label: "Subjects", icon: BookCopy },
   { href: "/profile", label: "Profile", icon: User },
 ];

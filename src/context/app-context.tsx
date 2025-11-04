@@ -20,7 +20,7 @@ import {
 } from 'firebase/auth';
 import { addDays, addMonths, startOfDay, getDay } from 'date-fns';
 
-import type { ClassSession, Subject, Assignment, Exam, UserProfile } from '@/lib/types';
+import type { ClassSession, Subject, Assignment, Exam, UserProfile, GradeSubject } from '@/lib/types';
 import { useFirebase } from '@/firebase/provider';
 
 interface UserData {
@@ -29,6 +29,7 @@ interface UserData {
   classes: ClassSession[];
   assignments: Assignment[];
   exams: Exam[];
+  grades: GradeSubject[];
 }
 
 interface AppContextType extends UserData {
@@ -53,6 +54,9 @@ interface AppContextType extends UserData {
   deleteAccount: () => Promise<void>;
   completeProfileSetup: () => Promise<void>;
   getSubjectAttendance: any; // Simplified for now
+  addGradeSubject: (subject: GradeSubject) => Promise<void>;
+  updateGradeSubject: (subject: GradeSubject) => Promise<void>;
+  deleteGradeSubject: (id: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -115,6 +119,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
             classes: parseDates(data.classes),
             assignments: parseDates(data.assignments),
             exams: parseDates(data.exams),
+            grades: data.grades || [],
           });
         } else {
            setUserData({
@@ -123,6 +128,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
             classes: [],
             assignments: [],
             exams: [],
+            grades: [],
           });
         }
         setIsDataLoading(false);
@@ -160,6 +166,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       classes: [],
       assignments: [],
       exams: [],
+      grades: [],
       timetable: [],
       attendance: {},
       attendanceStats: { overallPercentage: 0, currentStreak: 0 },
@@ -308,6 +315,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const subjectUpdater = createItemUpdater<Subject>('subjects');
   const assignmentUpdater = createItemUpdater<Assignment>('assignments');
   const examUpdater = createItemUpdater<Exam>('exams');
+  const gradeUpdater = createItemUpdater<GradeSubject>('grades');
+
 
   const value: AppContextType = {
     isDataLoading,
@@ -316,6 +325,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     classes: userData?.classes || [],
     assignments: userData?.assignments || [],
     exams: userData?.exams || [],
+    grades: userData?.grades || [],
     updateProfile: (profile: Partial<UserProfile>) => updateUserData('profile', {...(userData?.profile || {}), ...profile}),
     addSubject: subjectUpdater.add,
     updateSubject: subjectUpdater.update,
@@ -347,6 +357,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         const total = subjectClasses.length;
         return { subject: subjectName, attended, total };
     },
+    addGradeSubject: gradeUpdater.add,
+    updateGradeSubject: gradeUpdater.update,
+    deleteGradeSubject: gradeUpdater.delete,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
