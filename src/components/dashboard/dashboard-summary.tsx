@@ -1,3 +1,4 @@
+
 'use client';
 import { useAppContext } from "@/context/app-context";
 import { isToday } from "date-fns";
@@ -10,15 +11,15 @@ export default function DashboardSummary() {
     if (!profile) return null;
 
     const lecturesToday = classes.filter(c => isToday(new Date(c.date))).length;
-    const assignmentsDueToday = assignments.filter(a => isToday(new Date(a.dueDate)) && !a.completed).length;
+    const pendingAssignmentsCount = assignments.filter(a => !a.completed).length;
 
     const relevantClasses = classes.filter(c => c.status === 'attended' || c.status === 'missed');
     const attendedClasses = relevantClasses.filter(c => c.status === 'attended').length;
     const overallAttendance = relevantClasses.length > 0 ? Math.round((attendedClasses / relevantClasses.length) * 100) : 100;
 
     const summaryItems = [
-        { icon: CalendarDays, label: "Lectures", value: lecturesToday },
-        { icon: BookCheck, label: "Assignments", value: assignmentsDueToday },
+        { icon: CalendarDays, label: "Lectures Today", value: lecturesToday },
+        { icon: BookCheck, label: "Pending Assign.", value: pendingAssignmentsCount },
         { icon: PercentCircle, label: "Attendance", value: `${overallAttendance}%` },
     ]
     
