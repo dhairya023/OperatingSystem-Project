@@ -42,7 +42,7 @@ const GradesContent = () => {
         <CardContent>
           <div className="flex items-center justify-center p-8 bg-muted/50 rounded-xl">
             <div className="text-center">
-              <p className="text-sm text-muted-foreground">CGPA</p>
+              <p className="text-sm font-bold text-foreground">CGPA</p>
               <p className="text-5xl font-bold text-primary">{cgpa.toFixed(2)}</p>
             </div>
           </div>
