@@ -30,16 +30,16 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
         session.status && statusCardStyles[session.status]
       )}
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-2">
         {/* Info Section */}
-        <div className="flex items-start gap-3 w-full flex-grow min-w-0">
+        <div className="flex items-start gap-2 w-full flex-grow min-w-0">
           <div
             className="w-1.5 h-full rounded-full shrink-0 self-stretch"
             style={{ backgroundColor: color }}
           ></div>
           <div className="flex-grow min-w-0">
-            <h3 className="font-bold text-base truncate">{session.subject}</h3>
-            <p className="text-sm text-foreground/80 truncate">{session.teacher}</p>
+            <h3 className="font-bold text-sm truncate">{session.subject}</h3>
+            <p className="text-xs text-foreground/80 truncate">{session.teacher}</p>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-1">
               <span className="flex items-center gap-1.5">
                 <Clock className="w-3 h-3" /> {session.startTime} - {session.endTime}
