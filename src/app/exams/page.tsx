@@ -129,10 +129,11 @@ function ExamsContent() {
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title="Exams" description="Schedule and prepare for your upcoming exams.">
-         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+      <div className="flex flex-col gap-4">
+        <PageHeader title="Exams" description="Schedule and prepare for your upcoming exams." />
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
-                <Button onClick={openNewDialog}>
+                <Button onClick={openNewDialog} className="self-start">
                     <PlusCircle className="mr-2" /> Add Exam
                 </Button>
             </DialogTrigger>
@@ -143,7 +144,7 @@ function ExamsContent() {
                 <ExamForm onSave={handleSaveExam} exam={selectedExam} />
             </DialogContent>
         </Dialog>
-      </PageHeader>
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-1">
         <Card>
