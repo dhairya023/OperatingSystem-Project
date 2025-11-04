@@ -20,6 +20,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 
 export default function LoginPage() {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
