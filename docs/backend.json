@@ -134,10 +134,6 @@
           "type": "string",
           "description": "Subject of the assignment."
         },
-        "description": {
-          "type": "string",
-          "description": "Description of the assignment."
-        },
         "dueDate": {
           "type": "string",
           "description": "Due date of the assignment.",
@@ -338,6 +334,62 @@
             }
         },
         "required": ["id", "userId", "semester", "subjectName", "credits"]
+    },
+    "SharedTimetable": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SharedTimetable",
+      "type": "object",
+      "description": "Represents a timetable shared by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique short code for the shared timetable."
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "The UID of the user who shared the timetable."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the timetable was shared.",
+          "format": "date-time"
+        },
+        "timetableData": {
+          "type": "object",
+          "properties": {
+            "subjects": {
+              "type": "array",
+              "items": { "$ref": "#/entities/Subject" }
+            },
+            "classes": {
+              "type": "array",
+              "items": { "$ref": "#/entities/TimetableEntry" }
+            }
+          }
+        }
+      },
+      "required": ["id", "ownerId", "createdAt", "timetableData"]
+    },
+    "Subject": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Subject",
+      "type": "object",
+      "description": "Represents an academic subject.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "teacher": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "name", "teacher", "color"]
     }
   },
   "auth": {
@@ -495,8 +547,26 @@
                 }
             ]
         }
+      },
+       {
+        "path": "/sharedTimetables/{shortCode}",
+        "definition": {
+          "entityName": "SharedTimetable",
+          "schema": {
+            "$ref": "#/backend/entities/SharedTimetable"
+          },
+          "description": "Stores shared timetables accessible via a short code.",
+          "params": [
+            {
+              "name": "shortCode",
+              "description": "The unique short code for the shared timetable."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore structure is designed to manage user data and associated entities (TimetableEntry, Assignment, Exam, Attendance, AttendanceStats, Analytics, and Grade) within the Grad application. The core principle is Authorization Independence, ensuring that security rules can be evaluated without relying on hierarchical `get()` calls. This is achieved through path-based ownership and denormalization of user IDs within subcollections. Each user has their own dedicated space under `/users/{userId}`, which houses all their data. This design facilitates straightforward security rules, ensuring users can only access their own data.\n\n*   **/users/{userId}:** Stores the user's core information. This structure provides a secure and easily manageable way to store user-specific data. The subcollections under each user document ensure that data is logically grouped and access can be controlled at a granular level using Firestore security rules.\n*   **/users/{userId}/timetable/{timetableId}:** Stores the user's timetable entries. Each entry contains a `userId` field, which is crucial for authorization independence. Security rules can enforce that only the user with the matching `userId` can access these entries.\n*   **/users/{userId}/assignments/{assignmentId}:** Stores the user's assignments. Each assignment also includes the `userId` field, enabling independent authorization.\n*   **/users/{userId}/exams/{examId}:** Stores the user's exam schedules. The `userId` field in each exam document supports authorization independence.\n*   **/users/{userId}/attendance/{attendanceId}:** Stores the user's attendance records. The `userId` and `timetableEntryId` fields facilitate secure access and enable linking attendance records to specific timetable entries.\n*   **/users/{userId}/attendanceStats:** Stores the user's attendance statistics. This is a 1:1 relationship with the user, ensuring a dedicated space for attendance-related calculations.\n*   **/users/{userId}/analytics:** Stores the user's analytics data. Similar to attendanceStats, this provides a dedicated space for tracking user activity.\n*   **/users/{userId}/grades/{gradeId}:** Stores the user's grade entries. The `userId` field ensures data ownership, and the structure allows for easy querying of all grades for a user or filtering by semester.\n\nThis structure supports the required QAPs (Queries Are Permissions) by ensuring that all data is segregated by user ID, preventing unauthorized access. The path-based ownership model simplifies security rules and makes them more robust. The denormalization of the `userId` in subcollections eliminates the need for complex `get()` calls in security rules, ensuring atomic operations and easier debugging."
+    "reasoning": "The Firestore structure is designed to manage user data and associated entities (TimetableEntry, Assignment, Exam, Attendance, AttendanceStats, Analytics, and Grade) within the Grad application. The core principle is Authorization Independence, ensuring that security rules can be evaluated without relying on hierarchical `get()` calls. This is achieved through path-based ownership and denormalization of user IDs within subcollections. Each user has their own dedicated space under `/users/{userId}`, which houses all their data. This design facilitates straightforward security rules, ensuring users can only access their own data.\n\n*   **/users/{userId}:** Stores the user's core information. This structure provides a secure and easily manageable way to store user-specific data. The subcollections under each user document ensure that data is logically grouped and access can be controlled at a granular level using Firestore security rules.\n*   **/users/{userId}/timetable/{timetableId}:** Stores the user's timetable entries. Each entry contains a `userId` field, which is crucial for authorization independence. Security rules can enforce that only the user with the matching `userId` can access these entries.\n*   **/users/{userId}/assignments/{assignmentId}:** Stores the user's assignments. Each assignment also includes the `userId` field, enabling independent authorization.\n*   **/users/{userId}/exams/{examId}:** Stores the user's exam schedules. The `userId` field in each exam document supports authorization independence.\n*   **/users/{userId}/attendance/{attendanceId}:** Stores the user's attendance records. The `userId` and `timetableEntryId` fields facilitate secure access and enable linking attendance records to specific timetable entries.\n*   **/users/{userId}/attendanceStats:** Stores the user's attendance statistics. This is a 1:1 relationship with the user, ensuring a dedicated space for attendance-related calculations.\n*   **/users/{userId}/analytics:** Stores the user's analytics data. Similar to attendanceStats, this provides a dedicated space for tracking user activity.\n*   **/users/{userId}/grades/{gradeId}:** Stores the user's grade entries. The `userId` field ensures data ownership, and the structure allows for easy querying of all grades for a user or filtering by semester.\n* **/sharedTimetables/{shortCode}:** Stores shared timetable data. This collection is at the root level to allow public read access via the short code, while write access is restricted. This enables the sharing feature without compromising user data security.\n\nThis structure supports the required QAPs (Queries Are Permissions) by ensuring that all data is segregated by user ID, preventing unauthorized access. The path-based ownership model simplifies security rules and makes them more robust. The denormalization of the `userId` in subcollections eliminates the need for complex `get()` calls in security rules, ensuring atomic operations and easier debugging."
   }
 }
+
+    

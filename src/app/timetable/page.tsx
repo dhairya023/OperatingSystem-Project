@@ -1,11 +1,12 @@
 
 'use client';
 import AppLayout from '@/components/app-layout';
-import { useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import PageHeader from '@/components/page-header';
 import { useAppContext } from '@/context/app-context';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Edit, Trash2, MoreVertical, Copy, Trash, History } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Share2, Copy, Trash, History } from 'lucide-react';
 import { addDays, subDays, format, isToday, isTomorrow, isYesterday, startOfDay } from 'date-fns';
 import { Card } from '@/components/ui/card';
 import type { ClassSession } from '@/lib/types';
@@ -15,9 +16,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
+  DialogDescription,
+  DialogClose,
 } from '@/components/ui/dialog';
 import ClassSessionForm from '@/components/timetable/class-session-form';
 import { ClassDetailsDrawer } from '@/components/timetable/ClassDetailsDrawer';
+import { useToast } from '@/hooks/use-toast';
 
 const formatTime12h = (time: string) => {
     if (!time) return '';
@@ -65,9 +70,70 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
 };
 
 function TimetableContent() {
-  const { subjects, classes } = useAppContext();
+  const { subjects, classes, shareTimetable, getSharedTimetable, importTimetable } = useAppContext();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const { toast } = useToast();
+  const searchParams = useSearchParams();
+
+  const [isImporting, setIsImporting] = useState(false);
+  const [sharedData, setSharedData] = useState<{ subjects: any[], classes: any[] } | null>(null);
+  const importCode = useMemo(() => searchParams.get('importCode'), [searchParams]);
+
+
+  useEffect(() => {
+    if (importCode) {
+      const fetchSharedData = async () => {
+        try {
+          const data = await getSharedTimetable(importCode);
+          if (data) {
+            setSharedData(data);
+            setIsImporting(true);
+          } else {
+            toast({ variant: 'destructive', title: 'Invalid Link', description: 'The timetable link is invalid or has expired.' });
+          }
+        } catch (error) {
+          console.error(error);
+          toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch shared timetable.' });
+        }
+      };
+      fetchSharedData();
+    }
+  }, [importCode, getSharedTimetable, toast]);
+
+  const handleShare = async () => {
+    try {
+      const code = await shareTimetable();
+      const shareUrl = `${window.location.origin}/timetable?importCode=${code}`;
+      await navigator.clipboard.writeText(shareUrl);
+      toast({ title: 'Link Copied!', description: 'Timetable sharing link has been copied to your clipboard.' });
+    } catch (error) {
+      console.error('Failed to share timetable:', error);
+      toast({ variant: 'destructive', title: 'Sharing Failed', description: 'Could not create a shareable link.' });
+    }
+  };
+  
+  const handleConfirmImport = async () => {
+    if (sharedData) {
+      try {
+        await importTimetable(sharedData.subjects, sharedData.classes);
+        toast({ title: 'Success!', description: 'Timetable has been imported successfully.' });
+      } catch (error) {
+        toast({ variant: 'destructive', title: 'Import Failed', description: 'There was an error importing the timetable.' });
+      } finally {
+        setIsImporting(false);
+        setSharedData(null);
+        // Remove query param from URL without reloading
+        window.history.replaceState({}, '', '/timetable');
+      }
+    }
+  };
+
+  const handleCancelImport = () => {
+    setIsImporting(false);
+    setSharedData(null);
+    window.history.replaceState({}, '', '/timetable');
+  };
 
   const handlePrevDay = () => {
     setCurrentDate(subDays(currentDate, 1));
@@ -92,7 +158,7 @@ function TimetableContent() {
         return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime()
     });
 
-  if (subjects.length === 0) {
+  if (subjects.length === 0 && !importCode) {
     return (
       <div className="flex flex-col flex-1 p-4 md:p-6 lg:p-8">
         <PageHeader title="Timetable" description="Manage your class schedule." />
@@ -111,6 +177,7 @@ function TimetableContent() {
       <div className="w-full">
         <div>
             <PageHeader title="Timetable" description="Your weekly class schedule.">
+                <Button variant="outline" onClick={handleShare}><Share2 className="mr-2" /> Share</Button>
                 <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                     <DialogTrigger asChild>
                         <Button><PlusCircle className="mr-2" /> Add Class</Button>
@@ -154,6 +221,34 @@ function TimetableContent() {
             </div>
             </div>
         </div>
+
+        <Dialog open={isImporting} onOpenChange={setIsImporting}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Import Timetable</DialogTitle>
+              <DialogDescription>
+                Do you want to import this timetable? This will replace your current subjects and classes.
+              </DialogDescription>
+            </DialogHeader>
+            {sharedData && (
+                <Card className="max-h-60 overflow-y-auto">
+                    <CardContent className="p-4 space-y-2">
+                        <h4 className="font-semibold">Subjects ({sharedData.subjects.length})</h4>
+                        <ul className="list-disc pl-5 text-sm text-muted-foreground">
+                            {sharedData.subjects.map((s:any) => <li key={s.id}>{s.name}</li>)}
+                        </ul>
+                         <h4 className="font-semibold pt-2">Classes ({sharedData.classes.length})</h4>
+                        <p className="text-sm text-muted-foreground">This will import all recurring and single classes.</p>
+                    </CardContent>
+                </Card>
+            )}
+            <DialogFooter>
+              <Button variant="ghost" onClick={handleCancelImport}>Cancel</Button>
+              <Button onClick={handleConfirmImport}>Yes, Import</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
       </div>
     </div>
   );
@@ -167,3 +262,5 @@ export default function TimetablePage() {
         </AppLayout>
     )
 }
+
+    

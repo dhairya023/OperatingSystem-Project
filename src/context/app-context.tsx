@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   doc,
   setDoc,
+  getDoc,
   serverTimestamp,
   updateDoc,
   onSnapshot,
@@ -57,6 +58,9 @@ interface AppContextType extends UserData {
   addGradeSubject: (subject: GradeSubject) => Promise<void>;
   updateGradeSubject: (subject: GradeSubject) => Promise<void>;
   deleteGradeSubject: (id: string) => Promise<void>;
+  shareTimetable: () => Promise<string>;
+  getSharedTimetable: (code: string) => Promise<{ subjects: Subject[], classes: ClassSession[] } | null>;
+  importTimetable: (subjects: Subject[], classes: ClassSession[]) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -311,6 +315,42 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
     await updateUserData('classes', currentClasses);
   };
+
+  const shareTimetable = async (): Promise<string> => {
+    if (!user || !userData) throw new Error('User not logged in or data not loaded');
+    
+    const shortCode = crypto.randomUUID().substring(0, 8);
+    const shareDocRef = doc(firestore, 'sharedTimetables', shortCode);
+    
+    await setDoc(shareDocRef, {
+      ownerId: user.uid,
+      createdAt: serverTimestamp(),
+      timetableData: {
+        subjects: userData.subjects,
+        classes: userData.classes,
+      }
+    });
+    
+    return shortCode;
+  };
+
+  const getSharedTimetable = async (code: string): Promise<{ subjects: Subject[], classes: ClassSession[] } | null> => {
+    const shareDocRef = doc(firestore, 'sharedTimetables', code);
+    const docSnap = await getDoc(shareDocRef);
+    if (docSnap.exists()) {
+      return docSnap.data().timetableData;
+    }
+    return null;
+  };
+  
+  const importTimetable = async (subjects: Subject[], classes: ClassSession[]) => {
+    if (!user) throw new Error('User not logged in');
+    const userDocRef = doc(firestore, 'users', user.uid);
+    await updateDoc(userDocRef, {
+      subjects: subjects,
+      classes: classes.map(c => ({...c, date: new Date(c.date)})) // Ensure dates are Date objects
+    });
+  };
   
   const subjectUpdater = createItemUpdater<Subject>('subjects');
   const assignmentUpdater = createItemUpdater<Assignment>('assignments');
@@ -360,6 +400,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     addGradeSubject: gradeUpdater.add,
     updateGradeSubject: gradeUpdater.update,
     deleteGradeSubject: gradeUpdater.delete,
+    shareTimetable,
+    getSharedTimetable,
+    importTimetable,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
@@ -372,3 +415,5 @@ export const useAppContext = () => {
   }
   return context;
 };
+
+    
