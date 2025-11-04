@@ -1,3 +1,4 @@
+
 'use client';
 import { useAppContext } from "@/context/app-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,11 +16,11 @@ export default function PendingAssignments() {
   return (
     <Link href="/assignments" className="block h-full">
       <Card className="h-full hover:border-primary/50 transition-colors">
-        <CardHeader>
-          <CardTitle>Pending Assignments</CardTitle>
-          <CardDescription>You have {pendingAssignments.length} assignments due.</CardDescription>
+        <CardHeader className="p-4 md:p-6">
+          <CardTitle className="text-base">Pending Assignments</CardTitle>
+          <CardDescription className="text-xs">You have {pendingAssignments.length} assignments due.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
           {pendingAssignments.length > 0 ? (
             <div className="flex flex-col gap-3">
               {pendingAssignments.slice(0,3).map((assignment, index) => (
@@ -39,9 +40,9 @@ export default function PendingAssignments() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-48 text-center bg-muted/50 rounded-lg">
+            <div className="flex flex-col items-center justify-center h-full min-h-[140px] text-center bg-muted/50 rounded-lg">
               <BookCheck className="w-8 h-8 text-muted-foreground" />
-              <p className="mt-2 text-muted-foreground">All caught up! No pending assignments.</p>
+              <p className="mt-2 text-sm text-muted-foreground">All caught up! No pending assignments.</p>
             </div>
           )}
         </CardContent>

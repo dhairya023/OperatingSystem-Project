@@ -1,3 +1,4 @@
+
 'use client';
 import { useAppContext } from "@/context/app-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,14 +40,14 @@ export default function NextLecture() {
 
     if (!nextClass) {
         return (
-             <Card className="flex flex-col h-full">
+             <Card className="flex flex-col h-full hover:border-primary/50 transition-colors">
                 <CardHeader>
-                    <CardTitle>Next Lecture</CardTitle>
-                    <CardDescription>What's next on your schedule.</CardDescription>
+                    <CardTitle className="text-base">Next Lecture</CardTitle>
+                    <CardDescription className="text-xs">What's next on your schedule.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-1 flex-col items-center justify-center text-center gap-2">
-                    <Bell className="w-10 h-10 text-muted-foreground" />
-                    <p className="text-muted-foreground">No upcoming classes found.</p>
+                    <Bell className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">No upcoming classes found.</p>
                 </CardContent>
             </Card>
         )
@@ -55,19 +56,19 @@ export default function NextLecture() {
     return (
         <Link href="/timetable">
             <Card className="h-full hover:border-primary/50 transition-colors" style={{ backgroundColor: `${color}20`, borderColor: `${color}60` }}>
-                <CardHeader>
-                    <CardTitle>Next Lecture</CardTitle>
-                    <CardDescription>{format(new Date(nextClass.date), "EEEE, LLLL d")}</CardDescription>
+                <CardHeader className="p-4 md:p-6">
+                    <CardTitle className="text-base">Next Lecture</CardTitle>
+                    <CardDescription className="text-xs">{format(new Date(nextClass.date), "EEEE, LLLL d")}</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-2 md:space-y-3 p-4 pt-0 md:p-6 md:pt-0">
                     <div className="space-y-1">
-                        <h3 className="text-2xl font-bold text-primary" style={{color: color}}>{nextClass.subject}</h3>
-                        <p className="text-sm text-foreground/80">{nextClass.teacher}</p>
+                        <h3 className="text-lg md:text-2xl font-bold text-primary" style={{color: color}}>{nextClass.subject}</h3>
+                        <p className="text-xs md:text-sm text-foreground/80">{nextClass.teacher}</p>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-4 text-xs md:text-sm text-muted-foreground">
                         <span className="flex items-center gap-1.5"><Clock className="w-4 h-4"/> {formatTime12h(nextClass.startTime)} - {formatTime12h(nextClass.endTime)}</span>
                     </div>
-                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                     <div className="flex items-center gap-4 text-xs md:text-sm text-muted-foreground">
                         {nextClass.room && <span className="flex items-center gap-1.5"><DoorClosed className="w-4 h-4"/> {nextClass.room}</span>}
                     </div>
                 </CardContent>

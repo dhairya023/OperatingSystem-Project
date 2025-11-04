@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -46,13 +47,13 @@ export default function ExamCountdown() {
   if (!nextExam || !timeLeft) {
     return (
       <Card className="flex h-full flex-col justify-center hover:border-primary/50 transition-colors">
-        <CardHeader>
-          <CardTitle>Exam Countdown</CardTitle>
-          <CardDescription>Your next major assessment.</CardDescription>
+        <CardHeader className="p-4 md:p-6">
+          <CardTitle className="text-base">Exam Countdown</CardTitle>
+          <CardDescription className="text-xs">Your next major assessment.</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-1 flex-col items-center justify-center text-center gap-2">
-            <Clock className="w-10 h-10 text-muted-foreground" />
-            <p className="text-muted-foreground">No upcoming exams scheduled.</p>
+        <CardContent className="flex flex-1 flex-col items-center justify-center text-center gap-2 p-4 pt-0 md:p-6 md:pt-0">
+            <Clock className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">No upcoming exams scheduled.</p>
         </CardContent>
       </Card>
     );
@@ -67,20 +68,20 @@ export default function ExamCountdown() {
 
   return (
     <Card className="flex flex-col h-full hover:border-primary/50 transition-colors">
-      <CardHeader className="text-center">
+      <CardHeader className="text-center p-4 md:p-6">
         <CardTitle className="text-base font-bold">Next Exam: {nextExam.subject}</CardTitle>
         <CardDescription className="text-xs">
-          {format(new Date(nextExam.date), "EEEE, LLLL d, h:mm a")}
+          {format(new Date(nextExam.date), "EEE, LLL d, h:mm a")}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow flex items-center justify-center">
-        <div className="grid grid-cols-4 gap-2 text-center w-full">
+      <CardContent className="flex-grow flex items-center justify-center p-4 pt-0 md:p-6 md:pt-0">
+        <div className="grid grid-cols-4 gap-1 md:gap-2 text-center w-full">
           {timeUnits.map((unit) => (
-            <div key={unit.label} className="p-2 rounded-lg bg-muted/50">
-              <div className="text-3xl font-bold font-headline tabular-nums text-primary neon-icon">
+            <div key={unit.label} className="p-1 md:p-2 rounded-lg bg-muted/50">
+              <div className="text-xl md:text-3xl font-bold font-headline tabular-nums text-primary neon-icon">
                 {String(unit.value).padStart(2, '0')}
               </div>
-              <div className="text-xs text-muted-foreground">{unit.label}</div>
+              <div className="text-[10px] md:text-xs text-muted-foreground">{unit.label}</div>
             </div>
           ))}
         </div>
