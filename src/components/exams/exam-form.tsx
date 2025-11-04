@@ -26,6 +26,7 @@ export default function ExamForm({ exam, onSave }: ExamFormProps) {
   const [date, setDate] = useState<Date | undefined>(exam ? new Date(exam.date) : new Date());
   const [time, setTime] = useState(exam ? format(new Date(exam.date), 'HH:mm') : '10:00');
   const [venue, setVenue] = useState(exam?.venue || '');
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +76,7 @@ export default function ExamForm({ exam, onSave }: ExamFormProps) {
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="date" className="text-right">Date</Label>
-            <Popover>
+            <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
                 <PopoverTrigger asChild>
                     <Button
                     variant={"outline"}
@@ -85,7 +86,7 @@ export default function ExamForm({ exam, onSave }: ExamFormProps) {
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
-                    <Calendar mode="single" selected={date} onSelect={setDate} initialFocus/>
+                    <Calendar mode="single" selected={date} onSelect={(d) => { setDate(d); setIsDatePickerOpen(false);}} initialFocus/>
                 </PopoverContent>
             </Popover>
         </div>

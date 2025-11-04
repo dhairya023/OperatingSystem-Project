@@ -24,6 +24,7 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
   const [title, setTitle] = useState(assignment?.title || '');
   const [subject, setSubject] = useState(assignment?.subject || '');
   const [dueDate, setDueDate] = useState<Date | undefined>(assignment ? new Date(assignment.dueDate) : new Date());
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +61,7 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="date" className="text-right">Due Date</Label>
-            <Popover>
+            <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
                 <PopoverTrigger asChild>
                     <Button
                     variant={"outline"}
@@ -77,7 +78,10 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
                     <Calendar
                     mode="single"
                     selected={dueDate}
-                    onSelect={setDueDate}
+                    onSelect={(date) => {
+                      setDueDate(date);
+                      setIsDatePickerOpen(false);
+                    }}
                     initialFocus
                     />
                 </PopoverContent>

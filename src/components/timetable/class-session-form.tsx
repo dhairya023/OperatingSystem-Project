@@ -28,6 +28,7 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
   const [startTime, setStartTime] = useState(session?.startTime || '');
   const [endTime, setEndTime] = useState(session?.endTime || '');
   const [room, setRoom] = useState(session?.room || '');
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   
   const [repeat, setRepeat] = useState<'once' | 'weekly'>(session?.rrule ? 'weekly' : 'once');
   
@@ -93,7 +94,7 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
                 <Label htmlFor="date" className="text-left md:text-right">
                   {repeat === 'weekly' ? 'Start Date' : 'Date'}
                 </Label>
-                <Popover>
+                <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
                     <PopoverTrigger asChild>
                         <Button
                         variant={"outline"}
@@ -102,7 +103,7 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
                         {date ? format(date, "PPP") : <span>Pick a date</span>}
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={date} onSelect={setDate} initialFocus/></PopoverContent>
+                    <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={date} onSelect={(d) => {setDate(d); setIsDatePickerOpen(false);}} initialFocus/></PopoverContent>
                 </Popover>
             </div>
           </>
@@ -111,14 +112,14 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
         {session && ( // Only show date for single edits
            <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
             <Label htmlFor="date" className="text-left md:text-right">Date</Label>
-            <Popover>
+            <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
                 <PopoverTrigger asChild>
                     <Button variant={"outline"} className={cn("md:col-span-3 justify-start text-left font-normal", !date && "text-muted-foreground")}>
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {date ? format(date, "PPP") : <span>Pick a date</span>}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={date} onSelect={setDate} initialFocus /></PopoverContent>
+                <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={date} onSelect={(d) => {setDate(d); setIsDatePickerOpen(false);}} initialFocus /></PopoverContent>
             </Popover>
            </div>
         )}
