@@ -85,20 +85,20 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">{format(currentDate, 'MMMM yyyy')}</h3>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={handlePrevMonth}>
+            <Button variant="outline" size="icon" className="h-7 w-7" onClick={handlePrevMonth}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            <Button variant="outline" size="icon" onClick={handleNextMonth}>
+            <Button variant="outline" size="icon" className="h-7 w-7" onClick={handleNextMonth}>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-7 gap-2 text-center text-sm text-muted-foreground">
+        <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted-foreground">
           {weekDays.map((day) => <div key={day}>{day}</div>)}
         </div>
 
-        <div className="grid grid-cols-7 gap-2 mt-2">
+        <div className="grid grid-cols-7 gap-1 mt-2">
           {Array.from({ length: startingDay }).map((_, i) => <div key={`empty-${i}`} />)}
           {daysInMonth.map((day) => {
             const dateKey = format(day, 'yyyy-MM-dd');
@@ -110,7 +110,7 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
                 <TooltipTrigger asChild>
                     <div
                         className={cn(
-                        'w-10 h-10 rounded-full flex items-center justify-center cursor-pointer border',
+                        'w-9 h-9 rounded-full flex items-center justify-center cursor-pointer border text-xs',
                         isToday(day) && 'border-primary border-2',
                         !isSameMonth(day, currentDate) && 'text-muted-foreground',
                          status && statusColors[status]
