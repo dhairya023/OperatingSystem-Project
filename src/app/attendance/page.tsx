@@ -71,7 +71,7 @@ function AttendanceContent() {
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <div className="mx-auto w-full space-y-8" style={{width: '1240px'}}>
+      <div className="mx-auto w-full max-w-6xl space-y-8">
         <PageHeader title="Attendance" description="Track your attendance for all subjects." />
 
         <Card>
