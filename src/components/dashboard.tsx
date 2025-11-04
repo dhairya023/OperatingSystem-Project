@@ -15,12 +15,12 @@ export default function Dashboard() {
       
       <DashboardSummary />
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <NextLecture />
         <ExamCountdown />
       </div>
       
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <UpcomingClasses />
         <AttendanceOverview />
       </div>
