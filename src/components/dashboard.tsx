@@ -12,21 +12,25 @@ import { useAppContext } from "@/context/app-context";
 
 export default function Dashboard() {
   const { profile } = useAppContext();
-  const [greeting, setGreeting] = useState("Welcome back! Here's an overview of your academic life.");
+  const [greeting, setGreeting] = useState("Welcome! Here's an overview of your academic life.");
 
   useEffect(() => {
+    // This code runs only on the client, avoiding server/client mismatches.
     const hour = new Date().getHours();
+    // Use the first name from the user's profile, or a generic greeting if not available.
     const name = profile?.fullName?.split(' ')[0] || 'there';
-    let newGreeting = "";
+    
+    let timeOfDay;
     if (hour < 12) {
-      newGreeting = `Good morning, ${name} 👋`;
+      timeOfDay = 'Good morning';
     } else if (hour < 18) {
-      newGreeting = `Good afternoon, ${name} 👋`;
+      timeOfDay = 'Good afternoon';
     } else {
-      newGreeting = `Good evening, ${name} 👋`;
+      timeOfDay = 'Good evening';
     }
-    setGreeting(newGreeting);
-  }, [profile]);
+    setGreeting(`${timeOfDay}, ${name} 👋`);
+
+  }, [profile]); // Rerun this effect if the profile data changes.
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
