@@ -33,6 +33,9 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
   const { subjects } = useAppContext();
   const subject = subjects.find(s => s.name === assignment.subject);
   const isOverdue = !assignment.completed && isPast(new Date(assignment.dueDate));
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const hasDescription = assignment.description && assignment.description.trim() !== '';
 
   return (
     <div className="flex items-start gap-4 p-4 border rounded-lg">
@@ -50,7 +53,14 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
             {subject && <div className="w-2 h-2 rounded-full" style={{backgroundColor: subject.color}}></div>}
             <p className="text-sm text-muted-foreground">{assignment.subject}</p>
         </div>
-        {assignment.description && <p className="text-sm text-muted-foreground mt-2">{assignment.description}</p>}
+        {hasDescription && (
+            <p 
+                className="text-sm text-muted-foreground mt-2 cursor-pointer"
+                onClick={() => setIsExpanded(!isExpanded)}
+            >
+                {isExpanded ? assignment.description : `${assignment.description!.substring(0, 7)}...`}
+            </p>
+        )}
         <p className={cn("text-xs mt-2", isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
             Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })} ({format(new Date(assignment.dueDate), 'PPP')})
         </p>
