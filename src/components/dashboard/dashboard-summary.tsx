@@ -35,10 +35,10 @@ export default function DashboardSummary() {
                     </div>
                     <div className="grid grid-cols-3 gap-2 md:gap-3 text-center w-full md:w-auto">
                         {summaryItems.map(item => (
-                             <div key={item.label} className="p-2 rounded-lg bg-muted/50 flex flex-col items-center justify-center">
-                                <item.icon className="w-5 h-5 mb-1 text-primary"/>
-                                <div className="text-lg font-bold text-foreground">{item.value}</div>
-                                <div className="text-xs text-muted-foreground">{item.label}</div>
+                             <div key={item.label} className="p-3 rounded-lg bg-muted/50 flex flex-col items-center justify-center gap-1">
+                                <item.icon className="w-5 h-5 text-primary"/>
+                                <span className="text-lg font-bold text-foreground">{item.value}</span>
+                                <span className="text-xs text-muted-foreground">{item.label}</span>
                             </div>
                         ))}
                     </div>
