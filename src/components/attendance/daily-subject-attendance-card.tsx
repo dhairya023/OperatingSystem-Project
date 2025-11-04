@@ -33,7 +33,11 @@ const DailySubjectAttendanceCard = ({ subjectName, sessions }: DailySubjectAtten
       </CardHeader>
       <CardContent className="p-3 space-y-2">
         {sessions.sort((a,b) => a.startTime.localeCompare(b.startTime)).map((session) => (
-            <DailyAttendanceCard key={session.id} session={session} />
+          <DailyAttendanceCard
+            key={session.id}
+            session={session}
+            onStatusChange={handleStatusChange}
+          />
         ))}
       </CardContent>
     </Card>

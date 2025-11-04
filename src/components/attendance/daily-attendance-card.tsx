@@ -1,18 +1,39 @@
 
 'use client';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { ClassSession } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Clock, DoorClosed } from 'lucide-react';
-import { Badge } from '../ui/badge';
 
-const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
+const DailyAttendanceCard = ({
+  session,
+  onStatusChange,
+}: {
+  session: ClassSession;
+  onStatusChange: (sessionId: string, status: ClassSession['status']) => void;
+}) => {
   const statusCardStyles = {
     attended: 'bg-green-500/10 border-green-500/30',
     missed: 'bg-red-500/10 border-red-500/30',
     holiday: 'bg-gray-500/10 border-gray-500/30',
     cancelled: 'bg-yellow-500/10 border-yellow-500/30',
   };
+
+  const statusButtonStyles = {
+    attended: 'bg-green-500/20 text-green-700 dark:text-green-300',
+    missed: 'bg-red-500/20 text-red-700 dark:text-red-300',
+    holiday: 'bg-gray-500/20 text-gray-700 dark:text-gray-300',
+    cancelled: 'bg-yellow-500/20 text-yellow-700 dark:text-yellow-300',
+  }
+
+  const attendanceOptions: ClassSession['status'][] = ['attended', 'missed', 'holiday', 'cancelled'];
+  const attendanceLabels = {
+      'attended': 'P',
+      'missed': 'A',
+      'holiday': 'H',
+      'cancelled': 'C',
+  }
 
   return (
     <Card
@@ -36,12 +57,24 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
           </div>
         </div>
 
-        {/* Status Badge Section */}
-        {session.status && (
-            <Badge variant={session.status === 'attended' ? "secondary" : session.status === 'holiday' ? "outline" : "destructive"}>
-                {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
-            </Badge>
-        )}
+        {/* Buttons Section */}
+        <div className="flex items-center gap-1">
+          {attendanceOptions.map((status) => (
+            status &&
+            <Button
+              key={status}
+              variant="ghost"
+              size="icon"
+              className={cn(
+                'w-7 h-7 rounded-full text-xs',
+                session.status === status && statusButtonStyles[status]
+              )}
+              onClick={() => onStatusChange(session.id, session.status === status ? undefined : status)}
+            >
+              {attendanceLabels[status]}
+            </Button>
+          ))}
+        </div>
       </div>
     </Card>
   );
