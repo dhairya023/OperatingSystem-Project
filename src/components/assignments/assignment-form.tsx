@@ -46,15 +46,15 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="title" className="text-right">Title</Label>
-          <Input id="title" value={title} onChange={e => setTitle(e.target.value)} className="col-span-3" required />
+      <div className="space-y-4 py-4">
+        <div className="space-y-2">
+          <Label htmlFor="title">Title</Label>
+          <Input id="title" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="subject" className="text-right">Subject</Label>
+        <div className="space-y-2">
+          <Label htmlFor="subject">Subject</Label>
           <Select onValueChange={setSubject} defaultValue={subject}>
-            <SelectTrigger className="col-span-3">
+            <SelectTrigger>
               <SelectValue placeholder="Select a subject" />
             </SelectTrigger>
             <SelectContent>
@@ -62,14 +62,14 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
             </SelectContent>
           </Select>
         </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="date" className="text-right">Due Date</Label>
+        <div className="space-y-2">
+            <Label htmlFor="date">Due Date</Label>
             <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
                 <PopoverTrigger asChild>
                     <Button
                     variant={"outline"}
                     className={cn(
-                        "col-span-3 justify-start text-left font-normal",
+                        "w-full justify-start text-left font-normal",
                         !dueDate && "text-muted-foreground"
                     )}
                     >
@@ -90,13 +90,12 @@ export default function AssignmentForm({ assignment, onSave }: AssignmentFormPro
                 </PopoverContent>
             </Popover>
         </div>
-        <div className="grid grid-cols-4 items-start gap-4">
-          <Label htmlFor="description" className="text-right pt-2">Description</Label>
+        <div className="space-y-2">
+          <Label htmlFor="description">Description</Label>
           <Textarea 
             id="description" 
             value={description} 
             onChange={e => setDescription(e.target.value)} 
-            className="col-span-3" 
             placeholder="Add any extra details..."
           />
         </div>
