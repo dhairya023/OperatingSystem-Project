@@ -103,7 +103,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                                 "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-3 md:gap-3",
                                 isActive
                                   ? "bg-primary/15 text-primary border border-primary/50 shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
-                                  : "text-muted-foreground hover:bg-primary/10 hover:text-foreground hover:scale-[1.02]"
+                                  : "text-muted-foreground"
                               )}
                               isActive={isActive}
                             >
