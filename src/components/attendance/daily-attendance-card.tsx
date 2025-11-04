@@ -26,13 +26,13 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
   return (
     <Card
       className={cn(
-        'p-4 transition-all w-full max-w-full',
+        'p-3 transition-all w-full max-w-full',
         session.status && statusCardStyles[session.status]
       )}
     >
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="flex items-center justify-between gap-3">
         {/* Info Section */}
-        <div className="flex items-start gap-3 w-full sm:w-auto flex-grow min-w-0">
+        <div className="flex items-start gap-3 w-full flex-grow min-w-0">
           <div
             className="w-1.5 h-full rounded-full shrink-0 self-stretch"
             style={{ backgroundColor: color }}
@@ -55,54 +55,54 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
 
         {/* Button Section */}
         <div
-          className="flex flex-col sm:flex-row items-center shrink-0 gap-2 justify-end sm:justify-start"
+          className="flex items-center shrink-0 gap-1.5"
         >
           <Button
-            size="sm"
+            size="icon"
             variant={session.status === 'attended' ? 'default' : 'outline'}
             className={cn(
-              'h-8 text-xs w-full sm:w-auto sm:min-w-[70px]',
+              'h-8 w-8 text-xs',
               session.status === 'attended' && 'bg-green-500 text-white hover:bg-green-600'
             )}
             onClick={() => handleStatusChange('attended')}
           >
-            Present
+            P
           </Button>
 
           <Button
-            size="sm"
+            size="icon"
             variant={session.status === 'missed' ? 'destructive' : 'outline'}
             className={cn(
-              'h-8 text-xs w-full sm:w-auto sm:min-w-[70px]',
+              'h-8 w-8 text-xs',
               session.status === 'missed' && 'bg-red-500 text-white hover:bg-red-600'
             )}
             onClick={() => handleStatusChange('missed')}
           >
-            Absent
+            A
           </Button>
 
           <Button
-            size="sm"
+            size="icon"
             variant={session.status === 'holiday' ? 'secondary' : 'outline'}
             className={cn(
-              'h-8 text-xs w-full sm:w-auto sm:min-w-[70px]',
+              'h-8 w-8 text-xs',
               session.status === 'holiday' && 'bg-gray-500 text-white hover:bg-gray-600'
             )}
             onClick={() => handleStatusChange('holiday')}
           >
-            Holiday
+            H
           </Button>
 
           <Button
-            size="sm"
+            size="icon"
             variant={session.status === 'cancelled' ? 'secondary' : 'outline'}
             className={cn(
-              'h-8 text-xs w-full sm:w-auto sm:min-w-[70px]',
+              'h-8 w-8 text-xs',
               session.status === 'cancelled' && 'bg-yellow-500 text-white hover:bg-yellow-600'
             )}
             onClick={() => handleStatusChange('cancelled')}
           >
-            Cancel
+            C
           </Button>
         </div>
       </div>
