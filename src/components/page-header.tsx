@@ -6,6 +6,10 @@ type PageHeaderProps = {
 };
 
 export default function PageHeader({ title, description, children }: PageHeaderProps) {
+  const childrenArray = React.Children.toArray(children);
+  const primaryActions = childrenArray.slice(0, -1);
+  const secondaryActions = childrenArray.slice(-1);
+
   return (
     <div className="flex flex-col w-full">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -18,8 +22,10 @@ export default function PageHeader({ title, description, children }: PageHeaderP
                         <p className="text-sm text-muted-foreground">{description}</p>
                     )}
                 </div>
+                 <div className="hidden sm:flex items-center gap-2">{primaryActions}</div>
             </div>
-             <div className="flex items-center gap-2 self-end sm:self-auto">{children}</div>
+             <div className="flex items-center gap-2 self-end sm:self-auto">{secondaryActions}</div>
+             <div className="flex sm:hidden items-center gap-2 self-end sm:self-auto">{primaryActions}</div>
         </div>
     </div>
   );

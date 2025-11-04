@@ -180,16 +180,20 @@ function TimetableContent() {
       <div className="w-full">
         <div>
             <PageHeader title="Timetable" description="Your weekly class schedule.">
-                <Button variant="outline" onClick={handleShare}><Share2 className="mr-2" /> Share</Button>
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button><PlusCircle className="mr-2" /> Add Class</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
-                        <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-                    </DialogContent>
-                </Dialog>
+                <div className="flex items-center gap-2">
+                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button><PlusCircle className="mr-2" /> Add Class</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
+                            <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+                        </DialogContent>
+                    </Dialog>
+                </div>
+                 <div className="flex items-center gap-2">
+                    <Button variant="outline" size="icon" onClick={handleShare}><Share2/></Button>
+                 </div>
             </PageHeader>
         </div>
 
