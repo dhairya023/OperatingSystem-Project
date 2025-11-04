@@ -27,10 +27,10 @@ const MessageSquareIcon = () => (
 
 export function ShareDialog({ isOpen, onOpenChange, shareUrl, title, description }: ShareDialogProps) {
   const { toast } = useToast();
-  const [canShare, setCanShare] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setCanShare(!!navigator.share);
+    setIsClient(true);
   }, []);
 
   const shareData = {
@@ -53,7 +53,9 @@ export function ShareDialog({ isOpen, onOpenChange, shareUrl, title, description
       try {
         await navigator.share(shareData);
       } catch (error) {
-        console.log('Error sharing:', error);
+        // This error can happen if the user cancels the share sheet.
+        // We can safely ignore it.
+        console.log('Share cancelled or failed:', error);
       }
     } else {
         toast({ variant: 'destructive', title: 'Not Supported', description: 'Web Share API is not supported in your browser.' });
@@ -61,6 +63,8 @@ export function ShareDialog({ isOpen, onOpenChange, shareUrl, title, description
   };
   
   const encodedShareText = encodeURIComponent(`${shareData.text} ${shareData.url}`);
+
+  const canShare = isClient && !!navigator.share;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
