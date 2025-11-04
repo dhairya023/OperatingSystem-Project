@@ -26,24 +26,26 @@ export default function DashboardSummary() {
     const firstName = profile.fullName ? profile.fullName.split(' ')[0] : 'there';
 
     return (
-        <Card className="hover:border-primary/50 transition-colors">
-            <CardContent className="p-4 md:p-6">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-                    <div className="mb-4 md:mb-0">
-                        <h2 className="text-xl md:text-2xl font-bold font-headline">Hey {firstName}, ready for class?</h2>
-                        <p className="text-sm text-muted-foreground">Here is your summary for today.</p>
+        <div className="relative rounded-2xl p-[2px] bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 animate-gradient-border shadow-lg">
+            <Card className="border-none">
+                <CardContent className="p-4 md:p-6 bg-background rounded-xl">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div className="mb-4 md:mb-0">
+                            <h2 className="text-xl md:text-2xl font-bold font-headline">Hey {firstName}, ready for class?</h2>
+                            <p className="text-sm text-muted-foreground">Here is your summary for today.</p>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 md:gap-3 text-center w-full md:w-auto">
+                            {summaryItems.map(item => (
+                                 <div key={item.label} className="p-2 md:p-3 rounded-lg bg-muted/50 flex flex-col items-center justify-center gap-1">
+                                    <item.icon className="w-5 h-5 text-primary"/>
+                                    <span className="text-base md:text-lg font-bold text-foreground">{item.value}</span>
+                                    <span className="text-[10px] md:text-xs text-muted-foreground">{item.label}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-2 md:gap-3 text-center w-full md:w-auto">
-                        {summaryItems.map(item => (
-                             <div key={item.label} className="p-2 md:p-3 rounded-lg bg-muted/50 flex flex-col items-center justify-center gap-1">
-                                <item.icon className="w-5 h-5 text-primary"/>
-                                <span className="text-base md:text-lg font-bold text-foreground">{item.value}</span>
-                                <span className="text-[10px] md:text-xs text-muted-foreground">{item.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        </div>
     );
 }
