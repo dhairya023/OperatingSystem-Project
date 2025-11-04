@@ -1,3 +1,4 @@
+
 'use client';
 import AppLayout from '@/components/app-layout';
 import PageHeader from '@/components/page-header';
@@ -70,7 +71,7 @@ function AttendanceContent() {
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto w-full space-y-8">
+      <div className="mx-auto w-full space-y-8" style={{width: '1240px'}}>
         <PageHeader title="Attendance" description="Track your attendance for all subjects." />
 
         <Card>
