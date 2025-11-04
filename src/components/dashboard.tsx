@@ -1,3 +1,4 @@
+
 'use client';
 import AttendanceOverview from "@/components/dashboard/attendance-overview";
 import DashboardSummary from "@/components/dashboard/dashboard-summary";
@@ -14,12 +15,12 @@ export default function Dashboard() {
       
       <DashboardSummary />
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-2 gap-6">
         <NextLecture />
         <ExamCountdown />
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-2 gap-6">
         <UpcomingClasses />
         <AttendanceOverview />
       </div>
