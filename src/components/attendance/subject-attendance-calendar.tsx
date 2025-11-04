@@ -55,10 +55,10 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
   if (isMini) {
     return (
         <div className="w-full">
-            <div className="grid grid-cols-7 gap-2 text-center text-xs text-muted-foreground">
-                {weekDays.map((day) => <div key={day} className="w-8 h-8 flex items-center justify-center">{day.charAt(0)}</div>)}
+            <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted-foreground">
+                {weekDays.map((day) => <div key={day} className="w-6 h-6 flex items-center justify-center">{day.charAt(0)}</div>)}
             </div>
-            <div className="grid grid-cols-7 gap-2 mt-2">
+            <div className="grid grid-cols-7 gap-1 mt-1">
                 {Array.from({ length: startingDay }).map((_, i) => <div key={`empty-${i}`} />)}
                 {daysInMonth.map((day) => {
                     const dateKey = format(day, 'yyyy-MM-dd');
@@ -66,8 +66,8 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
                     const status = dayClasses?.[0]?.status || 'default';
                     return (
                         <div key={day.toString()} className={cn(
-                            "w-8 h-8 rounded-full flex items-center justify-center text-xs",
-                            isToday(day) && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                            "w-6 h-6 rounded-full flex items-center justify-center text-xs",
+                            isToday(day) && "ring-1 ring-primary ring-offset-1 ring-offset-background",
                         )}>
                             {getDate(day)}
                         </div>
