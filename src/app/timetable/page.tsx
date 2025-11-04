@@ -198,7 +198,7 @@ function TimetableContent() {
   }
 
   return (
-    <div className="flex flex-col flex-1 p-4 md:p-6 lg:p-8">
+    <div className="flex flex-col flex-1 p-4 md:p-6 lg:p-8 max-w-full overflow-x-hidden">
       <div className="w-full">
         <PageHeader title="Timetable" description="Your weekly class schedule.">
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
