@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import { useAppContext } from '@/context/app-context';
@@ -14,15 +15,17 @@ import { format, addMonths } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { TimePicker } from '@/components/ui/time-picker';
+import { Separator } from '../ui/separator';
 
 type ClassSessionFormProps = {
   session?: ClassSession;
-  onSave: () => void;
+  onSave: (session: ClassSession, scope: 'single' | 'future' | 'all') => void;
   defaultDate?: Date;
+  isRecurring?: boolean;
 };
 
-export default function ClassSessionForm({ session, onSave, defaultDate }: ClassSessionFormProps) {
-  const { subjects, addClass, updateClass } = useAppContext();
+export default function ClassSessionForm({ session, onSave, defaultDate, isRecurring = false }: ClassSessionFormProps) {
+  const { subjects, addClass } = useAppContext();
   const [subject, setSubject] = useState(session?.subject || '');
   const [date, setDate] = useState<Date | undefined>(session ? new Date(session.date) : (defaultDate || new Date()));
   const [startTime, setStartTime] = useState(session?.startTime || '');
@@ -31,8 +34,9 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   
   const [repeat, setRepeat] = useState<'once' | 'weekly'>(session?.rrule ? 'weekly' : 'once');
+  const [editScope, setEditScope] = useState<'single' | 'future' | 'all'>('single');
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!subject || !date || !startTime || !endTime) return;
     
@@ -46,21 +50,22 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
       startTime,
       endTime,
       room,
-      status: session?.status, // Default status
+      status: session?.status, // Keep existing status
       date,
-      ...(repeat === 'weekly' && { rrule: session?.rrule || crypto.randomUUID(), repeatUntil: addMonths(new Date(date), 3) }),
+      ...(repeat === 'weekly' && !session && { rrule: crypto.randomUUID(), repeatUntil: addMonths(new Date(date), 3) }),
+      ...(session?.rrule && { rrule: session.rrule, repeatUntil: session.repeatUntil })
     };
     
     if (session) {
-      updateClass(newSession, 'single');
+      const scope = (e.currentTarget.dataset.scope as 'single' | 'future' | 'all') || 'single';
+      onSave(newSession, scope);
     } else {
-      addClass(newSession);
+      addClass(newSession); // addClass handles recurrence itself
     }
-    onSave();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form>
       <div className="grid gap-4 py-4">
         <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
           <Label htmlFor="subject" className="text-left md:text-right">Subject</Label>
@@ -74,7 +79,7 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
           </Select>
         </div>
 
-        {!session && ( // Don't show repeat options when editing a single instance
+        {!session && ( // Only show repeat options when creating a new class
           <>
             <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
               <Label className="text-left md:text-right">Repeat</Label>
@@ -89,41 +94,27 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
                 </div>
               </RadioGroup>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
-                <Label htmlFor="date" className="text-left md:text-right">
-                  {repeat === 'weekly' ? 'Start Date' : 'Date'}
-                </Label>
-                <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
-                    <PopoverTrigger asChild>
-                        <Button
-                        variant={"outline"}
-                        className={cn("md:col-span-3 justify-start text-left font-normal",!date && "text-muted-foreground")}>
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={date} onSelect={(d) => {setDate(d); setIsDatePickerOpen(false);}} initialFocus/></PopoverContent>
-                </Popover>
-            </div>
           </>
         )}
 
-        {session && ( // Only show date for single edits
-           <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
-            <Label htmlFor="date" className="text-left md:text-right">Date</Label>
+        <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
+            <Label htmlFor="date" className="text-left md:text-right">
+              {repeat === 'weekly' && !session ? 'Start Date' : 'Date'}
+            </Label>
             <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
                 <PopoverTrigger asChild>
-                    <Button variant={"outline"} className={cn("md:col-span-3 justify-start text-left font-normal", !date && "text-muted-foreground")}>
+                    <Button
+                    variant={"outline"}
+                    className={cn("md:col-span-3 justify-start text-left font-normal",!date && "text-muted-foreground")}
+                    disabled={isRecurring && editScope !== 'single'}
+                    >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {date ? format(date, "PPP") : <span>Pick a date</span>}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={date} onSelect={(d) => {setDate(d); setIsDatePickerOpen(false);}} initialFocus /></PopoverContent>
+                <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={date} onSelect={(d) => {setDate(d); setIsDatePickerOpen(false);}} initialFocus/></PopoverContent>
             </Popover>
-           </div>
-        )}
-
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
           <Label className="text-left md:text-right">Start Time</Label>
@@ -143,9 +134,24 @@ export default function ClassSessionForm({ session, onSave, defaultDate }: Class
         </div>
       </div>
       <DialogFooter>
-        <DialogClose asChild>
-          <Button type="submit">Save Class</Button>
-        </DialogClose>
+        {isRecurring ? (
+            <div className="flex flex-col gap-2 w-full">
+                <Separator />
+                <DialogClose asChild>
+                    <Button type="button" data-scope="single" onClick={handleSubmit}>Save For This Class Only</Button>
+                </DialogClose>
+                <DialogClose asChild>
+                    <Button type="button" data-scope="future" onClick={handleSubmit}>Save For This & Future Classes</Button>
+                </DialogClose>
+                 <DialogClose asChild>
+                    <Button type="button" data-scope="all" onClick={handleSubmit}>Save For All Classes</Button>
+                </DialogClose>
+            </div>
+        ) : (
+            <DialogClose asChild>
+              <Button type="button" data-scope="single" onClick={handleSubmit}>Save Class</Button>
+            </DialogClose>
+        )}
       </DialogFooter>
     </form>
   );

@@ -209,7 +209,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const addClass = async (session: ClassSession) => {
     if (!user) throw new Error('User not logged in');
-    const newClasses: Omit<ClassSession, 'status'>[] = [];
+    let newClasses = [...(userData?.classes || [])];
   
     const baseSession = {
       subject: session.subject,
@@ -220,32 +220,32 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     };
   
     if (session.rrule) {
-      const rruleId = crypto.randomUUID();
-      const endDate = addMonths(new Date(session.date), 3);
+      const rruleId = session.rrule;
+      const endDate = session.repeatUntil || addMonths(new Date(session.date), 3);
       let loopDate = startOfDay(new Date(session.date));
   
       while (loopDate <= endDate) {
-        newClasses.push({
-          ...baseSession,
-          id: crypto.randomUUID(),
-          date: new Date(loopDate),
-          rrule: rruleId,
-          repeatUntil: endDate,
-        });
+        // Avoid adding duplicates
+        if (!newClasses.some(c => c.rrule === rruleId && startOfDay(new Date(c.date)).getTime() === loopDate.getTime())) {
+             newClasses.push({
+                ...baseSession,
+                id: crypto.randomUUID(),
+                date: new Date(loopDate),
+                rrule: rruleId,
+                repeatUntil: endDate,
+            });
+        }
         loopDate = addDays(loopDate, 7);
       }
     } else {
       newClasses.push({
         ...baseSession,
-        id: crypto.randomUUID(),
+        id: session.id,
         date: new Date(session.date),
       });
     }
     
-    await updateUserData('classes', [
-      ...(userData?.classes || []),
-      ...newClasses,
-    ]);
+    await updateUserData('classes', newClasses);
   };
 
 
@@ -253,7 +253,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       let currentClasses = [...(userData?.classes || [])];
       
       if (scope === 'single' || !session.rrule) {
-          currentClasses = currentClasses.map(c => c.id === session.id ? session : c);
+          // If it's a single instance or made to be single, just update it.
+          // Also remove recurrence info if it was part of a series but now is a single instance.
+          const updatedSession = { ...session, rrule: undefined, repeatUntil: undefined };
+          currentClasses = currentClasses.map(c => c.id === session.id ? updatedSession : c);
       } else {
           const sessionDate = startOfDay(new Date(session.date));
           currentClasses = currentClasses.map(c => {
@@ -264,6 +267,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
                       (scope === 'future' && (cDate.getTime() >= sessionDate.getTime()));
                   
                   if (shouldUpdate) {
+                      // Preserve original date and id, but update other details
                       return {
                           ...c,
                           subject: session.subject,
@@ -271,7 +275,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
                           startTime: session.startTime,
                           endTime: session.endTime,
                           room: session.room,
-                          repeatUntil: session.repeatUntil
                       };
                   }
               }

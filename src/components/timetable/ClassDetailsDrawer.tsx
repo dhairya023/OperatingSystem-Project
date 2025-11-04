@@ -3,14 +3,13 @@
 
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { Edit, Trash2, MapPin, Clock, History, Copy, Trash } from 'lucide-react';
+import { Edit, Trash2, MapPin, Clock } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetDescription,
-  SheetFooter
 } from '@/components/ui/sheet';
 import {
   Dialog,
@@ -19,19 +18,15 @@ import {
   DialogTitle,
   DialogFooter,
   DialogClose,
+  DialogDescription,
 } from '@/components/ui/dialog';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    DropdownMenuSeparator,
-  } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import type { ClassSession } from '@/lib/types';
 import { useAppContext } from '@/context/app-context';
 import ClassSessionForm from './class-session-form';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { Label } from '../ui/label';
 
 type ClassDetailsDrawerProps = {
   session: ClassSession;
@@ -52,32 +47,53 @@ export function ClassDetailsDrawer({ session, isOpen, onOpenChange }: ClassDetai
   const { subjects, updateClass, deleteClass } = useAppContext();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [editScope, setEditScope] = useState<'single' | 'future' | 'all'>('single');
-  const [deleteScope, setDeleteScope] = useState<'single' | 'future' | 'all'>('single');
+  const [isScopeDialogOpen, setIsScopeDialogOpen] = useState(false);
+  const [actionType, setActionType] = useState<'edit' | 'delete' | null>(null);
 
   const subject = subjects.find(s => s.name === session.subject);
   const color = subject?.color || '#A1A1AA';
 
-  const handleUpdate = (updatedSession: ClassSession) => {
-    updateClass(updatedSession, editScope);
+  const handleEditClick = () => {
+    if (session.rrule) {
+      setActionType('edit');
+      setIsScopeDialogOpen(true);
+    } else {
+      setIsEditDialogOpen(true);
+    }
+  };
+  
+  const handleDeleteClick = () => {
+    if (session.rrule) {
+      setActionType('delete');
+      setIsScopeDialogOpen(true);
+    } else {
+      setIsDeleteDialogOpen(true);
+    }
+  }
+  
+  const handleScopeConfirm = (scope: 'single' | 'future' | 'all') => {
+      setIsScopeDialogOpen(false);
+      if (actionType === 'edit') {
+        // We pass the scope to the form through a prop that is not there,
+        // Instead, let's just directly call the update function with the selected scope
+        setIsEditDialogOpen(true);
+      } else if (actionType === 'delete') {
+        deleteClass(session, scope);
+        onOpenChange(false);
+      }
+  }
+  
+  const handleUpdate = (updatedSession: ClassSession, scope: 'single' | 'future' | 'all') => {
+    updateClass(updatedSession, scope);
     setIsEditDialogOpen(false);
   };
 
   const handleDelete = () => {
-    deleteClass(session, deleteScope);
+    // This is now only for single-instance deletes
+    deleteClass(session, 'single');
     setIsDeleteDialogOpen(false);
     onOpenChange(false);
   };
-  
-  const openEditDialog = (scope: 'single' | 'future' | 'all') => {
-      setEditScope(scope);
-      setIsEditDialogOpen(true);
-  }
-  
-  const openDeleteDialog = (scope: 'single' | 'future' | 'all') => {
-      setDeleteScope(scope);
-      setIsDeleteDialogOpen(true);
-  }
 
   return (
     <>
@@ -103,40 +119,15 @@ export function ClassDetailsDrawer({ session, isOpen, onOpenChange }: ClassDetai
             )}
             <Separator />
             <div className="space-y-2">
-                 <Button variant="ghost" className="w-full justify-start p-2 h-auto" onClick={() => openEditDialog('single')}>
+                 <Button variant="ghost" className="w-full justify-start p-2 h-auto" onClick={handleEditClick}>
                     <Edit className="w-5 h-5 mr-4"/>
-                    <span>Edit</span>
+                    <span>Edit Class</span>
                 </Button>
-                <Button variant="ghost" className="w-full justify-start p-2 h-auto text-destructive hover:text-destructive" onClick={() => openDeleteDialog('single')}>
+                <Button variant="ghost" className="w-full justify-start p-2 h-auto text-destructive hover:text-destructive" onClick={handleDeleteClick}>
                     <Trash2 className="w-5 h-5 mr-4"/>
-                    <span>Delete</span>
+                    <span>Delete Class</span>
                 </Button>
             </div>
-
-            {session.rrule && (
-                <>
-                    <Separator />
-                    <p className="text-xs text-muted-foreground px-2">This is a recurring class.</p>
-                     <div className="space-y-2">
-                         <Button variant="ghost" className="w-full justify-start p-2 h-auto" onClick={() => openEditDialog('future')}>
-                            <Copy className="w-5 h-5 mr-4"/>
-                            <span>Edit this and future classes</span>
-                        </Button>
-                          <Button variant="ghost" className="w-full justify-start p-2 h-auto" onClick={() => openEditDialog('all')}>
-                            <History className="w-5 h-5 mr-4"/>
-                            <span>Edit all classes</span>
-                        </Button>
-                        <Button variant="ghost" className="w-full justify-start p-2 h-auto text-destructive hover:text-destructive" onClick={() => openDeleteDialog('future')}>
-                            <Trash className="w-5 h-5 mr-4"/>
-                            <span>Delete this and future classes</span>
-                        </Button>
-                         <Button variant="ghost" className="w-full justify-start p-2 h-auto text-destructive hover:text-destructive" onClick={() => openDeleteDialog('all')}>
-                            <Trash2 className="w-5 h-5 mr-4"/>
-                            <span>Delete all classes</span>
-                        </Button>
-                    </div>
-                </>
-            )}
           </div>
         </SheetContent>
       </Sheet>
@@ -145,10 +136,12 @@ export function ClassDetailsDrawer({ session, isOpen, onOpenChange }: ClassDetai
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Class</DialogTitle>
+             {session.rrule && <DialogDescription>How would you like to apply these changes?</DialogDescription>}
           </DialogHeader>
           <ClassSessionForm
-            session={editScope === 'single' ? { ...session, rrule: undefined } : session}
-            onSave={() => setIsEditDialogOpen(false)}
+            session={session}
+            onSave={(updatedSession, scope) => handleUpdate(updatedSession, scope)}
+            isRecurring={!!session.rrule}
           />
         </DialogContent>
       </Dialog>
@@ -158,24 +151,39 @@ export function ClassDetailsDrawer({ session, isOpen, onOpenChange }: ClassDetai
           <DialogHeader>
             <DialogTitle>Delete Class</DialogTitle>
           </DialogHeader>
-          <p>
-            Are you sure you want to delete{' '}
-            {deleteScope === 'single'
-              ? 'this class'
-              : deleteScope === 'future'
-              ? 'this and all future classes'
-              : 'all classes in this series'}
-            ?
-          </p>
+          <p>Are you sure you want to delete this class?</p>
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="ghost">Cancel</Button>
-            </DialogClose>
-            <Button variant="destructive" onClick={handleDelete}>
-              Delete
-            </Button>
+            <DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose>
+            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
           </DialogFooter>
         </DialogContent>
+      </Dialog>
+
+      <Dialog open={isScopeDialogOpen} onOpenChange={setIsScopeDialogOpen}>
+          <DialogContent>
+              <DialogHeader>
+                  <DialogTitle>{actionType === 'edit' ? 'Edit' : 'Delete'} Recurring Class</DialogTitle>
+                  <DialogDescription>
+                      This is a recurring class. Please choose how you want to {actionType} it.
+                  </DialogDescription>
+              </DialogHeader>
+               <div className="flex flex-col gap-4 py-4">
+                  <Button variant="outline" onClick={() => handleScopeConfirm('single')}>
+                      {actionType === 'edit' ? 'Edit' : 'Delete'} This Class Only
+                  </Button>
+                  <Button variant="outline" onClick={() => handleScopeConfirm('future')}>
+                      {actionType === 'edit' ? 'Edit' : 'Delete'} This and All Future Classes
+                  </Button>
+                  <Button variant="outline" onClick={() => handleScopeConfirm('all')}>
+                      {actionType === 'edit' ? 'Edit' : 'Delete'} All Classes in Series
+                  </Button>
+              </div>
+              <DialogFooter>
+                  <DialogClose asChild>
+                      <Button variant="ghost">Cancel</Button>
+                  </DialogClose>
+              </DialogFooter>
+          </DialogContent>
       </Dialog>
     </>
   );
