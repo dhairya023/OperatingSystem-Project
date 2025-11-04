@@ -144,7 +144,7 @@ function AttendanceContent() {
                       <div className="flex items-center gap-2">
                       <Progress 
                         value={subjectData.total > 0 ? Math.round((subjectData.attended / subjectData.total) * 100) : 0} 
-                        className="h-2 [&>div]:bg-primary"
+                        className="h-2"
                         indicatorClassName={getProgressColor(subjectData.total > 0 ? Math.round((subjectData.attended / subjectData.total) * 100) : 0)}
                       />
                       <span className={cn("text-xs font-semibold", getTextColor(subjectData.total > 0 ? Math.round((subjectData.attended / subjectData.total) * 100) : 0))}>
