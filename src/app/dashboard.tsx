@@ -15,8 +15,11 @@ export default function Dashboard() {
   const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
+    // This code runs only on the client, avoiding server/client mismatches.
     const hour = new Date().getHours();
-    const name = profile?.fullName?.split(' ')[0] || '';
+    // Use the first name from the user's profile, or a generic greeting if not available.
+    const name = profile?.fullName?.split(' ')[0] || 'there';
+    
     let timeOfDay;
     if (hour < 12) {
       timeOfDay = 'Good morning';
@@ -26,11 +29,12 @@ export default function Dashboard() {
       timeOfDay = 'Good evening';
     }
     setGreeting(`${timeOfDay}, ${name} 👋`);
-  }, [profile]);
+
+  }, [profile]); // Rerun this effect if the profile data changes.
 
   return (
-    <div className="flex flex-col gap-6 p-4 md:p-6 lg:p-8">
-      <PageHeader title={greeting} />
+    <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
+      <PageHeader title={greeting} description="Here's your academic summary" />
       
       <DashboardSummary />
 
