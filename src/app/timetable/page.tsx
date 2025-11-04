@@ -23,6 +23,7 @@ import {
 import ClassSessionForm from '@/components/timetable/class-session-form';
 import { ClassDetailsDrawer } from '@/components/timetable/ClassDetailsDrawer';
 import { useToast } from '@/hooks/use-toast';
+import { ShareDialog } from '@/components/share-dialog';
 
 const formatTime12h = (time: string) => {
     if (!time) return '';
@@ -73,6 +74,8 @@ function TimetableContent() {
   const { subjects, classes, shareTimetable, getSharedTimetable, importTimetable } = useAppContext();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
   const { toast } = useToast();
   const searchParams = useSearchParams();
 
@@ -104,9 +107,9 @@ function TimetableContent() {
   const handleShare = async () => {
     try {
       const code = await shareTimetable();
-      const shareUrl = `${window.location.origin}/timetable?importCode=${code}`;
-      await navigator.clipboard.writeText(shareUrl);
-      toast({ title: 'Link Copied!', description: 'Timetable sharing link has been copied to your clipboard.' });
+      const url = `${window.location.origin}/timetable?importCode=${code}`;
+      setShareUrl(url);
+      setIsShareDialogOpen(true);
     } catch (error) {
       console.error('Failed to share timetable:', error);
       toast({ variant: 'destructive', title: 'Sharing Failed', description: 'Could not create a shareable link.' });
@@ -249,6 +252,14 @@ function TimetableContent() {
           </DialogContent>
         </Dialog>
 
+        <ShareDialog
+            isOpen={isShareDialogOpen}
+            onOpenChange={setIsShareDialogOpen}
+            shareUrl={shareUrl}
+            title="Share Your Timetable"
+            description="Anyone with this link can view and import your timetable."
+        />
+
       </div>
     </div>
   );
@@ -262,5 +273,3 @@ export default function TimetablePage() {
         </AppLayout>
     )
 }
-
-    
