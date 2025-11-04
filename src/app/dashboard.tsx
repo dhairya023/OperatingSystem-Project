@@ -1,4 +1,3 @@
-
 'use client';
 import AttendanceOverview from "@/components/dashboard/attendance-overview";
 import DashboardSummary from "@/components/dashboard/dashboard-summary";
@@ -8,20 +7,25 @@ import PendingAssignments from "@/components/dashboard/pending-assignments";
 import UpcomingClasses from "@/components/dashboard/upcoming-classes";
 import PageHeader from "@/components/page-header";
 import { useState, useEffect } from 'react';
+import { useAppContext } from "@/context/app-context";
 
 export default function Dashboard() {
+  const { profile } = useAppContext();
   const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
     const hour = new Date().getHours();
+    const name = profile?.fullName?.split(' ')[0] || '';
+    let timeOfDay;
     if (hour < 12) {
-      setGreeting('Good morning! 👋');
+      timeOfDay = 'Good morning';
     } else if (hour < 18) {
-      setGreeting('Good afternoon! 👋');
+      timeOfDay = 'Good afternoon';
     } else {
-      setGreeting('Good evening! 👋');
+      timeOfDay = 'Good evening';
     }
-  }, []);
+    setGreeting(`${timeOfDay}, ${name} 👋`);
+  }, [profile]);
 
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 lg:p-8">
