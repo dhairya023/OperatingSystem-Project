@@ -28,22 +28,22 @@ export default function UpcomingClasses() {
   return (
     <Link href="/timetable" className="block h-full">
         <Card className="h-full hover:border-primary/50 transition-colors">
-        <CardHeader className="p-4 md:p-6">
+        <CardHeader className="p-4">
             <CardTitle className="text-base">Today's Classes</CardTitle>
-            <CardDescription className="text-xs">Here are your classes for today.</CardDescription>
+            <CardDescription className="text-xs">Your schedule for today.</CardDescription>
         </CardHeader>
-        <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+        <CardContent className="p-4 pt-0">
             {upcomingClasses.length > 0 ? (
             <div className="flex flex-col gap-3">
                 {upcomingClasses.slice(0,3).map((session, index) => (
                 <div key={session.id}>
                     <div className="flex items-start gap-3">
                     <div className="flex-1">
-                        <p className="font-semibold text-sm">{session.subject}</p>
+                        <p className="font-semibold text-sm leading-tight">{session.subject}</p>
                         <p className="text-xs text-muted-foreground">{session.teacher}</p>
-                        <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-1 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1.5"><Clock className="w-3 h-3"/> {formatTime12h(session.startTime)} - {formatTime12h(session.endTime)}</span>
-                        {session.room && <span className="flex items-center gap-1.5"><DoorClosed className="w-3 h-3"/> {session.room}</span>}
+                        <div className="flex items-center flex-wrap gap-x-2 gap-y-1 mt-1 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1"><Clock className="w-3 h-3"/> {formatTime12h(session.startTime)}</span>
+                        {session.room && <span className="flex items-center gap-1"><DoorClosed className="w-3 h-3"/> {session.room}</span>}
                         </div>
                     </div>
                     {session.status && (
@@ -59,7 +59,7 @@ export default function UpcomingClasses() {
             ) : (
             <div className="flex flex-col items-center justify-center h-full min-h-[140px] text-center bg-muted/50 rounded-lg">
                 <Bell className="w-8 h-8 text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">No classes scheduled for today.</p>
+                <p className="mt-2 text-sm text-muted-foreground">No classes today.</p>
             </div>
             )}
         </CardContent>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -56,7 +57,7 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
     return (
         <div className="w-full">
             <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted-foreground">
-                {weekDays.map((day) => <div key={day} className="w-6 h-6 flex items-center justify-center">{day.charAt(0)}</div>)}
+                {weekDays.map((day) => <div key={day} className="w-full aspect-square flex items-center justify-center">{day.charAt(0)}</div>)}
             </div>
             <div className="grid grid-cols-7 gap-1 mt-1">
                 {Array.from({ length: startingDay }).map((_, i) => <div key={`empty-${i}`} />)}
@@ -66,7 +67,7 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false }: S
                     const status = dayClasses?.[0]?.status || 'default';
                     return (
                         <div key={day.toString()} className={cn(
-                            "w-6 h-6 rounded-full flex items-center justify-center text-xs",
+                            "w-full aspect-square rounded-full flex items-center justify-center text-xs",
                             isToday(day) && "ring-1 ring-primary ring-offset-1 ring-offset-background",
                         )}>
                             {getDate(day)}
