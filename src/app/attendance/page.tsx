@@ -42,9 +42,21 @@ function AttendanceContent() {
         return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime()
     });
 
+  const getProgressColor = (percentage: number) => {
+    if (percentage >= 90) return 'bg-green-500';
+    if (percentage >= 80) return 'bg-yellow-500';
+    return 'bg-red-500';
+  };
+
+  const getTextColor = (percentage: number) => {
+    if (percentage >= 90) return 'text-green-500';
+    if (percentage >= 80) return 'text-yellow-500';
+    return 'text-red-500';
+  }
+
   if (subjects.length === 0) {
     return (
-       <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
+       <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8 max-w-4xl mx-auto w-full">
         <PageHeader title="Attendance" description="Track your attendance for all subjects." />
          <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
            <div className="text-center">
@@ -130,8 +142,14 @@ function AttendanceContent() {
                       </span>
                       </div>
                       <div className="flex items-center gap-2">
-                      <Progress value={subjectData.total > 0 ? Math.round((subjectData.attended / subjectData.total) * 100) : 0} className="h-2" />
-                      <span className="text-xs font-semibold text-primary">{subjectData.total > 0 ? Math.round((subjectData.attended / subjectData.total) * 100) : 0}%</span>
+                      <Progress 
+                        value={subjectData.total > 0 ? Math.round((subjectData.attended / subjectData.total) * 100) : 0} 
+                        className="h-2 [&>div]:bg-primary"
+                        indicatorClassName={getProgressColor(subjectData.total > 0 ? Math.round((subjectData.attended / subjectData.total) * 100) : 0)}
+                      />
+                      <span className={cn("text-xs font-semibold", getTextColor(subjectData.total > 0 ? Math.round((subjectData.attended / subjectData.total) * 100) : 0))}>
+                        {subjectData.total > 0 ? Math.round((subjectData.attended / subjectData.total) * 100) : 0}%
+                      </span>
                       </div>
                   </div>
               )}
