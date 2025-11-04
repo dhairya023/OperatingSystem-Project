@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -14,7 +15,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { isDataLoading, profile, logoutUser } = useAppContext();
   const router = useRouter();
   const pathname = usePathname();
-  const [isSplashActive, setIsSplashActive] = useState(true);
 
   useEffect(() => {
     if (isUserLoading || isDataLoading) return;
@@ -26,36 +26,32 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
     if (user && !profile?.profileCompleted && pathname !== '/profile-setup') {
       router.push('/profile-setup');
-    } else if (user && profile?.profileCompleted && pathname === '/profile-setup') {
+    } else if (user && profile?.profileCompleted && (pathname === '/profile-setup' || pathname === '/login')) {
       router.push('/');
     }
 
   }, [user, isUserLoading, isDataLoading, profile, pathname, router]);
 
-  useEffect(() => {
-    // Hide splash screen after the initial load is done.
-    if (!isUserLoading && !(user && isDataLoading)) {
-        // Wait for animation to complete
-        const timer = setTimeout(() => setIsSplashActive(false), 1000); 
-        return () => clearTimeout(timer);
-    }
-  }, [isUserLoading, isDataLoading, user]);
+  // Determine if we should show a loading state or content.
+  // This helps prevent flashes of content during redirects or initial data load.
+  const isRedirecting = 
+    (isUserLoading || (user && isDataLoading)) || 
+    (!user && pathname !== '/login') || 
+    (user && !profile?.profileCompleted && pathname !== '/profile-setup') ||
+    (user && profile?.profileCompleted && (pathname === '/login' || pathname === '/profile-setup'));
 
-
-  const showLoadingContent = isUserLoading || (user && isDataLoading) || (user && !profile?.profileCompleted && pathname !== '/profile-setup');
-  
-  if (isSplashActive) {
-      return <SplashScreen />;
+  // If we are redirecting or loading critical data, render nothing to avoid content flashes.
+  if (isRedirecting) {
+      return null;
   }
-
-  // If user is not logged in and we are not on the login page, we show nothing to prevent flashes of content.
+  
+  // If not logged in, and we are on a page that doesn't need the full AppLayout (like login)
+  // we can just show the children directly. This case is mostly handled by redirection, but
+  // it is a safe fallback.
   if (!user) {
-    return null;
+    return <>{children}</>;
   }
-  
-  if (showLoadingContent) {
-      return null; // Show nothing, as splash screen has just finished or we are redirecting
-  }
+
 
   return (
     <SidebarProvider>
