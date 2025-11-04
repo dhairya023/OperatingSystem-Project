@@ -1,11 +1,10 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useFirebase } from '@/firebase';
 import { Sidebar, SidebarHeader, SidebarContent, SidebarInset, SidebarProvider, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupContent, SidebarTrigger } from '@/components/ui/sidebar';
-import { SidebarNav } from '@/components/sidebar-nav';
 import { GraduationCap, LogOut } from 'lucide-react';
 import { useAppContext } from '@/context/app-context';
 import { cn } from "@/lib/utils"
@@ -18,6 +17,7 @@ import {
   BookCopy,
   User,
   BarChart,
+  GraduationCap as ExamIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button"
 
@@ -26,7 +26,7 @@ const navItems = [
   { href: "/timetable", label: "Timetable", icon: CalendarDays },
   { href: "/attendance", label: "Attendance", icon: UserCheck },
   { href: "/assignments", label: "Assignments", icon: BookCheck },
-  { href: "/exams", label: "Exams", icon: GraduationCap },
+  { href: "/exams", label: "Exams", icon: ExamIcon },
   { href: "/grades", label: "Grades", icon: BarChart },
   { href: "/subjects", label: "Subjects", icon: BookCopy },
   { href: "/profile", label: "Profile", icon: User },

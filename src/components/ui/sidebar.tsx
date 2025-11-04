@@ -224,7 +224,7 @@ const Sidebar = React.forwardRef<
           "transition-all duration-300 ease-in-out",
            variant === "inset" ? "p-2" : "",
            state === "expanded" ? "w-[--sidebar-width]" : "w-20",
-          className,
+          className
         )}
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
