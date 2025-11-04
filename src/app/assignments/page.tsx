@@ -5,7 +5,7 @@ import { useState } from 'react';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, Edit, Trash2, MoreVertical } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -15,72 +15,59 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
 import { useAppContext } from '@/context/app-context';
 import type { Assignment } from '@/lib/types';
 import { format, formatDistanceToNow, isPast } from 'date-fns';
 import AssignmentForm from '@/components/assignments/assignment-form';
 import { cn } from '@/lib/utils';
+import { AssignmentDetailsDrawer } from '@/components/assignments/assignment-details-drawer';
 
 const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment: Assignment, onEdit: () => void, onDelete: () => void, onToggle: (id: string) => void }) => {
   const { subjects } = useAppContext();
   const subject = subjects.find(s => s.name === assignment.subject);
   const isOverdue = !assignment.completed && isPast(new Date(assignment.dueDate));
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const hasDescription = assignment.description && assignment.description.trim() !== '';
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
-    <div className="flex items-start gap-4 p-4 border rounded-lg">
-      <Checkbox
-        id={`ass-${assignment.id}`}
-        checked={assignment.completed}
-        onCheckedChange={() => onToggle(assignment.id)}
-        className="mt-1"
-      />
-      <div className="flex-1">
-        <label htmlFor={`ass-${assignment.id}`} className={cn("font-semibold", assignment.completed && "line-through text-muted-foreground")}>
-            {assignment.title}
-        </label>
-        <div className="flex items-center gap-2 mt-1">
-            {subject && <div className="w-2 h-2 rounded-full" style={{backgroundColor: subject.color}}></div>}
-            <p className="text-sm text-muted-foreground">{assignment.subject}</p>
+    <>
+      <div 
+        className="flex items-start gap-4 p-4 border rounded-lg cursor-pointer"
+        onClick={() => setIsDrawerOpen(true)}
+      >
+        <div className="mt-1" onClick={(e) => e.stopPropagation()}>
+            <Checkbox
+                id={`ass-${assignment.id}`}
+                checked={assignment.completed}
+                onCheckedChange={() => onToggle(assignment.id)}
+            />
         </div>
-        {hasDescription && (
-            <p 
-                className="text-sm text-muted-foreground mt-2 cursor-pointer"
-                onClick={() => setIsExpanded(!isExpanded)}
-            >
-                {isExpanded ? assignment.description : `${assignment.description!.substring(0, 7)}${assignment.description!.length > 7 ? '...' : ''}`}
-            </p>
-        )}
-        <p className={cn("text-xs mt-2", isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
-            Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })} ({format(new Date(assignment.dueDate), 'PPP')})
-        </p>
+        <div className="flex-1">
+          <label htmlFor={`ass-${assignment.id}`} className={cn("font-semibold", assignment.completed && "line-through text-muted-foreground")}>
+              {assignment.title}
+          </label>
+          <div className="flex items-center gap-2 mt-1">
+              {subject && <div className="w-2 h-2 rounded-full" style={{backgroundColor: subject.color}}></div>}
+              <p className="text-sm text-muted-foreground">{assignment.subject}</p>
+          </div>
+          {assignment.description && (
+              <p className="text-sm text-muted-foreground mt-2">
+                  {assignment.description.substring(0, 50)}{assignment.description.length > 50 ? '...' : ''}
+              </p>
+          )}
+          <p className={cn("text-xs mt-2", isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
+              Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })} ({format(new Date(assignment.dueDate), 'PPP')})
+          </p>
+        </div>
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <MoreVertical className="w-4 h-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onSelect={onEdit}>
-            <Edit className="mr-2 h-4 w-4" /> Edit
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={onDelete} className="text-destructive">
-            <Trash2 className="mr-2 h-4 w-4" /> Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+      <AssignmentDetailsDrawer
+        assignment={assignment}
+        isOpen={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    </>
   );
 };
 
