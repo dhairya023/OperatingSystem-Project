@@ -7,11 +7,25 @@ import NextLecture from "@/components/dashboard/next-lecture";
 import PendingAssignments from "@/components/dashboard/pending-assignments";
 import UpcomingClasses from "@/components/dashboard/upcoming-classes";
 import PageHeader from "@/components/page-header";
+import { useState, useEffect } from 'react';
 
 export default function Dashboard() {
+  const [greeting, setGreeting] = useState('');
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      setGreeting('Good morning! 👋');
+    } else if (hour < 18) {
+      setGreeting('Good afternoon! 👋');
+    } else {
+      setGreeting('Good evening! 👋');
+    }
+  }, []);
+
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 lg:p-8">
-      <PageHeader title="Dashboard" description="Welcome back! Here's an overview of your academic life." />
+      <PageHeader title="Dashboard" description={greeting} />
       
       <DashboardSummary />
 

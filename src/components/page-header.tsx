@@ -15,7 +15,7 @@ export default function PageHeader({ title, description, children }: PageHeaderP
                     <SidebarTrigger className="h-10 w-10" />
                 </div>
                 <div className="flex flex-col gap-1">
-                    <h1 className="text-2xl font-bold tracking-tight font-headline md:text-3xl">
+                    <h1 className="text-2xl font-bold tracking-tight font-headline md:text-3xl text-white/90">
                         {title}
                     </h1>
                     {description && (
