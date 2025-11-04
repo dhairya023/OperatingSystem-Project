@@ -10,6 +10,7 @@ import { FirebaseClientProvider } from '@/firebase';
 import { useAppContext } from '@/context/app-context';
 import { useFirebase } from '@/firebase';
 import { usePathname, useRouter } from 'next/navigation';
+import SplashScreen from '@/components/splash-screen';
 
 // This component is necessary to use client-side hooks like useState, useEffect, and the context hooks
 // within the body, while still allowing the RootLayout to provide metadata.
@@ -49,7 +50,7 @@ function AppBody({ children }: { children: React.ReactNode }) {
 
   // While user or app data is loading, or during redirects, we render nothing to prevent flashes.
   if (isUserLoading || isDataLoading || !showContent) {
-    return null;
+    return <SplashScreen />;
   }
   
   return <>{children}</>;
