@@ -20,20 +20,19 @@ function AppBody({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const [isSplashActive, setIsSplashActive] = useState(true);
+  const [isSplashTimingComplete, setIsSplashTimingComplete] = useState(false);
 
-  // This effect handles the initial splash screen timing.
+  // This effect handles the minimum splash screen display time.
   useEffect(() => {
-    // Check if the splash screen has already been shown in this session.
     const splashShown = sessionStorage.getItem('splashShown');
     if (splashShown) {
-      setIsSplashActive(false);
+      setIsSplashTimingComplete(true);
       return;
     }
     
-    // Show splash screen for 1.2 seconds, then hide it and mark as shown.
+    // Show splash screen for at least 1.2 seconds
     const timer = setTimeout(() => {
-      setIsSplashActive(false);
+      setIsSplashTimingComplete(true);
       sessionStorage.setItem('splashShown', 'true');
     }, 1200);
 
@@ -42,7 +41,7 @@ function AppBody({ children }: { children: React.ReactNode }) {
 
   // This effect handles the initial routing logic.
   useEffect(() => {
-    // Don't do anything until all data is loaded.
+    // Wait until firebase auth is resolved and app data has been attempted to load.
     if (isUserLoading || isDataLoading) return;
 
     // If the user is not logged in, and they are not on a public page, redirect to login.
@@ -60,16 +59,21 @@ function AppBody({ children }: { children: React.ReactNode }) {
 
   }, [user, profile, isUserLoading, isDataLoading, pathname, router]);
 
-  // Determine if we should show the content.
+  // Determine if the app is ready to be shown.
+  // It's ready when the minimum splash time is over AND the initial data loading/routing checks are done.
+  const isAppReady = isSplashTimingComplete && !isUserLoading && !isDataLoading;
+
+  // Determine if we should show the final content.
   // This prevents content flashes during initial load or redirects.
-  const showContent = (
+  const showContent = isAppReady && (
     (user && profile?.profileCompleted) || // Regular authenticated user
     pathname === '/login' || // Login page is always accessible
     (user && !profile?.profileCompleted && pathname === '/profile-setup') // Profile setup is accessible
   );
 
-  // While user or app data is loading, or during redirects, we render nothing to prevent flashes.
-  if (isSplashActive || isUserLoading || isDataLoading || !showContent) {
+  // While the app is not ready, we show the splash screen.
+  // This prevents the black screen flash.
+  if (!showContent) {
     return <SplashScreen />;
   }
   
