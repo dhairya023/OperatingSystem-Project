@@ -16,6 +16,7 @@ import {
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   deleteUser,
   signOut,
 } from 'firebase/auth';
@@ -51,6 +52,7 @@ interface AppContextType extends UserData {
   updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
   registerUser: (email: string, password: string, fullName: string) => Promise<void>;
   loginUser: (email: string, password: string) => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
   logoutUser: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   completeProfileSetup: () => Promise<void>;
@@ -182,6 +184,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
   
+  const sendPasswordReset = async (email: string) => {
+    await sendPasswordResetEmail(auth, email);
+  };
+
   const logoutUser = async () => {
     await signOut(auth);
     router.push('/login');
@@ -388,6 +394,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     deleteExam: examUpdater.delete,
     registerUser,
     loginUser,
+    sendPasswordReset,
     logoutUser,
     deleteAccount,
     completeProfileSetup,

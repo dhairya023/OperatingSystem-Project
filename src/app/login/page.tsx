@@ -9,19 +9,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Loader2 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+  DialogClose,
+} from '@/components/ui/dialog';
 
 export default function LoginPage() {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { registerUser, loginUser } = useAppContext();
+  const [isResetting, setIsResetting] = useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+
+  const { registerUser, loginUser, sendPasswordReset } = useAppContext();
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -45,6 +59,30 @@ export default function LoginPage() {
     }
   };
 
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail) {
+        toast({ variant: 'destructive', title: 'Email required', description: 'Please enter your email address.' });
+        return;
+    }
+    setIsResetting(true);
+    try {
+      await sendPasswordReset(resetEmail);
+      toast({ title: 'Password reset email sent!', description: 'Check your inbox to reset your password.' });
+      setTimeout(() => {
+        setIsForgotPasswordOpen(false);
+      }, 2000);
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Reset Failed',
+        description: error.message || 'Could not send reset email.',
+      });
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
@@ -62,7 +100,7 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleAuthSubmit} className="space-y-4">
               {isRegisterMode && (
                 <div className="space-y-2">
                   <Label htmlFor="username">Username</Label>
@@ -100,9 +138,26 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                 />
+                 {!isRegisterMode && (
+                     <div className="flex justify-end">
+                        <Button
+                            type="button"
+                            variant="link"
+                            className="p-0 h-auto text-sm text-primary/80 hover:text-primary"
+                            onClick={() => setIsForgotPasswordOpen(true)}
+                        >
+                            Forgot Password?
+                        </Button>
+                    </div>
+                )}
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Processing...' : isRegisterMode ? 'Register' : 'Sign In'}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : isRegisterMode ? 'Register' : 'Sign In'}
               </Button>
             </form>
             <div className="mt-4 text-center text-sm">
@@ -114,6 +169,44 @@ export default function LoginPage() {
           </CardContent>
         </Card>
       </div>
+
+       <Dialog open={isForgotPasswordOpen} onOpenChange={setIsForgotPasswordOpen}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Forgot Password</DialogTitle>
+                    <DialogDescription>
+                        Enter your registered email address and we'll send you a link to reset your password.
+                    </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handlePasswordReset}>
+                    <div className="grid gap-4 py-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="reset-email">Email Address</Label>
+                            <Input
+                                id="reset-email"
+                                type="email"
+                                placeholder="name@example.com"
+                                required
+                                value={resetEmail}
+                                onChange={(e) => setResetEmail(e.target.value)}
+                                disabled={isResetting}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild><Button type="button" variant="ghost">Cancel</Button></DialogClose>
+                        <Button type="submit" disabled={isResetting}>
+                            {isResetting ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Sending...
+                                </>
+                             ) : "Send Reset Link"}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
     </div>
   );
 }
