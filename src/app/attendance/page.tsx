@@ -85,26 +85,9 @@ function AttendanceContent() {
               <Card className="h-full">
                   <CardHeader>
                       <CardTitle>Daily Attendance</CardTitle>
-                      <CardDescription>Mark attendance for today.</CardDescription>
+                      <CardDescription>{format(currentDate, "PPP")}</CardDescription>
                   </CardHeader>
                   <CardContent className='space-y-4'>
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                      <Button variant="ghost" size="icon" onClick={handlePrevDay} className="h-8 w-8"><ChevronLeft className="w-5 h-5" /></Button>
-                      <Popover>
-                          <PopoverTrigger asChild>
-                              <Button
-                              variant={"outline"}
-                              className={cn("w-full max-w-[200px] text-xs h-9 justify-start text-left font-normal",!currentDate && "text-muted-foreground")}>
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {currentDate ? format(currentDate, "PPP") : <span>Pick a date</span>}
-                              </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0">
-                              <Calendar mode="single" selected={currentDate} onSelect={(d) => d && setCurrentDate(d)} initialFocus/>
-                          </PopoverContent>
-                      </Popover>
-                      <Button variant="ghost" size="icon" onClick={handleNextDay} className="h-8 w-8"><ChevronRight className="w-5 h-5" /></Button>
-                  </div>
                   {Object.keys(dailyClassesBySubject).length > 0 ? (
                       <ScrollArea className="h-96 pr-3">
                           <div className="flex flex-col gap-3">
@@ -114,7 +97,7 @@ function AttendanceContent() {
                           </div>
                       </ScrollArea>
                   ) : (
-                      <div className="flex h-40 flex-col items-center justify-center text-center bg-card/50 rounded-lg">
+                      <div className="flex h-96 flex-col items-center justify-center text-center bg-card/50 rounded-lg">
                       <p className="text-muted-foreground">No classes scheduled.</p>
                       </div>
                   )}
@@ -165,6 +148,11 @@ function AttendanceContent() {
                               </div>
                           </div>
                       )}
+                      <SubjectAttendanceCalendar 
+                        classes={subjectClasses} 
+                        viewingDate={currentDate} 
+                        setViewingDate={setCurrentDate} 
+                      />
                   </CardContent>
               </Card>
           </div>
@@ -183,3 +171,5 @@ export default function AttendancePage() {
         </AppLayout>
     )
 }
+
+    
