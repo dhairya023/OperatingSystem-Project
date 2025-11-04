@@ -4,11 +4,34 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useFirebase } from '@/firebase';
-import { Sidebar, SidebarHeader, SidebarContent, SidebarInset, SidebarProvider, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
+import { Sidebar, SidebarHeader, SidebarContent, SidebarInset, SidebarProvider, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupContent, SidebarTrigger } from '@/components/ui/sidebar';
 import { SidebarNav } from '@/components/sidebar-nav';
 import { GraduationCap, LogOut } from 'lucide-react';
 import { useAppContext } from '@/context/app-context';
-import SplashScreen from './splash-screen';
+import { cn } from "@/lib/utils"
+import Link from 'next/link';
+import {
+  LayoutDashboard,
+  CalendarDays,
+  BookCheck,
+  UserCheck,
+  BookCopy,
+  User,
+  BarChart,
+} from "lucide-react";
+import { Button } from "@/components/ui/button"
+
+const navItems = [
+  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/timetable", label: "Timetable", icon: CalendarDays },
+  { href: "/attendance", label: "Attendance", icon: UserCheck },
+  { href: "/assignments", label: "Assignments", icon: BookCheck },
+  { href: "/exams", label: "Exams", icon: GraduationCap },
+  { href: "/grades", label: "Grades", icon: BarChart },
+  { href: "/subjects", label: "Subjects", icon: BookCopy },
+  { href: "/profile", label: "Profile", icon: User },
+];
+
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useFirebase();
@@ -32,52 +55,115 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   }, [user, isUserLoading, isDataLoading, profile, pathname, router]);
 
-  // Determine if we are in a state where content shouldn't be shown yet.
   const isLoading = isUserLoading || (user && isDataLoading);
   
-  // If we are loading data, or if the user is not yet available, don't render the layout.
-  // The RootLayout will handle showing the splash screen or nothing.
   if (isLoading || !user) {
       return null;
   }
   
-  // If the user is logged in, but the profile isn't complete, and they aren't on the setup page,
-  // we also render nothing to prevent a flash of the wrong content before the redirect happens.
   if (!profile?.profileCompleted && pathname !== '/profile-setup') {
     return null;
   }
 
-
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen bg-background">
-        <Sidebar variant="inset">
-          <SidebarHeader>
-            <div className="flex items-center gap-2 p-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                <GraduationCap className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <h1 className="text-xl font-bold font-headline">Grad</h1>
-            </div>
-          </SidebarHeader>
-          <SidebarContent className="p-0">
-            <SidebarNav />
-          </SidebarContent>
-           <SidebarFooter>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={logoutUser} tooltip={{ children: 'Log Out', side: 'right', align: 'center' }}>
-                  <LogOut />
-                  <span>Log Out</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
+      <div className="flex h-screen bg-black">
+        <Sidebar
+          className={cn(
+            "relative flex h-full w-[--sidebar-width] flex-col transition-all duration-300 ease-in-out p-2",
+          )}
+           variant="inset"
+        >
+          <div
+            data-sidebar="sidebar"
+            className={cn(
+              "flex h-full w-full flex-col bg-card/50 backdrop-blur-md border border-border/40 rounded-xl shadow-xl transition-all duration-300 ease-in-out overflow-hidden",
+            )}
+          >
+            <SidebarHeader className="p-4 border-b border-border/40">
+                <div className="flex items-center gap-2 p-2">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+                        <GraduationCap className="h-6 w-6 text-primary-foreground" />
+                    </div>
+                    <h1 className="text-xl font-bold font-headline">Grad</h1>
+                </div>
+            </SidebarHeader>
+
+            <SidebarContent className="flex-1 px-3 py-4 overflow-y-auto scrollbar-none">
+              <SidebarGroup>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {navItems.map((route) => {
+                      const isActive = pathname === route.href
+                      return (
+                        <SidebarMenuItem key={route.href}>
+                          <Link href={route.href}>
+                            <SidebarMenuButton
+                              className={cn(
+                                "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 ease-out",
+                                isActive
+                                  ? "bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary)/0.5)]"
+                                  : "text-muted-foreground hover:bg-primary/20 hover:text-foreground hover:scale-[1.02]"
+                              )}
+                              isActive={isActive}
+                            >
+                              <route.icon
+                                className={cn(
+                                  "h-5 w-5",
+                                  isActive ? "text-primary-foreground" : "text-muted-foreground group-hover/menu-item:text-foreground"
+                                )}
+                              />
+                              <span>{route.label}</span>
+                            </SidebarMenuButton>
+                          </Link>
+                        </SidebarMenuItem>
+                      )
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+
+            <SidebarFooter className="p-4 border-t border-border/40 mt-auto">
+              {user ? (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-primary/80 text-primary-foreground flex items-center justify-center font-bold">
+                      {profile?.fullName?.[0]?.toUpperCase() || "U"}
+                    </div>
+                    <span className="text-sm text-foreground">
+                      {profile?.fullName || "User"}
+                    </span>
+                  </div>
+                  <Button
+                    onClick={logoutUser}
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground hover:text-red-400 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="secondary"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl"
+                  onClick={() => router.push('/login')}
+                >
+                  Login
+                </Button>
+              )}
+            </SidebarFooter>
+          </div>
         </Sidebar>
-        <SidebarInset>
-            {children}
+
+        <SidebarInset className="flex-1 p-2 md:p-4 overflow-y-auto bg-transparent text-white rounded-2xl md:ml-0">
+          <div className="md:hidden flex items-center justify-between mb-4">
+            <SidebarTrigger />
+          </div>
+           {children}
         </SidebarInset>
       </div>
     </SidebarProvider>
-  );
+  )
 }
