@@ -64,7 +64,7 @@ function AttendanceContent() {
 
   if (subjects.length === 0) {
     return (
-       <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
+       <div className="flex flex-col gap-8 w-full">
         <PageHeader title="Attendance" description="Track your attendance for all subjects." />
          <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
            <div className="text-center">
@@ -77,10 +77,10 @@ function AttendanceContent() {
   }
 
   return (
-    <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
+    <div className="flex flex-col gap-8 w-full">
       <PageHeader title="Attendance" description="Track your attendance for all subjects." />
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mt-8">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2">
               <Card className="h-full">
                   <CardHeader>
@@ -106,7 +106,7 @@ function AttendanceContent() {
                       <Button variant="ghost" size="icon" onClick={handleNextDay} className="h-8 w-8"><ChevronRight className="w-5 h-5" /></Button>
                   </div>
                   {Object.keys(dailyClassesBySubject).length > 0 ? (
-                      <ScrollArea className="h-[400px] pr-3">
+                      <ScrollArea className="h-96 pr-3">
                           <div className="flex flex-col gap-3">
                           {Object.entries(dailyClassesBySubject).map(([subject, sessions]) => (
                               <DailySubjectAttendanceCard key={subject} subjectName={subject} sessions={sessions} />
@@ -179,7 +179,9 @@ function AttendanceContent() {
 export default function AttendancePage() {
     return (
         <AppLayout>
-            <AttendanceContent />
+            <div className="w-full p-4 md:p-6 lg:p-8">
+                <AttendanceContent />
+            </div>
         </AppLayout>
     )
 }
