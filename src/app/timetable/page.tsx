@@ -176,7 +176,7 @@ function TimetableContent() {
   }
 
   return (
-    <div className="flex flex-col flex-1 max-w-4xl mx-auto w-full p-4 md:p-6 lg:p-8">
+    <div className="flex flex-col flex-1 w-full p-4 md:p-6 lg:p-8">
       <div className="w-full">
         <div>
             <PageHeader title="Timetable" description="Your weekly class schedule.">

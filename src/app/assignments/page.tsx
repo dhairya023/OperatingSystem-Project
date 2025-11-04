@@ -111,90 +111,88 @@ function AssignmentsContent() {
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <div className="max-w-6xl w-full mx-auto">
-        <PageHeader title="Assignments" description="Keep track of all your assignments.">
-          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-              <DialogTrigger asChild>
-                  <Button onClick={openNewDialog}>
-                      <PlusCircle className="mr-2" /> Add Assignment
-                  </Button>
-              </DialogTrigger>
-              <DialogContent>
-                  <DialogHeader>
-                      <DialogTitle>{selectedAssignment ? 'Edit' : 'Add'} Assignment</DialogTitle>
-                  </DialogHeader>
-                  <AssignmentForm onSave={handleSaveAssignment} assignment={selectedAssignment} />
-              </DialogContent>
-          </Dialog>
-        </PageHeader>
+      <PageHeader title="Assignments" description="Keep track of all your assignments.">
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogTrigger asChild>
+                <Button onClick={openNewDialog}>
+                    <PlusCircle className="mr-2" /> Add Assignment
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{selectedAssignment ? 'Edit' : 'Add'} Assignment</DialogTitle>
+                </DialogHeader>
+                <AssignmentForm onSave={handleSaveAssignment} assignment={selectedAssignment} />
+            </DialogContent>
+        </Dialog>
+      </PageHeader>
 
-        <div className="grid gap-8 lg:grid-cols-2 mt-8">
-          <Card>
-              <CardHeader>
-                  <CardTitle>Pending</CardTitle>
-                  <CardDescription>You have {pendingAssignments.length} assignments due.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                  {pendingAssignments.length > 0 ? (
-                  <div className="space-y-4">
-                      {pendingAssignments.map((assignment) => (
-                          <AssignmentItem 
-                              key={assignment.id}
-                              assignment={assignment}
-                              onEdit={() => openEditDialog(assignment)}
-                              onDelete={() => openDeleteDialog(assignment)}
-                              onToggle={toggleAssignmentCompletion}
-                          />
-                      ))}
-                  </div>
-                  ) : (
-                  <div className="flex flex-col items-center justify-center h-48 text-center bg-muted/50 rounded-lg">
-                      <p className="text-muted-foreground">No pending assignments. Great job!</p>
-                  </div>
-                  )}
-              </CardContent>
-          </Card>
+      <div className="grid gap-8 lg:grid-cols-2 mt-8">
+        <Card>
+            <CardHeader>
+                <CardTitle>Pending</CardTitle>
+                <CardDescription>You have {pendingAssignments.length} assignments due.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {pendingAssignments.length > 0 ? (
+                <div className="space-y-4">
+                    {pendingAssignments.map((assignment) => (
+                        <AssignmentItem 
+                            key={assignment.id}
+                            assignment={assignment}
+                            onEdit={() => openEditDialog(assignment)}
+                            onDelete={() => openDeleteDialog(assignment)}
+                            onToggle={toggleAssignmentCompletion}
+                        />
+                    ))}
+                </div>
+                ) : (
+                <div className="flex flex-col items-center justify-center h-48 text-center bg-muted/50 rounded-lg">
+                    <p className="text-muted-foreground">No pending assignments. Great job!</p>
+                </div>
+                )}
+            </CardContent>
+        </Card>
 
-          <Card>
-              <CardHeader>
-                  <CardTitle>Completed</CardTitle>
-                  <CardDescription>You have completed {completedAssignments.length} assignments.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {completedAssignments.length > 0 ? (
-                  <div className="space-y-4">
-                      {completedAssignments.map((assignment) => (
-                          <AssignmentItem 
-                              key={assignment.id}
-                              assignment={assignment}
-                              onEdit={() => openEditDialog(assignment)}
-                              onDelete={() => openDeleteDialog(assignment)}
-                              onToggle={toggleAssignmentCompletion}
-                          />
-                      ))}
-                  </div>
-                  ) : (
-                  <div className="flex flex-col items-center justify-center h-48 text-center bg-muted/50 rounded-lg">
-                      <p className="text-muted-foreground">No assignments completed yet.</p>
-                  </div>
-                  )}
-              </CardContent>
-          </Card>
-        </div>
-
-        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-              <DialogContent>
-                      <DialogHeader>
-                      <DialogTitle>Delete Assignment</DialogTitle>
-                  </DialogHeader>
-                  <p>Are you sure you want to delete the assignment "{selectedAssignment?.title}"? This action cannot be undone.</p>
-                      <DialogFooter>
-                      <DialogClose asChild><Button variant="ghost" onClick={() => setSelectedAssignment(undefined)}>Cancel</Button></DialogClose>
-                      <Button variant="destructive" onClick={handleDeleteAssignment}>Delete</Button>
-                  </DialogFooter>
-              </DialogContent>
-          </Dialog>
+        <Card>
+            <CardHeader>
+                <CardTitle>Completed</CardTitle>
+                <CardDescription>You have completed {completedAssignments.length} assignments.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {completedAssignments.length > 0 ? (
+                <div className="space-y-4">
+                    {completedAssignments.map((assignment) => (
+                        <AssignmentItem 
+                            key={assignment.id}
+                            assignment={assignment}
+                            onEdit={() => openEditDialog(assignment)}
+                            onDelete={() => openDeleteDialog(assignment)}
+                            onToggle={toggleAssignmentCompletion}
+                        />
+                    ))}
+                </div>
+                ) : (
+                <div className="flex flex-col items-center justify-center h-48 text-center bg-muted/50 rounded-lg">
+                    <p className="text-muted-foreground">No assignments completed yet.</p>
+                </div>
+                )}
+            </CardContent>
+        </Card>
       </div>
+
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+            <DialogContent>
+                    <DialogHeader>
+                    <DialogTitle>Delete Assignment</DialogTitle>
+                </DialogHeader>
+                <p>Are you sure you want to delete the assignment "{selectedAssignment?.title}"? This action cannot be undone.</p>
+                    <DialogFooter>
+                    <DialogClose asChild><Button variant="ghost" onClick={() => setSelectedAssignment(undefined)}>Cancel</Button></DialogClose>
+                    <Button variant="destructive" onClick={handleDeleteAssignment}>Delete</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </div>
   );
 }
