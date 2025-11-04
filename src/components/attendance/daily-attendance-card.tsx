@@ -26,7 +26,7 @@ const DailyAttendanceCard = ({ session }: { session: ClassSession }) => {
   return (
     <Card
       className={cn(
-        'p-3 transition-all w-full',
+        'p-2 transition-all w-full',
         session.status && statusCardStyles[session.status]
       )}
     >
