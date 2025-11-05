@@ -96,7 +96,7 @@ export default function ProfileSetupPage() {
       await completeProfileSetup();
       toast({ title: 'Profile setup complete!', description: 'Welcome to Grad.' });
       router.push('/');
-    } catch (error: any) => {
+    } catch (error: any) {
       console.error('Profile setup failed:', error);
       toast({
         variant: 'destructive',
