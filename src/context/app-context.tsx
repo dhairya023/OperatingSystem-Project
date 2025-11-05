@@ -174,18 +174,20 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const newUser = userCredential.user;
     if (newUser) {
       const userDocRef = doc(firestore, 'users', newUser.uid);
-      await setDoc(userDocRef, { 
-          profile: {
-            ...initialProfile,
-            email: newUser.email,
-            fullName: newUser.displayName || '',
-            profilePhotoUrl: `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(newUser.email || 'anonymous')}`
-          },
-          subjects: [],
-          classes: [],
-          assignments: [],
-          exams: [],
-          grades: [],
+      await setDoc(userDocRef, {
+        profile: {
+          ...initialProfile,
+          email: newUser.email || '',
+          fullName: newUser.displayName || '',
+          profilePhotoUrl: `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(
+            newUser.email || 'anonymous'
+          )}`,
+        },
+        subjects: [],
+        classes: [],
+        assignments: [],
+        exams: [],
+        grades: [],
       });
     }
   };
@@ -247,10 +249,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const updateProfile = async (profileData: Partial<UserProfile>) => {
     if (!user) throw new Error('User not logged in');
     
-    // Create a new profile object to avoid direct mutation
-    const newProfile = { ...(userData?.profile || {}), ...profileData };
+    const newProfile = { ...(userData?.profile || (initialProfile as UserProfile)), ...profileData };
 
-    // If the full name has changed, update the photo URL
     if (profileData.fullName && profileData.fullName !== userData?.profile?.fullName) {
         newProfile.profilePhotoUrl = `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(profileData.fullName)}`;
     }
@@ -402,7 +402,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const shareDocRef = doc(firestore, 'sharedTimetables', code);
     const docSnap = await getDoc(shareDocRef);
     if (docSnap.exists()) {
-      return docSnap.data().timetableData;
+      const data = docSnap.data().timetableData;
+      // Convert Firestore Timestamps back to JS Dates
+      const convertedClasses = data.classes.map((c: any) => ({
+        ...c,
+        date: c.date.toDate(),
+        ...(c.repeatUntil && { repeatUntil: c.repeatUntil.toDate() }),
+      }));
+      return { ...data, classes: convertedClasses };
     }
     return null;
   };
@@ -410,9 +417,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const importTimetable = async (subjects: Subject[], classes: ClassSession[]) => {
     if (!user) throw new Error('User not logged in');
     const userDocRef = doc(firestore, 'users', user.uid);
+    // Ensure all class dates are proper JS Date objects before updating
+    const sanitizedClasses = classes.map(c => ({
+      ...c,
+      date: c.date instanceof Date ? c.date : new Date(c.date),
+      ...(c.repeatUntil && { repeatUntil: c.repeatUntil instanceof Date ? c.repeatUntil : new Date(c.repeatUntil) })
+    }));
     await updateDoc(userDocRef, {
       subjects: subjects,
-      classes: classes.map(c => ({...c, date: new Date(c.date)})) // Ensure dates are Date objects
+      classes: sanitizedClasses
     });
   };
   
@@ -484,5 +497,7 @@ export const useAppContext = () => {
   }
   return context;
 };
+
+    
 
     
