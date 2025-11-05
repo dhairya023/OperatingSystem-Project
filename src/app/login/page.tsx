@@ -51,25 +51,18 @@ export default function LoginPage() {
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
-      if (isRegisterMode) {
-        await registerUser(email, password, username);
-        toast({ title: "Registration successful!", description: "Please complete your profile." });
-        router.push('/profile-setup');
-      } else {
         await loginUser(email, password);
         router.push('/');
-      }
     } catch (error: any) {
-      console.error(error);
-      toast({
-        variant: 'destructive',
-        title: 'Authentication Failed',
-        description: error.message || 'An unexpected error occurred.',
-      });
+        console.error(error);
+        toast({
+            variant: 'destructive',
+            title: 'Authentication Failed',
+            description: error.message || 'An unexpected error occurred.',
+        });
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
   };
   
