@@ -1,6 +1,4 @@
-
 'use client';
-import AppLayout from '@/components/app-layout';
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import PageHeader from '@/components/page-header';
@@ -273,10 +271,8 @@ function TimetableContent() {
 
 export default function TimetablePage() {
     return (
-        <AppLayout>
-            <div className="w-full p-4 md:p-6 lg:p-8">
-                <TimetableContent />
-            </div>
-        </AppLayout>
+        <div className="w-full p-4 md:p-6 lg:p-8">
+            <TimetableContent />
+        </div>
     )
 }
