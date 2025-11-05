@@ -1,3 +1,4 @@
+
 import { useAppContext } from '@/context/app-context';
 import * as React from 'react';
 import { useEffect } from 'react';
@@ -15,7 +16,7 @@ export default function PageHeader({ title, description, children }: PageHeaderP
     setHeaderState({ title, description, children });
     // Clear header state on component unmount
     return () => setHeaderState({ title: '' });
-  }, [title, description, children, setHeaderState]);
+  }, [title, description, setHeaderState]);
 
   return (
     <div className="hidden md:flex flex-col gap-4 w-full">
