@@ -79,7 +79,7 @@ interface AppContextType extends UserData {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const initialProfile: Omit<UserProfile, 'dateOfBirth' | 'profilePhotoUrl'> = {
+const initialProfile: Omit<UserProfile, 'profilePhotoUrl'> = {
   fullName: '',
   email: '',
   course: '',
@@ -498,3 +498,4 @@ export const useAppContext = () => {
     
 
     
+
