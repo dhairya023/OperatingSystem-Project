@@ -10,12 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, PlusCircle } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { TimePicker } from '@/components/ui/time-picker';
 import { Separator } from '../ui/separator';
+import Link from 'next/link';
 
 type ClassSessionFormProps = {
   session?: ClassSession;
@@ -85,6 +86,12 @@ export default function ClassSessionForm({ session, onSave, defaultDate, isRecur
                 </SelectTrigger>
                 <SelectContent>
                 {subjects.map(s => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
+                <Separator className="my-2" />
+                 <Button variant="ghost" className="w-full justify-start" asChild>
+                    <Link href="/subjects">
+                      <PlusCircle className="mr-2 h-4 w-4" /> Add New Subject
+                    </Link>
+                  </Button>
                 </SelectContent>
             </Select>
             </div>
@@ -95,12 +102,12 @@ export default function ClassSessionForm({ session, onSave, defaultDate, isRecur
                 <Label>Repeat</Label>
                 <RadioGroup defaultValue={repeat} onValueChange={(value: 'once' | 'weekly') => setRepeat(value)} className="flex">
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="once" id="r-once" />
-                        <Label htmlFor="r-once">Once</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
                         <RadioGroupItem value="weekly" id="r-weekly" />
                         <Label htmlFor="r-weekly">Weekly</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="once" id="r-once" />
+                        <Label htmlFor="r-once">Once</Label>
                     </div>
                 </RadioGroup>
                 </div>
