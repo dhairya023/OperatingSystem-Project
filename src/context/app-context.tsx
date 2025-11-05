@@ -59,6 +59,7 @@ interface AppContextType extends UserData {
   deleteExam: (id: string) => Promise<void>;
   updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
   loginUser: (email: string, password: string) => Promise<void>;
+  registerUser: (email: string, password: string) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   logoutUser: () => Promise<void>;
   deleteAccount: () => Promise<void>;
@@ -166,6 +167,26 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
   
+  const registerUser = async (email: string, password: string) => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const newUser = userCredential.user;
+    if (newUser) {
+      const userDocRef = doc(firestore, 'users', newUser.uid);
+      await setDoc(userDocRef, { 
+          profile: {
+            ...initialProfile,
+            email: newUser.email,
+            fullName: newUser.displayName || '',
+          },
+          subjects: [],
+          classes: [],
+          assignments: [],
+          exams: [],
+          grades: [],
+      });
+    }
+  };
+
   const sendPasswordReset = async (email: string) => {
     await sendPasswordResetEmail(auth, email);
   };
@@ -387,6 +408,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     updateExam: examUpdater.update,
     deleteExam: examUpdater.delete,
     loginUser,
+    registerUser,
     sendPasswordReset,
     logoutUser,
     deleteAccount,

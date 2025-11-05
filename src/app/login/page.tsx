@@ -17,24 +17,26 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogTrigger,
   DialogClose,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
   const [resetEmail, setResetEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
-  const { loginUser, sendPasswordReset } = useAppContext();
+  const { loginUser, registerUser, sendPasswordReset } = useAppContext();
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleAuthSubmit = async (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -50,6 +52,24 @@ export default function LoginPage() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+  
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+        await registerUser(registerEmail, registerPassword);
+        toast({ title: 'Registration successful!', description: 'Please complete your profile.' });
+        router.push('/profile-setup');
+    } catch (error: any) {
+        toast({
+            variant: 'destructive',
+            title: 'Registration Failed',
+            description: error.message || 'An unexpected error occurred.',
+        });
+    } finally {
+        setIsLoading(false);
     }
   };
 
@@ -90,62 +110,108 @@ export default function LoginPage() {
             </div>
             <h1 className="text-3xl font-bold font-headline">Grad</h1>
         </div>
-        <div className="relative rounded-2xl p-1 bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 animate-gradient-border animate-hue-glow">
-            <Card className="rounded-xl overflow-hidden border-none">
-            <CardHeader>
-                <CardTitle className="text-2xl">Sign In</CardTitle>
-                <CardDescription>
-                Enter your credentials to access your dashboard.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="bg-background">
-              <form onSubmit={handleAuthSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="name@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    minLength={6}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading}
-                  />
-                  <div className="flex justify-end">
-                      <Button
-                          type="button"
-                          variant="link"
-                          className="p-0 h-auto text-sm text-primary/80 hover:text-primary"
-                          onClick={() => setIsForgotPasswordOpen(true)}
-                      >
-                          Forgot Password?
-                      </Button>
-                  </div>
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : 'Sign In'}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+        <Tabs defaultValue="login" className="w-full">
+            <div className="relative rounded-2xl p-1 bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 animate-gradient-border animate-hue-glow">
+                <Card className="rounded-xl overflow-hidden border-none">
+                    <CardHeader>
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="login">Sign In</TabsTrigger>
+                            <TabsTrigger value="register">Register</TabsTrigger>
+                        </TabsList>
+                    </CardHeader>
+                    <CardContent className="bg-background">
+                         <TabsContent value="login">
+                             <CardDescription className="text-center mb-4">
+                                Enter your credentials to access your dashboard.
+                            </CardDescription>
+                            <form onSubmit={handleLoginSubmit} className="space-y-4">
+                                <div className="space-y-2">
+                                <Label htmlFor="email">Email</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="name@example.com"
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    disabled={isLoading}
+                                />
+                                </div>
+                                <div className="space-y-2">
+                                <Label htmlFor="password">Password</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    required
+                                    minLength={6}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    disabled={isLoading}
+                                />
+                                <div className="flex justify-end">
+                                    <Button
+                                        type="button"
+                                        variant="link"
+                                        className="p-0 h-auto text-sm text-primary/80 hover:text-primary"
+                                        onClick={() => setIsForgotPasswordOpen(true)}
+                                    >
+                                        Forgot Password?
+                                    </Button>
+                                </div>
+                                </div>
+                                <Button type="submit" className="w-full" disabled={isLoading}>
+                                {isLoading ? (
+                                    <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Processing...
+                                    </>
+                                ) : 'Sign In'}
+                                </Button>
+                            </form>
+                         </TabsContent>
+                         <TabsContent value="register">
+                            <CardDescription className="text-center mb-4">
+                                Create a new account to get started.
+                            </CardDescription>
+                             <form onSubmit={handleRegisterSubmit} className="space-y-4">
+                                <div className="space-y-2">
+                                <Label htmlFor="register-email">Email</Label>
+                                <Input
+                                    id="register-email"
+                                    type="email"
+                                    placeholder="name@example.com"
+                                    required
+                                    value={registerEmail}
+                                    onChange={(e) => setRegisterEmail(e.target.value)}
+                                    disabled={isLoading}
+                                />
+                                </div>
+                                <div className="space-y-2">
+                                <Label htmlFor="register-password">Password</Label>
+                                <Input
+                                    id="register-password"
+                                    type="password"
+                                    required
+                                    minLength={6}
+                                    value={registerPassword}
+                                    onChange={(e) => setRegisterPassword(e.target.value)}
+                                    disabled={isLoading}
+                                />
+                                </div>
+                                <Button type="submit" className="w-full" disabled={isLoading}>
+                                {isLoading ? (
+                                    <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Creating Account...
+                                    </>
+                                ) : 'Register'}
+                                </Button>
+                            </form>
+                         </TabsContent>
+                    </CardContent>
+                </Card>
+            </div>
+        </Tabs>
       </div>
 
        <Dialog open={isForgotPasswordOpen} onOpenChange={setIsForgotPasswordOpen}>
