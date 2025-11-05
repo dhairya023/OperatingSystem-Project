@@ -46,18 +46,20 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
         style={{ backgroundColor: `${color}40`, borderColor: `${color}80` }}
         onClick={() => setIsDrawerOpen(true)}
       >
-          <div className="flex justify-between items-start">
-              <div className="flex-1">
-                   <h3 className="font-bold text-base md:text-lg">{session.subject}</h3>
-                   <p className="text-xs md:text-sm text-foreground/80 mt-1">{formatTime12h(session.startTime)} - {formatTime12h(session.endTime)}</p>
-                   {session.room && (
-                      <div className="flex items-center gap-1.5 text-xs md:text-sm text-foreground/80 mt-1">
-                      <MapPin className="w-3 h-3 md:w-4 md:h-4" />
-                      <span>{session.room}</span>
-                      </div>
-                  )}
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            <h3 className="font-bold text-base md:text-lg">{session.subject}</h3>
+            <p className="text-xs md:text-sm text-foreground/80 mt-1">
+              {formatTime12h(session.startTime)} - {formatTime12h(session.endTime)}
+            </p>
+            {session.room && (
+              <div className="flex items-center gap-1.5 text-xs md:text-sm text-foreground/80 mt-1">
+                <MapPin className="w-3 h-3 md:w-4 md:h-4" />
+                <span>{session.room}</span>
               </div>
+            )}
           </div>
+        </div>
       </Card>
       <ClassDetailsDrawer
         session={session}
@@ -147,14 +149,14 @@ function TimetableContent() {
     if (isTomorrow(date)) return 'Tomorrow';
     if (isYesterday(date)) return 'Yesterday';
     return format(date, 'EEEE');
-  }
+  };
 
   const dailyClasses = classes
     .filter((c) => format(new Date(c.date), 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
     .sort((a, b) => {
         const timeA = a.startTime.split(':');
         const timeB = b.startTime.split(':');
-        return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime()
+        return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime();
     });
 
   if (subjects.length === 0 && !importCode) {
@@ -177,10 +179,10 @@ function TimetableContent() {
         title="Timetable" 
         description="Your weekly class schedule."
       >
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="flex-1 sm:flex-none">
+              <Button>
                 <PlusCircle className="mr-2 h-4 w-4" /> 
                 <span className="hidden sm:inline">Add Class</span>
                 <span className="sm:hidden">Add</span>
@@ -199,7 +201,7 @@ function TimetableContent() {
         </div>
       </PageHeader>
 
-      <div className="w-full flex-1 flex flex-col">
+      <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-muted/50">
           <Button variant="ghost" size="icon" onClick={handlePrevDay} className="h-8 w-8 md:h-10 md:w-10">
             <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
@@ -213,15 +215,15 @@ function TimetableContent() {
           </Button>
         </div>
 
-        <div className="mt-6 flex-1 pb-8 min-h-[50vh]">
+        <div className="pb-6">
           {dailyClasses.length > 0 ? (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 md:gap-4">
               {dailyClasses.map(session => (
                 <TimetableCard key={session.id} session={session} />
               ))}
             </div>
           ) : (
-            <div className="flex h-full min-h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg p-4">
+            <div className="flex h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg p-4">
               <p className="text-muted-foreground">No classes scheduled for this day.</p>
             </div>
           )}
@@ -267,11 +269,11 @@ function TimetableContent() {
 }
 
 export default function TimetablePage() {
-    return (
-        <AppLayout>
-            <div className="w-full p-4 md:p-6 lg:p-8">
-                <TimetableContent />
-            </div>
-        </AppLayout>
-    )
+  return (
+    <AppLayout>
+      <div className="w-full p-4 md:p-6 lg:p-8">
+        <TimetableContent />
+      </div>
+    </AppLayout>
+  );
 }
