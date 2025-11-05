@@ -163,7 +163,7 @@ function TimetableContent() {
 
   if (subjects.length === 0 && !importCode) {
     return (
-      <div className="flex flex-col flex-1 p-4 md:p-6 lg:p-8">
+      <div className="flex flex-col flex-1">
         <PageHeader title="Timetable" description="Manage your class schedule." />
         <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
           <div className="text-center">
@@ -176,7 +176,7 @@ function TimetableContent() {
   }
 
   return (
-    <div className="flex flex-col flex-1 w-full p-4 md:p-6 lg:p-8">
+    <div className="flex flex-col flex-1 w-full">
       <div className="w-full">
         <div>
             <PageHeader title="Timetable" description="Your weekly class schedule.">
@@ -273,7 +273,9 @@ function TimetableContent() {
 export default function TimetablePage() {
     return (
         <AppLayout>
-            <TimetableContent />
+            <div className="w-full p-4 md:p-6 lg:p-8">
+                <TimetableContent />
+            </div>
         </AppLayout>
     )
 }
