@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAppContext } from '@/context/app-context';
 import type { UserProfile } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
-import { GraduationCap, Loader2 } from 'lucide-react';
+import { GraduationCap, Loader2, ArrowLeft } from 'lucide-react';
 import { DatePicker } from '@/components/profile/date-picker';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -20,6 +20,7 @@ export default function ProfileSetupPage() {
   const router = useRouter();
   const { toast } = useToast();
   
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<Partial<UserProfile>>({
     fullName: profile?.fullName || '',
     email: profile?.email || '',
@@ -38,6 +39,14 @@ export default function ProfileSetupPage() {
     if (profile?.profilePhotoUrl) {
       setFormData(prev => ({...prev, profilePhotoUrl: profile.profilePhotoUrl}));
     }
+     if (profile) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: profile.fullName || '',
+        email: profile.email || '',
+        profilePhotoUrl: profile.profilePhotoUrl || `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(profile.email || 'user')}`,
+      }));
+    }
   }, [profile]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +55,24 @@ export default function ProfileSetupPage() {
   
   const handleDateChange = (date: Date | undefined) => {
     setFormData({ ...formData, dateOfBirth: date });
+  }
+
+  const validateStep1 = () => {
+    if (!formData.fullName || !formData.email || !formData.phoneNumber) {
+        toast({
+            variant: 'destructive',
+            title: 'Missing Fields',
+            description: 'Please fill out your name, email, and phone number.',
+        });
+        return false;
+    }
+    return true;
+  }
+
+  const handleNext = () => {
+    if (validateStep1()) {
+        setStep(2);
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,6 +108,11 @@ export default function ProfileSetupPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader>
+           {step > 1 && (
+             <Button variant="ghost" size="icon" className="absolute top-4 left-4" onClick={() => setStep(1)}>
+               <ArrowLeft />
+             </Button>
+           )}
           <div className="flex items-center justify-center gap-2 p-2 mb-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
               <GraduationCap className="h-8 w-8 text-primary-foreground" />
@@ -89,19 +121,20 @@ export default function ProfileSetupPage() {
           </div>
           <CardTitle>Complete Your Profile</CardTitle>
           <CardDescription>
-            Just a few more details to get you started.
+            {step === 1 ? 'Let\'s start with the basics.' : 'Now for your academic details.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <ScrollArea className="h-[50vh] pr-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
-                    <div className="col-span-2 flex flex-col items-center gap-4">
+              {step === 1 && (
+                <div className="grid grid-cols-1 gap-6 py-4">
+                    <div className="col-span-1 flex flex-col items-center gap-4">
                         <Avatar className="w-32 h-32 border-4 border-primary/50">
                             <AvatarImage src={avatarUrl} />
                             <AvatarFallback className="text-4xl">{getInitials(formData.fullName)}</AvatarFallback>
                         </Avatar>
-                        <p className="text-sm text-muted-foreground">Your unique avatar is generated from your name.</p>
+                        <p className="text-sm text-muted-foreground text-center">Your avatar is auto-generated from your name. Change your name to get a new one!</p>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="fullName">Full Name</Label>
@@ -112,6 +145,14 @@ export default function ProfileSetupPage() {
                         <Input name="email" type="email" value={formData.email} onChange={handleChange} required />
                     </div>
                     <div className="space-y-2">
+                        <Label htmlFor="phoneNumber">Phone Number</Label>
+                        <Input name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} required />
+                    </div>
+                </div>
+              )}
+               {step === 2 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+                     <div className="space-y-2">
                         <Label htmlFor="course">Course</Label>
                         <Input name="course" value={formData.course} onChange={handleChange} required />
                     </div>
@@ -131,28 +172,34 @@ export default function ProfileSetupPage() {
                         <Label htmlFor="rollNumber">Roll Number</Label>
                         <Input name="rollNumber" value={formData.rollNumber} onChange={handleChange} required />
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="phoneNumber">Phone Number</Label>
-                        <Input name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} required />
-                    </div>
-                     <div className="space-y-2 col-span-2">
+                     <div className="space-y-2">
                         <Label htmlFor="dateOfBirth">Date of Birth</Label>
                         <DatePicker value={formData.dateOfBirth} onChange={handleDateChange} />
                     </div>
                 </div>
+               )}
             </ScrollArea>
              <div className="flex justify-end items-center gap-4 mt-6">
                 <Button type="button" variant="ghost" onClick={logoutUser}>
                     Logout
                 </Button>
-                <Button type="submit" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Saving...
-                      </>
-                    ) : 'Save and Continue'}
-                </Button>
+
+                {step === 1 && (
+                    <Button type="button" onClick={handleNext}>
+                        Next
+                    </Button>
+                )}
+                
+                {step === 2 && (
+                    <Button type="submit" disabled={isLoading}>
+                        {isLoading ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Saving...
+                        </>
+                        ) : 'Save and Continue'}
+                    </Button>
+                )}
             </div>
           </form>
         </CardContent>
