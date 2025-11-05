@@ -34,7 +34,7 @@ export default function ClassSessionForm({ session, onSave, defaultDate, isRecur
   const [room, setRoom] = useState(session?.room || '');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   
-  const [repeat, setRepeat] = useState<'once' | 'weekly'>(session?.rrule ? 'weekly' : 'once');
+  const [repeat, setRepeat] = useState<'once' | 'weekly'>(session?.rrule ? 'weekly' : 'weekly');
   
   useEffect(() => {
     if (startTime && !session) { // only on creation and when startTime is set
