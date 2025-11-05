@@ -84,7 +84,6 @@ const initialProfile: UserProfile = {
   collegeName: '',
   rollNumber: '',
   phoneNumber: '',
-  dateOfBirth: undefined,
   profilePhotoUrl: '',
   profileCompleted: false,
 };
