@@ -121,7 +121,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                                   className={cn(
                                     "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-3 md:gap-3 text-muted-foreground hover:bg-black/20 hover:text-white"
                                   )}
-                                  isActive={isActive}
                                 >
                                   <Link href={route.href}>
                                     <route.icon
