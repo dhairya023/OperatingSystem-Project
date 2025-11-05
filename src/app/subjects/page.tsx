@@ -20,20 +20,21 @@ import { useAppContext } from '@/context/app-context';
 import type { Subject } from '@/lib/types';
 import { HexColorPicker } from 'react-colorful';
 
-const SubjectForm = ({ subject, onSave }: { subject?: Subject; onSave: (subject: Subject) => void }) => {
+const SubjectForm = ({ subject, onSave, onDone }: { subject?: Subject; onSave: (subject: Subject) => Promise<void>; onDone: () => void; }) => {
   const [name, setName] = useState(subject?.name || '');
   const [teacher, setTeacher] = useState(subject?.teacher || '');
   const [color, setColor] = useState(subject?.color || '#8B5CF6');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !teacher) return;
-    onSave({
+    await onSave({
       id: subject?.id || crypto.randomUUID(),
       name,
       teacher,
       color,
     });
+    onDone();
   };
 
   return (
@@ -68,9 +69,7 @@ const SubjectForm = ({ subject, onSave }: { subject?: Subject; onSave: (subject:
         </div>
       </div>
       <DialogFooter>
-        <DialogClose asChild>
           <Button type="submit">Save Subject</Button>
-        </DialogClose>
       </DialogFooter>
     </form>
   );
@@ -83,14 +82,12 @@ function SubjectsContent() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<Subject | undefined>(undefined);
 
-  const handleAddSubject = (subject: Subject) => {
-    addSubject(subject);
-    setIsNewSubjectDialogOpen(false);
+  const handleAddSubject = async (subject: Subject) => {
+    await addSubject(subject);
   };
 
-  const handleUpdateSubject = (subject: Subject) => {
-    updateSubject(subject);
-    setIsEditDialogOpen(false);
+  const handleUpdateSubject = async (subject: Subject) => {
+    await updateSubject(subject);
   };
   
   const handleDeleteSubject = () => {
@@ -112,7 +109,7 @@ function SubjectsContent() {
           <DialogHeader>
             <DialogTitle>Add New Subject</DialogTitle>
           </DialogHeader>
-          <SubjectForm onSave={handleAddSubject} />
+          <SubjectForm onSave={handleAddSubject} onDone={() => setIsNewSubjectDialogOpen(false)} />
         </DialogContent>
       </Dialog>
     );
@@ -166,7 +163,7 @@ function SubjectsContent() {
                              <DialogHeader>
                                 <DialogTitle>Edit Subject</DialogTitle>
                             </DialogHeader>
-                            <SubjectForm subject={subject} onSave={handleUpdateSubject} />
+                            <SubjectForm subject={subject} onSave={handleUpdateSubject} onDone={() => setIsEditDialogOpen(false)} />
                         </DialogContent>
                     </Dialog>
                      <Dialog open={isDeleteDialogOpen && selectedSubject?.id === subject.id} onOpenChange={(open) => {
