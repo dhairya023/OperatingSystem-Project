@@ -42,8 +42,8 @@ export default function ProfileForm({ profile, onSave }: ProfileFormProps) {
   return (
     <form onSubmit={handleSubmit}>
       <ScrollArea className="h-[60vh] pr-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
-          <div className="col-span-2 flex flex-col items-center gap-4">
+        <div className="space-y-6 py-4">
+          <div className="flex flex-col items-center gap-4">
               <Avatar className="w-32 h-32 border-4 border-primary/50">
                   <AvatarImage src={avatarUrl} />
                   <AvatarFallback className="text-4xl">{getInitials(formData.fullName)}</AvatarFallback>
@@ -51,15 +51,24 @@ export default function ProfileForm({ profile, onSave }: ProfileFormProps) {
               <p className="text-sm text-muted-foreground">Your unique avatar is generated from your name.</p>
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input id="fullName" name="fullName" value={formData.fullName} onChange={handleChange} required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email ID</Label>
-            <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
-          </div>
-           <div className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Full Name</Label>
+              <Input id="fullName" name="fullName" value={formData.fullName} onChange={handleChange} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email ID</Label>
+              <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+            </div>
+            <div className="space-y-2">
+                  <Label htmlFor="collegeName">College Name</Label>
+                  <Input name="collegeName" value={formData.collegeName} onChange={handleChange} required />
+              </div>
+              <div className="space-y-2">
+                  <Label htmlFor="rollNumber">Roll Number</Label>
+                  <Input name="rollNumber" value={formData.rollNumber} onChange={handleChange} required />
+              </div>
+            <div className="space-y-2">
                 <Label htmlFor="course">Course</Label>
                 <Input name="course" value={formData.course} onChange={handleChange} required />
             </div>
@@ -71,22 +80,15 @@ export default function ProfileForm({ profile, onSave }: ProfileFormProps) {
                 <Label htmlFor="semester">Semester</Label>
                 <Input name="semester" value={formData.semester} onChange={handleChange} required />
             </div>
-            <div className="space-y-2">
-                <Label htmlFor="collegeName">College Name</Label>
-                <Input name="collegeName" value={formData.collegeName} onChange={handleChange} required />
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="rollNumber">Roll Number</Label>
-                <Input name="rollNumber" value={formData.rollNumber} onChange={handleChange} required />
-            </div>
-            <div className="space-y-2">
+             <div className="space-y-2">
                 <Label htmlFor="phoneNumber">Phone Number</Label>
                 <Input name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} required />
             </div>
-            <div className="space-y-2 col-span-2">
+            <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="dateOfBirth">Date of Birth</Label>
                 <DatePicker value={formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined} onChange={handleDateChange} />
             </div>
+          </div>
         </div>
       </ScrollArea>
       <DialogFooter className="mt-6">
