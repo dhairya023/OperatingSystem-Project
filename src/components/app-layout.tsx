@@ -69,16 +69,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <div className="flex h-screen bg-black">
         <Sidebar
-          className={cn(
-            "relative flex h-full w-[--sidebar-width] flex-col transition-all duration-300 ease-in-out p-2",
-          )}
-           variant="inset"
+          className="p-2"
+          variant="inset"
         >
           <div
             data-sidebar="sidebar"
-            className={cn(
-              "flex h-full w-full flex-col bg-card/50 backdrop-blur-md border border-border/40 rounded-3xl shadow-xl transition-all duration-300 ease-in-out overflow-hidden",
-            )}
+            className="flex h-full w-full flex-col bg-card/50 backdrop-blur-md border border-border/40 rounded-3xl shadow-xl overflow-hidden"
           >
             <SidebarHeader className="p-4 border-b border-border/40">
                 <div className="flex items-center gap-2 p-2">
@@ -89,7 +85,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </div>
             </SidebarHeader>
 
-            <SidebarContent className="flex-1 px-3 py-4 overflow-y-auto scrollbar-none">
+            <SidebarContent className="flex-1 px-3 py-4 overflow-y-auto">
               <SidebarGroup>
                 <SidebarGroupContent>
                   <SidebarMenu>
@@ -103,14 +99,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                                 "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-3 md:gap-3",
                                 isActive
                                   ? "bg-black/50 text-white"
-                                  : "text-muted-foreground"
+                                  : "text-muted-foreground hover:bg-black/20 hover:text-white"
                               )}
                               isActive={isActive}
+                              tooltip={route.label}
                             >
                               <route.icon
                                 className={cn(
-                                  "h-6 w-6 md:h-5 md:w-5",
-                                  isActive ? 'text-white' : ''
+                                  "h-5 w-5",
                                 )}
                               />
                               <span>{route.label}</span>
@@ -128,10 +124,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               {user ? (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-primary/80 text-primary-foreground flex items-center justify-center font-bold">
-                      {profile?.fullName?.[0]?.toUpperCase() || "U"}
-                    </div>
-                    <span className="text-sm text-foreground">
+                     <Avatar className="h-8 w-8">
+                       <AvatarImage src={profile?.profilePhotoUrl} />
+                       <AvatarFallback>{profile?.fullName?.[0]?.toUpperCase() || "U"}</AvatarFallback>
+                     </Avatar>
+                    <span className="text-sm text-foreground truncate">
                       {profile?.fullName || "User"}
                     </span>
                   </div>
@@ -158,10 +155,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </Sidebar>
 
         <SidebarInset className="flex-1 overflow-y-auto bg-transparent text-white">
-          <div className="md:hidden flex items-center justify-between mb-4 p-4">
+          <header className="md:hidden flex items-center justify-start mb-4 p-4 sticky top-0 bg-black/50 backdrop-blur-sm z-10">
             <SidebarTrigger />
-          </div>
-           {children}
+          </header>
+           <main className="flex-1">
+            {children}
+           </main>
         </SidebarInset>
       </div>
     </SidebarProvider>

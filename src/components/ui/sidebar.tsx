@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import * as React from "react"
@@ -20,12 +19,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
-const SIDEBAR_WIDTH_ICON = "3rem"
+const SIDEBAR_WIDTH_ICON = "4rem" // Increased from 3rem to 4rem for better spacing
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContext = {
@@ -167,7 +167,7 @@ const Sidebar = React.forwardRef<
     {
       side = "left",
       variant = "sidebar",
-      collapsible = "offcanvas",
+      collapsible = "icon", // Changed default to 'icon'
       className,
       children,
       ...props
@@ -180,7 +180,7 @@ const Sidebar = React.forwardRef<
       return (
         <div
           className={cn(
-            "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
+            "hidden md:flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
             className
           )}
           ref={ref}
@@ -217,13 +217,13 @@ const Sidebar = React.forwardRef<
     }
 
     return (
-      <div
+      <aside
         ref={ref}
         className={cn(
           "group peer hidden md:block text-sidebar-foreground",
           "transition-all duration-300 ease-in-out",
-           variant === "inset" ? "p-2" : "",
-           state === "expanded" ? "w-[--sidebar-width]" : "w-20",
+           variant === "inset" ? "p-2 h-screen sticky top-0" : "h-screen sticky top-0",
+           state === "expanded" ? "w-[--sidebar-width]" : "w-[var(--sidebar-width-icon)]",
           className
         )}
         data-state={state}
@@ -233,7 +233,7 @@ const Sidebar = React.forwardRef<
         {...props}
       >
         {children}
-      </div>
+      </aside>
     )
   }
 )
@@ -243,7 +243,7 @@ const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar, open } = useSidebar()
+  const { toggleSidebar, state } = useSidebar()
 
   return (
     <Button
@@ -251,14 +251,14 @@ const SidebarTrigger = React.forwardRef<
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn("h-12 w-12", className)}
+      className={cn("h-10 w-10", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <PanelLeft className={cn("h-8 w-8 transition-transform duration-300", open && "rotate-180")} />
+      <PanelLeft className={cn("h-6 w-6 transition-transform duration-300", state === 'expanded' && "rotate-180")} />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
@@ -302,8 +302,8 @@ const SidebarInset = React.forwardRef<
     <main
       ref={ref}
       className={cn(
-        "relative flex min-h-svh flex-1 flex-col bg-background",
-        "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-[calc(var(--sidebar-width-icon)_+theme(spacing.8))!important] md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl",
+        "relative flex min-h-svh flex-1 flex-col",
+        "md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:ml-0",
         "has-[[data-variant=inset]]:bg-sidebar peer-data-[variant=inset]:bg-background",
         className
       )}
@@ -335,11 +335,12 @@ const SidebarHeader = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div">
 >(({ className, ...props }, ref) => {
+    const { state } = useSidebar();
   return (
     <div
       ref={ref}
       data-sidebar="header"
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn("flex items-center", state === 'collapsed' ? 'justify-center' : 'justify-between', className)}
       {...props}
     />
   )
@@ -386,7 +387,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto",
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden",
          state === "collapsed" && "overflow-hidden",
         className
       )}
@@ -404,7 +405,7 @@ const SidebarGroup = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="group"
-      className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+      className={cn("relative flex w-full min-w-0 flex-col px-2", className)}
       {...props}
     />
   )
@@ -496,9 +497,13 @@ const SidebarMenuItem = React.forwardRef<
 SidebarMenuItem.displayName = "SidebarMenuItem"
 
 const sidebarMenuButtonVariants = cva(
-  `peer/menu-button flex w-full items-center gap-2 
+  `peer/menu-button flex w-full items-center gap-3 
   overflow-hidden rounded-md p-2 text-left outline-none
-   ring-sidebar-ring transition-all focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-primary data-[active=true]:font-medium data-[active=true]:text-sidebar-primary-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[state=collapsed]:size-10 group-data-[state=collapsed]:justify-center group-data-[state=collapsed]:p-2 [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0`,
+   ring-sidebar-ring transition-all focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 
+   data-[active=true]:bg-sidebar-primary data-[active=true]:font-medium data-[active=true]:text-sidebar-primary-foreground
+   hover:bg-sidebar-accent hover:text-sidebar-accent-foreground
+   group-data-[state=collapsed]:size-10 group-data-[state=collapsed]:justify-center group-data-[state=collapsed]:p-2 
+   [&>span:last-child]:truncate [&>svg]:size-5 [&>svg]:shrink-0`,
   {
     variants: {
       variant: {
