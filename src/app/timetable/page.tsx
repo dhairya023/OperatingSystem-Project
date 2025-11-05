@@ -6,9 +6,9 @@ import { useSearchParams } from 'next/navigation';
 import PageHeader from '@/components/page-header';
 import { useAppContext } from '@/context/app-context';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Share2, Copy, Trash, History } from 'lucide-react';
-import { addDays, subDays, format, isToday, isTomorrow, isYesterday, startOfDay } from 'date-fns';
-import { Card } from '@/components/ui/card';
+import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Share2 } from 'lucide-react';
+import { addDays, subDays, format, isToday, isTomorrow, isYesterday } from 'date-fns';
+import { Card, CardContent } from '@/components/ui/card';
 import type { ClassSession } from '@/lib/types';
 import {
   Dialog,
@@ -18,7 +18,6 @@ import {
   DialogTrigger,
   DialogFooter,
   DialogDescription,
-  DialogClose,
 } from '@/components/ui/dialog';
 import ClassSessionForm from '@/components/timetable/class-session-form';
 import { ClassDetailsDrawer } from '@/components/timetable/ClassDetailsDrawer';
@@ -39,21 +38,21 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const subject = subjects.find(s => s.name === session.subject);
-  const color = subject?.color || '#A1A1AA'; // A default gray color
+  const color = subject?.color || '#A1A1AA';
 
   return (
     <>
       <Card
-        className="p-6 flex flex-col gap-2 rounded-xl cursor-pointer"
+        className="p-4 md:p-6 flex flex-col gap-2 rounded-xl cursor-pointer hover:shadow-md transition-shadow"
         style={{ backgroundColor: `${color}40`, borderColor: `${color}80` }}
         onClick={() => setIsDrawerOpen(true)}
       >
           <div className="flex justify-between items-start">
-              <div>
+              <div className="flex-1">
                    <h3 className="font-bold text-base md:text-lg">{session.subject}</h3>
-                   <p className="text-xs md:text-sm text-foreground/80">{formatTime12h(session.startTime)} - {formatTime12h(session.endTime)}</p>
+                   <p className="text-xs md:text-sm text-foreground/80 mt-1">{formatTime12h(session.startTime)} - {formatTime12h(session.endTime)}</p>
                    {session.room && (
-                      <div className="flex items-center gap-2 text-xs md:text-sm text-foreground/80 mt-1">
+                      <div className="flex items-center gap-1.5 text-xs md:text-sm text-foreground/80 mt-1">
                       <MapPin className="w-3 h-3 md:w-4 md:h-4" />
                       <span>{session.room}</span>
                       </div>
@@ -82,7 +81,6 @@ function TimetableContent() {
   const [isImporting, setIsImporting] = useState(false);
   const [sharedData, setSharedData] = useState<{ subjects: any[], classes: any[] } | null>(null);
   const importCode = useMemo(() => searchParams.get('importCode'), [searchParams]);
-
 
   useEffect(() => {
     if (importCode) {
@@ -126,7 +124,6 @@ function TimetableContent() {
       } finally {
         setIsImporting(false);
         setSharedData(null);
-        // Remove query param from URL without reloading
         window.history.replaceState({}, '', '/timetable');
       }
     }
@@ -166,9 +163,9 @@ function TimetableContent() {
       <div className="flex flex-col flex-1">
         <PageHeader title="Timetable" description="Manage your class schedule." />
         <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
-          <div className="text-center">
+          <div className="text-center px-4">
             <p className="text-lg font-medium text-muted-foreground">No subjects found.</p>
-            <p className="text-sm text-muted-foreground/80">Add subjects in the 'Subjects' page to build your timetable.</p>
+            <p className="text-sm text-muted-foreground/80 mt-2">Add subjects in the 'Subjects' page to build your timetable.</p>
           </div>
         </div>
       </div>
@@ -178,59 +175,65 @@ function TimetableContent() {
   return (
     <div className="flex flex-col flex-1 w-full">
       <div className="w-full">
-        <div>
-            <PageHeader title="Timetable" description="Your weekly class schedule.">
-                <div className="flex items-center gap-2">
-                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button><PlusCircle className="mr-2" /> Add Class</Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader><DialogTitle>Add New Class</DialogTitle></DialogHeader>
-                            <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-                        </DialogContent>
-                    </Dialog>
-                </div>
-                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={handleShare}><Share2/></Button>
-                 </div>
-            </PageHeader>
-        </div>
-
-
-        <div className="w-full flex-1 flex flex-col mt-8">
-            <div className="w-full flex-1 flex flex-col">
-            <div className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                <Button variant="ghost" size="icon" onClick={handlePrevDay}>
-                <ChevronLeft className="w-5 h-5" />
+        <PageHeader 
+          title="Timetable" 
+          description="Your weekly class schedule."
+        >
+          <div className="flex items-center gap-2 flex-wrap">
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="flex-1 sm:flex-none">
+                  <PlusCircle className="mr-2 h-4 w-4" /> 
+                  <span className="hidden sm:inline">Add Class</span>
+                  <span className="sm:hidden">Add</span>
                 </Button>
-                <div className="text-center">
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Add New Class</DialogTitle>
+                </DialogHeader>
+                <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+              </DialogContent>
+            </Dialog>
+            <Button variant="outline" size="icon" onClick={handleShare}>
+              <Share2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </PageHeader>
+
+        <div className="w-full flex-1 flex flex-col mt-6 md:mt-8">
+          <div className="w-full flex-1 flex flex-col">
+            <div className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-muted/50">
+              <Button variant="ghost" size="icon" onClick={handlePrevDay} className="h-8 w-8 md:h-10 md:w-10">
+                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+              </Button>
+              <div className="text-center">
                 <p className="font-bold text-base md:text-lg">{getRelativeDate(currentDate)}</p>
-                <p className="text-muted-foreground text-xs">{format(currentDate, 'do MMMM yyyy')}</p>
-                </div>
-                <Button variant="ghost" size="icon" onClick={handleNextDay}>
-                <ChevronRight className="w-5 h-5" />
-                </Button>
+                <p className="text-muted-foreground text-xs md:text-sm">{format(currentDate, 'do MMMM yyyy')}</p>
+              </div>
+              <Button variant="ghost" size="icon" onClick={handleNextDay} className="h-8 w-8 md:h-10 md:w-10">
+                <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+              </Button>
             </div>
 
-            <div className="mt-6 flex-1 pb-8 min-h-[50vh]">
-                {dailyClasses.length > 0 ? (
-                <div className="flex flex-col gap-4">
-                    {dailyClasses.map(session => (
+            <div className="mt-4 md:mt-6 flex-1 pb-6 md:pb-8 min-h-[50vh]">
+              {dailyClasses.length > 0 ? (
+                <div className="flex flex-col gap-3 md:gap-4">
+                  {dailyClasses.map(session => (
                     <TimetableCard key={session.id} session={session} />
-                    ))}
+                  ))}
                 </div>
-                ) : (
-                <div className="flex h-full min-h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg">
-                    <p className="text-muted-foreground">No classes scheduled for this day.</p>
+              ) : (
+                <div className="flex h-full min-h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg p-4">
+                  <p className="text-muted-foreground">No classes scheduled for this day.</p>
                 </div>
-                )}
+              )}
             </div>
-            </div>
+          </div>
         </div>
 
         <Dialog open={isImporting} onOpenChange={setIsImporting}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Import Timetable</DialogTitle>
               <DialogDescription>
@@ -238,37 +241,35 @@ function TimetableContent() {
               </DialogDescription>
             </DialogHeader>
             {sharedData && (
-                <Card className="max-h-60 overflow-y-auto">
-                    <CardContent className="p-4 space-y-2">
-                        <h4 className="font-semibold">Subjects ({sharedData.subjects.length})</h4>
-                        <ul className="list-disc pl-5 text-sm text-muted-foreground">
-                            {sharedData.subjects.map((s:any) => <li key={s.id}>{s.name}</li>)}
-                        </ul>
-                         <h4 className="font-semibold pt-2">Classes ({sharedData.classes.length})</h4>
-                        <p className="text-sm text-muted-foreground">This will import all recurring and single classes.</p>
-                    </CardContent>
-                </Card>
+              <Card className="max-h-60 overflow-y-auto">
+                <CardContent className="p-4 space-y-2">
+                  <h4 className="font-semibold">Subjects ({sharedData.subjects.length})</h4>
+                  <ul className="list-disc pl-5 text-sm text-muted-foreground">
+                    {sharedData.subjects.map((s:any) => <li key={s.id}>{s.name}</li>)}
+                  </ul>
+                  <h4 className="font-semibold pt-2">Classes ({sharedData.classes.length})</h4>
+                  <p className="text-sm text-muted-foreground">This will import all recurring and single classes.</p>
+                </CardContent>
+              </Card>
             )}
-            <DialogFooter>
-              <Button variant="ghost" onClick={handleCancelImport}>Cancel</Button>
-              <Button onClick={handleConfirmImport}>Yes, Import</Button>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <Button variant="ghost" onClick={handleCancelImport} className="w-full sm:w-auto">Cancel</Button>
+              <Button onClick={handleConfirmImport} className="w-full sm:w-auto">Yes, Import</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         <ShareDialog
-            isOpen={isShareDialogOpen}
-            onOpenChange={setIsShareDialogOpen}
-            shareUrl={shareUrl}
-            title="Share Your Timetable"
-            description="Anyone with this link can view and import your timetable."
+          isOpen={isShareDialogOpen}
+          onOpenChange={setIsShareDialogOpen}
+          shareUrl={shareUrl}
+          title="Share Your Timetable"
+          description="Anyone with this link can view and import your timetable."
         />
-
       </div>
     </div>
   );
 }
-
 
 export default function TimetablePage() {
     return (
