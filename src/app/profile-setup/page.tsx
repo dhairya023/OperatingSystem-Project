@@ -36,10 +36,7 @@ export default function ProfileSetupPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (profile?.profilePhotoUrl) {
-      setFormData(prev => ({...prev, profilePhotoUrl: profile.profilePhotoUrl}));
-    }
-     if (profile) {
+    if (profile) {
       setFormData(prev => ({
         ...prev,
         fullName: profile.fullName || '',
@@ -58,11 +55,11 @@ export default function ProfileSetupPage() {
   }
 
   const validateStep1 = () => {
-    if (!formData.fullName || !formData.email || !formData.phoneNumber) {
+    if (!formData.fullName) {
         toast({
             variant: 'destructive',
-            title: 'Missing Fields',
-            description: 'Please fill out your name, email, and phone number.',
+            title: 'Missing Field',
+            description: 'Please fill out your name.',
         });
         return false;
     }
@@ -75,6 +72,22 @@ export default function ProfileSetupPage() {
     }
   }
 
+  const handleSetupLater = async () => {
+    if (!validateStep1()) return;
+    setIsLoading(true);
+    try {
+      await updateProfile({ fullName: formData.fullName });
+      await completeProfileSetup();
+      toast({ title: 'Welcome to Grad!', description: 'You can complete your profile later.' });
+      router.push('/');
+    } catch (error: any) {
+       console.error('Profile setup failed:', error);
+       toast({ variant: 'destructive', title: 'Setup Failed', description: error.message || 'Could not save profile.' });
+    } finally {
+        setIsLoading(false);
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -83,7 +96,7 @@ export default function ProfileSetupPage() {
       await completeProfileSetup();
       toast({ title: 'Profile setup complete!', description: 'Welcome to Grad.' });
       router.push('/');
-    } catch (error: any) {
+    } catch (error: any) => {
       console.error('Profile setup failed:', error);
       toast({
         variant: 'destructive',
@@ -121,7 +134,7 @@ export default function ProfileSetupPage() {
           </div>
           <CardTitle>Complete Your Profile</CardTitle>
           <CardDescription>
-            {step === 1 ? 'Let\'s start with the basics.' : 'Now for your academic details.'}
+            {step === 1 ? 'Let\'s start with your name.' : 'Now for your academic details.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -140,37 +153,37 @@ export default function ProfileSetupPage() {
                         <Label htmlFor="fullName">Full Name</Label>
                         <Input name="fullName" value={formData.fullName} onChange={handleChange} required />
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input name="email" type="email" value={formData.email} onChange={handleChange} required />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="phoneNumber">Phone Number</Label>
-                        <Input name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} required />
-                    </div>
                 </div>
               )}
                {step === 2 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input name="email" type="email" value={formData.email} onChange={handleChange} required />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="phoneNumber">Phone Number</Label>
+                        <Input name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} />
+                    </div>
                      <div className="space-y-2">
                         <Label htmlFor="course">Course</Label>
-                        <Input name="course" value={formData.course} onChange={handleChange} required />
+                        <Input name="course" value={formData.course} onChange={handleChange} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="branch">Branch</Label>
-                        <Input name="branch" value={formData.branch} onChange={handleChange} required />
+                        <Input name="branch" value={formData.branch} onChange={handleChange} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="semester">Semester</Label>
-                        <Input name="semester" value={formData.semester} onChange={handleChange} required />
+                        <Input name="semester" value={formData.semester} onChange={handleChange} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="collegeName">College Name</Label>
-                        <Input name="collegeName" value={formData.collegeName} onChange={handleChange} required />
+                        <Input name="collegeName" value={formData.collegeName} onChange={handleChange} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="rollNumber">Roll Number</Label>
-                        <Input name="rollNumber" value={formData.rollNumber} onChange={handleChange} required />
+                        <Input name="rollNumber" value={formData.rollNumber} onChange={handleChange} />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="dateOfBirth">Date of Birth</Label>
@@ -185,9 +198,14 @@ export default function ProfileSetupPage() {
                 </Button>
 
                 {step === 1 && (
-                    <Button type="button" onClick={handleNext}>
-                        Next
+                  <>
+                    <Button type="button" variant="secondary" onClick={handleSetupLater} disabled={isLoading}>
+                      Setup Later
                     </Button>
+                    <Button type="button" onClick={handleNext} disabled={isLoading}>
+                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Next'}
+                    </Button>
+                  </>
                 )}
                 
                 {step === 2 && (
