@@ -37,9 +37,10 @@ export default function ExamCountdown() {
   useEffect(() => {
     if (!nextExam) return;
 
+    // Update once every hour is sufficient if we only show days
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft(new Date(nextExam.date)));
-    }, 1000);
+    }, 1000 * 60 * 60);
 
     return () => clearInterval(timer);
   }, [nextExam]);
@@ -59,13 +60,6 @@ export default function ExamCountdown() {
     );
   }
 
-  const timeUnits = [
-    { label: 'Days', value: timeLeft.days },
-    { label: 'Hours', value: timeLeft.hours },
-    { label: 'Mins', value: timeLeft.minutes },
-    { label: 'Secs', value: timeLeft.seconds },
-  ];
-
   return (
     <Card className="flex flex-col h-full hover:border-primary/50 transition-colors">
       <CardHeader className="text-center p-4 md:p-6">
@@ -75,15 +69,13 @@ export default function ExamCountdown() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex items-center justify-center p-4 pt-0 md:p-6 md:pt-0">
-        <div className="grid grid-cols-4 gap-1 md:gap-2 text-center w-full">
-          {timeUnits.map((unit) => (
-            <div key={unit.label} className="p-1 md:p-2 rounded-lg bg-muted/50">
-              <div className="text-xl md:text-3xl font-bold font-headline tabular-nums text-primary neon-icon">
-                {String(unit.value).padStart(2, '0')}
-              </div>
-              <div className="text-[10px] md:text-xs text-muted-foreground">{unit.label}</div>
+        <div className="text-center">
+            <div className="text-5xl md:text-6xl font-bold font-headline tabular-nums text-primary neon-icon">
+                {timeLeft.days}
             </div>
-          ))}
+            <div className="text-sm text-muted-foreground mt-1">
+                {timeLeft.days === 1 ? 'Day Left' : 'Days Left'}
+            </div>
         </div>
       </CardContent>
     </Card>
