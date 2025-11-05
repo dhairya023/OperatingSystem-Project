@@ -46,8 +46,8 @@ export default function NextLecture() {
                     <CardDescription className="text-xs">What's next on your schedule.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-1 flex-col items-center justify-center text-center gap-2">
-                    <Bell className="w-8 h-8 md:w-10 md:h-10 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">No upcoming classes found.</p>
+                    <Bell className="w-10 h-10 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground mt-2">No upcoming classes found.</p>
                 </CardContent>
             </Card>
         )
@@ -55,21 +55,21 @@ export default function NextLecture() {
 
     return (
         <Link href="/timetable">
-            <Card className="h-full hover:border-primary/50 transition-colors" style={{ backgroundColor: `${color}20`, borderColor: `${color}60` }}>
+            <Card className="h-full hover:border-primary/50 transition-colors flex flex-col" style={{ backgroundColor: `${color}20`, borderColor: `${color}60` }}>
                 <CardHeader className="p-4 md:p-6">
                     <CardTitle className="text-base">Next Lecture</CardTitle>
                     <CardDescription className="text-xs">{format(new Date(nextClass.date), "EEEE, LLLL d")}</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-2 md:space-y-3 p-4 pt-0 md:p-6 md:pt-0">
+                <CardContent className="space-y-3 md:space-y-4 p-4 pt-0 md:p-6 md:pt-0 flex-1 flex flex-col justify-center">
                     <div className="space-y-1">
-                        <h3 className="text-lg md:text-2xl font-bold text-primary" style={{color: color}}>{nextClass.subject}</h3>
+                        <h3 className="text-2xl md:text-4xl font-bold leading-tight" style={{color: color}}>{nextClass.subject}</h3>
                     </div>
-                    <div className="flex flex-col gap-2 text-xs md:text-sm text-muted-foreground">
+                    <div className="flex flex-col gap-2.5 text-sm md:text-base text-muted-foreground">
                         {nextClass.teacher && (
-                          <span className="flex items-center gap-1.5"><User className="w-4 h-4"/> {nextClass.teacher}</span>
+                          <span className="flex items-center gap-2 font-medium"><User className="w-5 h-5"/> {nextClass.teacher}</span>
                         )}
-                        <span className="flex items-center gap-1.5"><Clock className="w-4 h-4"/> {formatTime12h(nextClass.startTime)} - {formatTime12h(nextClass.endTime)}</span>
-                        {nextClass.room && <span className="flex items-center gap-1.5"><DoorClosed className="w-4 h-4"/> {nextClass.room}</span>}
+                        <span className="flex items-center gap-2 font-medium"><Clock className="w-5 h-5"/> {formatTime12h(nextClass.startTime)} - {formatTime12h(nextClass.endTime)}</span>
+                        {nextClass.room && <span className="flex items-center gap-2 font-medium"><DoorClosed className="w-5 h-5"/> {nextClass.room}</span>}
                     </div>
                 </CardContent>
             </Card>
