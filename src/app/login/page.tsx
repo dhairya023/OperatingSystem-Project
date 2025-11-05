@@ -165,7 +165,6 @@ export default function LoginPage() {
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="name@example.com"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -214,7 +213,6 @@ export default function LoginPage() {
                                 <Input
                                     id="register-email"
                                     type="email"
-                                    placeholder="name@example.com"
                                     required
                                     value={registerEmail}
                                     onChange={(e) => setRegisterEmail(e.target.value)}
@@ -282,7 +280,6 @@ export default function LoginPage() {
                             <Input
                                 id="reset-email"
                                 type="email"
-                                placeholder="name@example.com"
                                 required
                                 value={resetEmail}
                                 onChange={(e) => setResetEmail(e.target.value)}
