@@ -394,14 +394,9 @@
   },
   "auth": {
     "providers": [
-<<<<<<< HEAD
-      "anonymous",
-      "password"
-=======
       "password",
       "anonymous",
       "google.com"
->>>>>>> ce8a73b (add sign in with google option to sign in page)
     ]
   },
   "firestore": {

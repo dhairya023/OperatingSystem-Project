@@ -131,7 +131,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           }
 
           setUserData({
-            profile: parseProfile(data.profile) || { ...(initialProfile as UserProfile), fullName: user.displayName, email: user.email, profilePhotoUrl: `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(user.email || 'user')}` },
+            profile: parseProfile(data.profile) || { ...(initialProfile as UserProfile), fullName: user.displayName || '', email: user.email || '', profilePhotoUrl: `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(user.email || 'user')}` },
             subjects: data.subjects || [],
             classes: parseDates(data.classes),
             assignments: parseDates(data.assignments),
@@ -140,7 +140,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           });
         } else {
            setUserData({
-            profile: { ...(initialProfile as UserProfile), fullName: user.displayName, email: user.email, profilePhotoUrl: `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(user.email || 'user')}` },
+            profile: { ...(initialProfile as UserProfile), fullName: user.displayName || '', email: user.email || '', profilePhotoUrl: `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(user.email || 'user')}` },
             subjects: [],
             classes: [],
             assignments: [],
@@ -203,9 +203,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     if (!docSnap.exists()) {
       // If the user is new, create their profile document
       await setDoc(userDocRef, {
-        uid: newUser.uid,
-        email: newUser.email,
-        createdAt: serverTimestamp(),
         profile: {
           ...initialProfile,
           fullName: newUser.displayName || '',
