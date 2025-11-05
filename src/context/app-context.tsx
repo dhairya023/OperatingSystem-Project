@@ -495,9 +495,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     addGradeSubject: gradeUpdater.add,
     updateGradeSubject: gradeUpdater.update,
     deleteGradeSubject: gradeUpdater.delete,
-_shareTimetable: shareTimetable,
-_getSharedTimetable: getSharedTimetable,
-_importTimetable: importTimetable,
+    shareTimetable: shareTimetable,
+    getSharedTimetable: getSharedTimetable,
+    importTimetable: importTimetable,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
@@ -510,5 +510,3 @@ export const useAppContext = () => {
   }
   return context;
 };
-
-    

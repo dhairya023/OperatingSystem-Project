@@ -7,11 +7,10 @@ import PendingAssignments from "@/components/dashboard/pending-assignments";
 import UpcomingClasses from "@/components/dashboard/upcoming-classes";
 import { useState, useEffect } from 'react';
 import { useAppContext } from "@/context/app-context";
-import PageHeader from "@/components/page-header";
+import AttendanceOverview from "./dashboard/attendance-overview";
 
 export default function Dashboard() {
   const { profile, setHeaderState } = useAppContext();
-  const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
     // This code runs only on the client, avoiding server/client mismatches.
@@ -28,7 +27,6 @@ export default function Dashboard() {
       timeOfDay = 'Good evening';
     }
     const newGreeting = `${timeOfDay}, ${name}`
-    setGreeting(newGreeting);
     setHeaderState({title: newGreeting, description: "Here's your academic summary"});
 
   }, [profile, setHeaderState]);
@@ -45,7 +43,11 @@ export default function Dashboard() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <UpcomingClasses />
-        <PendingAssignments />
+        <AttendanceOverview />
+      </div>
+
+      <div className="grid gap-6">
+          <PendingAssignments />
       </div>
     </div>
   );
