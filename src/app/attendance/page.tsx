@@ -19,8 +19,14 @@ import type { ClassSession } from '@/lib/types';
 
 function AttendanceContent() {
   const { subjects, getSubjectAttendance, classes, setHeaderState } = useAppContext();
-  const [selectedSubject, setSelectedSubject] = useState(subjects.length > 0 ? subjects[0].name : '');
+  const [selectedSubject, setSelectedSubject] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    if (subjects.length > 0 && !selectedSubject) {
+      setSelectedSubject(subjects[0].name);
+    }
+  }, [subjects, selectedSubject]);
 
   useEffect(() => {
     setHeaderState({
