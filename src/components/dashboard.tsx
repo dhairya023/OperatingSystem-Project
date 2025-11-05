@@ -7,6 +7,7 @@ import PendingAssignments from "@/components/dashboard/pending-assignments";
 import UpcomingClasses from "@/components/dashboard/upcoming-classes";
 import { useState, useEffect } from 'react';
 import { useAppContext } from "@/context/app-context";
+import PageHeader from "@/components/page-header";
 
 export default function Dashboard() {
   const { profile, setHeaderState } = useAppContext();
@@ -34,7 +35,6 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title={greeting} description="Here's your academic summary" />
       
       <DashboardSummary />
 
