@@ -197,7 +197,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[--sidebar-width] bg-card/90 backdrop-blur-md p-0 text-foreground [&>button]:hidden"
+            className="w-[--sidebar-width] bg-card/90 backdrop-blur-md p-0 text-foreground [&>button]:hidden rounded-3xl"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -529,7 +529,6 @@ const SidebarMenuButton = React.forwardRef<
   React.ComponentProps<"button"> & {
     asChild?: boolean
     isActive?: boolean
-    tooltip?: string | React.ComponentProps<typeof TooltipContent>
   } & VariantProps<typeof sidebarMenuButtonVariants>
 >(
   (
@@ -538,7 +537,6 @@ const SidebarMenuButton = React.forwardRef<
       isActive = false,
       variant = "default",
       size = "default",
-      tooltip,
       className,
       children,
       ...props
@@ -548,7 +546,7 @@ const SidebarMenuButton = React.forwardRef<
     const Component = asChild ? Slot : "button"
     const { isMobile, state } = useSidebar()
 
-    const buttonContent = (
+    return (
       <Component
         ref={ref}
         data-sidebar="menu-button"
@@ -559,28 +557,6 @@ const SidebarMenuButton = React.forwardRef<
       >
         <>{children}</>
       </Component>
-    )
-
-    if (!tooltip) {
-      return buttonContent
-    }
-
-    if (typeof tooltip === "string") {
-      tooltip = {
-        children: tooltip,
-      }
-    }
-
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{buttonContent}</TooltipTrigger>
-        <TooltipContent
-          side="right"
-          align="center"
-          hidden={state !== "collapsed" || isMobile}
-          {...tooltip}
-        />
-      </Tooltip>
     )
   }
 )

@@ -33,6 +33,7 @@ import {
   GraduationCap as ExamIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -108,25 +109,31 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                       const isActive = pathname === route.href
                       return (
                         <SidebarMenuItem key={route.href}>
-                          <Link href={route.href}>
-                            <SidebarMenuButton
-                              className={cn(
-                                "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-3 md:gap-3",
-                                isActive
-                                  ? "bg-black/50 text-white"
-                                  : "text-muted-foreground hover:bg-black/20 hover:text-white"
-                              )}
-                              isActive={isActive}
-                              tooltip={route.label}
-                            >
-                              <route.icon
-                                className={cn(
-                                  "h-5 w-5",
-                                )}
-                              />
-                              <span>{route.label}</span>
-                            </SidebarMenuButton>
-                          </Link>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Link href={route.href}>
+                                <SidebarMenuButton
+                                  className={cn(
+                                    "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-3 md:gap-3",
+                                    isActive
+                                      ? "bg-black/50 text-white"
+                                      : "text-muted-foreground hover:bg-black/20 hover:text-white"
+                                  )}
+                                  isActive={isActive}
+                                >
+                                  <route.icon
+                                    className={cn(
+                                      "h-5 w-5",
+                                    )}
+                                  />
+                                  <span>{route.label}</span>
+                                </SidebarMenuButton>
+                              </Link>
+                            </TooltipTrigger>
+                            <TooltipContent side="right" align="center">
+                              {route.label}
+                            </TooltipContent>
+                          </Tooltip>
                         </SidebarMenuItem>
                       )
                     })}
