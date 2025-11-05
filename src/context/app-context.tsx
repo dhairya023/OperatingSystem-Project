@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
@@ -75,7 +76,7 @@ interface AppContextType extends UserData {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const initialProfile: UserProfile = {
+const initialProfile: Omit<UserProfile, 'dateOfBirth'> = {
   fullName: '',
   email: '',
   course: '',
@@ -128,7 +129,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           }
 
           setUserData({
-            profile: parseProfile(data.profile) || { ...initialProfile, fullName: user.displayName, email: user.email },
+            profile: parseProfile(data.profile) || { ...(initialProfile as UserProfile), fullName: user.displayName, email: user.email },
             subjects: data.subjects || [],
             classes: parseDates(data.classes),
             assignments: parseDates(data.assignments),
@@ -137,7 +138,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           });
         } else {
            setUserData({
-            profile: { ...initialProfile, fullName: user.displayName, email: user.email },
+            profile: { ...(initialProfile as UserProfile), fullName: user.displayName, email: user.email },
             subjects: [],
             classes: [],
             assignments: [],
@@ -436,3 +437,5 @@ export const useAppContext = () => {
   }
   return context;
 };
+
+    
