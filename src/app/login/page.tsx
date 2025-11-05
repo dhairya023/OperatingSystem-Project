@@ -90,6 +90,13 @@ export default function LoginPage() {
         await loginWithGoogle();
         router.push('/');
     } catch (error: any) {
+        // This specific error code means the user closed the popup.
+        // We can safely ignore it and don't need to show an error message.
+        if (error.code === 'auth/popup-closed-by-user') {
+            console.log('Google Sign-in popup closed by user.');
+            return;
+        }
+
         console.error(error);
         toast({
             variant: 'destructive',
