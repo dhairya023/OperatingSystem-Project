@@ -27,7 +27,7 @@ const SubjectForm = ({ subject, onSave, onDone }: { subject?: Subject; onSave: (
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !teacher) return;
+    if (!name) return;
     await onSave({
       id: subject?.id || crypto.randomUUID(),
       name,
@@ -55,7 +55,6 @@ const SubjectForm = ({ subject, onSave, onDone }: { subject?: Subject; onSave: (
             value={teacher}
             onChange={(e) => setTeacher(e.target.value)}
             className="col-span-3"
-            required
           />
         </div>
         <div className="grid grid-cols-4 items-start gap-4">

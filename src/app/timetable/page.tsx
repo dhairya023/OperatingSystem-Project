@@ -1,7 +1,8 @@
+
 'use client';
 import AppLayout from '@/components/app-layout';
 import { useEffect, useState, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/app-context';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Share2 } from 'lucide-react';
@@ -17,10 +18,10 @@ import {
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog';
-import ClassSessionForm from '@/components/timetable/class-session-form';
 import { ClassDetailsDrawer } from '@/components/timetable/ClassDetailsDrawer';
 import { useToast } from '@/hooks/use-toast';
 import { ShareDialog } from '@/components/share-dialog';
+import Link from 'next/link';
 
 const formatTime12h = (time: string) => {
     if (!time) return '';
@@ -71,8 +72,8 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
 
 function TimetableContent() {
   const { subjects, classes, shareTimetable, getSharedTimetable, importTimetable, setHeaderState } = useAppContext();
+  const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
   const { toast } = useToast();
@@ -161,21 +162,13 @@ function TimetableContent() {
   useEffect(() => {
     const pageActions = (
       <div className="flex items-center gap-2">
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" /> 
-              <span className="hidden sm:inline">Add Class</span>
-              <span className="sm:hidden">Add</span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              <DialogTitle>Add New Class</DialogTitle>
-            </DialogHeader>
-            <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-          </DialogContent>
-        </Dialog>
+        <Button asChild>
+          <Link href={`/timetable/add?date=${format(currentDate, 'yyyy-MM-dd')}`}>
+            <PlusCircle className="mr-2 h-4 w-4" /> 
+            <span className="hidden sm:inline">Add Class</span>
+            <span className="sm:hidden">Add</span>
+          </Link>
+        </Button>
         <Button variant="outline" size="icon" onClick={handleShare}>
           <Share2 className="h-4 w-4" />
         </Button>
@@ -187,7 +180,7 @@ function TimetableContent() {
         description: "Your weekly class schedule.",
         children: pageActions
     });
-  }, [isAddDialogOpen, currentDate, setHeaderState]);
+  }, [currentDate, setHeaderState]);
 
   if (subjects.length === 0 && !importCode) {
     return (

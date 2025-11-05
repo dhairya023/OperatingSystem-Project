@@ -45,7 +45,7 @@ export type DailyAttendance = {
 export type Subject = {
     id: string;
     name: string;
-    teacher: string;
+    teacher?: string;
     color: string;
 }
 
