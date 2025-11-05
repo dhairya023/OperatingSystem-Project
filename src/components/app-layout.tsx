@@ -77,6 +77,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     return null;
   }
 
+  const getInitials = (name?: string) => {
+    return name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+  }
+
   return (
     <SidebarProvider>
       <div className="flex h-screen bg-black">
@@ -138,7 +142,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <div className="flex items-center gap-3">
                      <Avatar className="h-8 w-8">
                        <AvatarImage src={profile?.profilePhotoUrl} />
-                       <AvatarFallback>{profile?.fullName?.[0]?.toUpperCase() || "U"}</AvatarFallback>
+                       <AvatarFallback>{getInitials(profile?.fullName)}</AvatarFallback>
                      </Avatar>
                     <span className="text-sm text-foreground truncate">
                       {profile?.fullName || "User"}
