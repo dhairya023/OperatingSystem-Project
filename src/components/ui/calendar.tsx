@@ -7,6 +7,7 @@ import { DayPicker, DropdownProps } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select"
+import { ScrollArea } from "./scroll-area"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
@@ -104,16 +105,5 @@ function Calendar({
   )
 }
 Calendar.displayName = "Calendar"
-
-const ScrollArea = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, children, ...props }, ref) => (
-  <div ref={ref} className={cn("relative", className)} {...props}>
-    <div className="max-h-60 overflow-y-auto">{children}</div>
-  </div>
-))
-ScrollArea.displayName = "ScrollArea"
-
 
 export { Calendar }
