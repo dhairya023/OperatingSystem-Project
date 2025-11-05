@@ -23,8 +23,6 @@ import {
 import { cn } from '@/lib/utils';
 
 export default function LoginPage() {
-  const [isRegisterMode, setIsRegisterMode] = useState(false);
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [resetEmail, setResetEmail] = useState('');
@@ -32,7 +30,7 @@ export default function LoginPage() {
   const [isResetting, setIsResetting] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
-  const { registerUser, loginUser, sendPasswordReset } = useAppContext();
+  const { loginUser, sendPasswordReset } = useAppContext();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -41,12 +39,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      if (isRegisterMode) {
-        await registerUser(email, password, username);
-        toast({ title: "Registration successful!", description: "Please complete your profile." });
-      } else {
-        await loginUser(email, password);
-      }
+      await loginUser(email, password);
       router.push('/');
     } catch (error: any) {
       console.error(error);
@@ -100,27 +93,13 @@ export default function LoginPage() {
         <div className="relative rounded-2xl p-1 bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 animate-gradient-border animate-hue-glow">
             <Card className="rounded-xl overflow-hidden border-none">
             <CardHeader>
-                <CardTitle className="text-2xl">{isRegisterMode ? 'Create an Account' : 'Sign In'}</CardTitle>
+                <CardTitle className="text-2xl">Sign In</CardTitle>
                 <CardDescription>
-                {isRegisterMode ? 'Enter your details to get started.' : 'Enter your credentials to access your dashboard.'}
+                Enter your credentials to access your dashboard.
               </CardDescription>
             </CardHeader>
             <CardContent className="bg-background">
               <form onSubmit={handleAuthSubmit} className="space-y-4">
-                {isRegisterMode && (
-                  <div className="space-y-2">
-                    <Label htmlFor="username">Username</Label>
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder="your_username"
-                      required
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </div>
-                )}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -144,18 +123,16 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
                   />
-                  {!isRegisterMode && (
-                      <div className="flex justify-end">
-                          <Button
-                              type="button"
-                              variant="link"
-                              className="p-0 h-auto text-sm text-primary/80 hover:text-primary"
-                              onClick={() => setIsForgotPasswordOpen(true)}
-                          >
-                              Forgot Password?
-                          </Button>
-                      </div>
-                  )}
+                  <div className="flex justify-end">
+                      <Button
+                          type="button"
+                          variant="link"
+                          className="p-0 h-auto text-sm text-primary/80 hover:text-primary"
+                          onClick={() => setIsForgotPasswordOpen(true)}
+                      >
+                          Forgot Password?
+                      </Button>
+                  </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
@@ -163,15 +140,9 @@ export default function LoginPage() {
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Processing...
                     </>
-                  ) : isRegisterMode ? 'Register' : 'Sign In'}
+                  ) : 'Sign In'}
                 </Button>
               </form>
-              <div className="mt-4 text-center text-sm">
-                {isRegisterMode ? 'Already have an account?' : "Don't have an account?"}
-                <Button variant="link" onClick={() => setIsRegisterMode(!isRegisterMode)} className="px-1">
-                  {isRegisterMode ? 'Sign In' : 'Register'}
-                </Button>
-              </div>
             </CardContent>
           </Card>
         </div>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
@@ -57,7 +58,6 @@ interface AppContextType extends UserData {
   updateExam: (exam: Exam) => Promise<void>;
   deleteExam: (id: string) => Promise<void>;
   updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
-  registerUser: (email: string, password: string, fullName: string) => Promise<void>;
   loginUser: (email: string, password: string) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   logoutUser: () => Promise<void>;
@@ -161,32 +161,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       const userDocRef = doc(firestore, 'users', user.uid);
       await updateDoc(userDocRef, { [field]: value });
   }
-
-  const registerUser = async (email: string, password: string, fullName: string) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const newUser = userCredential.user;
-
-    const userDocRef = doc(firestore, 'users', newUser.uid);
-    await setDoc(userDocRef, {
-      uid: newUser.uid,
-      email: newUser.email,
-      createdAt: serverTimestamp(),
-      profile: {
-          ...initialProfile,
-          fullName: fullName,
-          email: newUser.email,
-      },
-      subjects: [],
-      classes: [],
-      assignments: [],
-      exams: [],
-      grades: [],
-      timetable: [],
-      attendance: {},
-      attendanceStats: { overallPercentage: 0, currentStreak: 0 },
-      analytics: {},
-    });
-  };
 
   const loginUser = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
@@ -412,7 +386,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     addExam: examUpdater.add,
     updateExam: examUpdater.update,
     deleteExam: examUpdater.delete,
-    registerUser,
     loginUser,
     sendPasswordReset,
     logoutUser,
