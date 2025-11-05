@@ -8,7 +8,7 @@ import { AppProvider } from '@/context/app-context';
 import { FirebaseClientProvider } from '@/firebase';
 import { useAppContext } from '@/context/app-context';
 import { useFirebase } from '@/firebase';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import SplashScreen from '@/components/splash-screen';
 import { SkeletonSidebar } from '@/components/skeletons/skeleton-sidebar';
 import { SkeletonHeader } from '@/components/skeletons/skeleton-header';
@@ -18,28 +18,35 @@ function AppBody({ children }: { children: React.ReactNode }) {
   const { isDataLoading, profile } = useAppContext();
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (isUserLoading || isDataLoading) return;
 
     const isAuthPage = pathname === '/login' || pathname === '/profile-setup';
+    const isImporting = pathname === '/timetable' && searchParams.has('importCode');
+    
+    if (isImporting) return; // Don't redirect if we are importing
 
     if (!user && !isAuthPage) {
       router.replace('/login');
     } else if (user && !profile?.profileCompleted && pathname !== '/profile-setup') {
-      router.replace('/profile-setup');
+        const importCode = searchParams.get('importCode');
+        router.replace(`/profile-setup${importCode ? `?importCode=${importCode}` : ''}`);
     } else if (user && profile?.profileCompleted && isAuthPage) {
-      router.replace('/');
+      const importCode = searchParams.get('importCode');
+      router.replace(importCode ? `/timetable?importCode=${importCode}` : '/');
     }
-  }, [user, profile, isUserLoading, isDataLoading, pathname, router]);
+  }, [user, profile, isUserLoading, isDataLoading, pathname, router, searchParams]);
 
 
   const showContent = () => {
     if (isUserLoading || isDataLoading) return false;
 
     const isAuthPage = pathname === '/login' || pathname === '/profile-setup';
-
-    if (!user && isAuthPage) return true;
+    const isImporting = pathname === '/timetable' && searchParams.has('importCode');
+    
+    if (!user && (isAuthPage || isImporting)) return true;
     if (user && !profile?.profileCompleted && pathname === '/profile-setup') return true;
     if (user && profile?.profileCompleted && !isAuthPage) return true;
 
@@ -94,3 +101,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    

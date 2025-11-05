@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAppContext } from '@/context/app-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,14 +46,23 @@ export default function LoginPage() {
 
   const { registerUser, loginUser, sendPasswordReset, loginWithGoogle } = useAppContext();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
+
+  const getRedirectPath = () => {
+    const importCode = searchParams.get('importCode');
+    if (importCode) {
+      return `/timetable?importCode=${importCode}`;
+    }
+    return '/';
+  }
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
         await loginUser(email, password);
-        router.push('/');
+        router.push(getRedirectPath());
     } catch (error: any) {
         console.error(error);
         toast({
@@ -72,7 +81,7 @@ export default function LoginPage() {
     try {
         await registerUser(registerEmail, registerPassword);
         toast({ title: 'Registration successful!', description: 'Please complete your profile.' });
-        router.push('/profile-setup');
+        router.push(`/profile-setup?importCode=${searchParams.get('importCode') || ''}`);
     } catch (error: any) {
         toast({
             variant: 'destructive',
@@ -88,7 +97,7 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     try {
         await loginWithGoogle();
-        router.push('/');
+        router.push(getRedirectPath());
     } catch (error: any) {
         // This specific error code means the user closed the popup.
         // We can safely ignore it and don't need to show an error message.
@@ -304,3 +313,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    

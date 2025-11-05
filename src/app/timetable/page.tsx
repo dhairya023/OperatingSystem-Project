@@ -24,6 +24,7 @@ import Link from 'next/link';
 import WeekViewCalendar from '@/components/timetable/week-view-calendar';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import { useFirebase } from '@/firebase';
 
 const formatTime12h = (time: string) => {
     if (!time) return '';
@@ -90,6 +91,7 @@ const TimetableCard = ({ session, isBreak = false }: { session: ClassSession, is
 };
 
 function TimetableContent() {
+  const { user } = useFirebase();
   const { subjects, classes, shareTimetable, getSharedTimetable, importTimetable, setHeaderState } = useAppContext();
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -138,13 +140,20 @@ function TimetableContent() {
     if (sharedData) {
       try {
         await importTimetable(sharedData.subjects, sharedData.classes);
-        toast({ title: 'Success!', description: 'Timetable has been imported successfully.' });
-      } catch (error) {
-        toast({ variant: 'destructive', title: 'Import Failed', description: 'There was an error importing the timetable.' });
-      } finally {
-        setIsImporting(false);
-        setSharedData(null);
-        window.history.replaceState({}, '', '/timetable');
+        if (user) { // If user is logged in, import is complete
+            toast({ title: 'Success!', description: 'Timetable has been imported successfully.' });
+            setIsImporting(false);
+            setSharedData(null);
+            router.replace('/timetable');
+        } 
+        // If user is not logged in, importTimetable will handle redirection.
+      } catch (error: any) {
+         if (error.message.includes('User not logged in')) {
+            // The context is handling the redirect, just close the dialog.
+            setIsImporting(false);
+         } else {
+            toast({ variant: 'destructive', title: 'Import Failed', description: 'There was an error importing the timetable.' });
+         }
       }
     }
   };
@@ -152,7 +161,7 @@ function TimetableContent() {
   const handleCancelImport = () => {
     setIsImporting(false);
     setSharedData(null);
-    window.history.replaceState({}, '', '/timetable');
+    router.replace('/timetable');
   };
 
   const dailySchedule = useMemo(() => {
@@ -175,7 +184,7 @@ function TimetableContent() {
             <span className="sm:hidden">Add</span>
           </Link>
         </Button>
-        <Button variant="outline" size="icon" onClick={handleShare}>
+        <Button variant="outline" size="icon" onClick={handleShare} disabled={!user}>
           <Share2 className="h-4 w-4" />
         </Button>
       </div>
@@ -185,7 +194,7 @@ function TimetableContent() {
         title: format(currentDate, 'MMMM'),
         children: pageActions
     });
-  }, [currentDate, setHeaderState]);
+  }, [currentDate, setHeaderState, user]);
 
   if (subjects.length === 0 && !importCode) {
     return (
@@ -220,12 +229,15 @@ function TimetableContent() {
         )}
       </div>
 
-      <Dialog open={isImporting} onOpenChange={setIsImporting}>
+      <Dialog open={isImporting} onOpenChange={handleCancelImport}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Import Timetable</DialogTitle>
             <DialogDescription>
-              Do you want to import this timetable? This will replace your current subjects and classes.
+              {user 
+                ? "Do you want to import this timetable? This will replace your current subjects and classes."
+                : "Please log in or create an account to import this timetable."
+              }
             </DialogDescription>
           </DialogHeader>
           {sharedData && (
@@ -242,7 +254,9 @@ function TimetableContent() {
           )}
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="ghost" onClick={handleCancelImport} className="w-full sm:w-auto">Cancel</Button>
-            <Button onClick={handleConfirmImport} className="w-full sm:w-auto">Yes, Import</Button>
+            <Button onClick={handleConfirmImport} className="w-full sm:w-auto">
+                {user ? "Yes, Import" : "Login & Import"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -265,3 +279,5 @@ export default function TimetablePage() {
     </AppLayout>
   );
 }
+
+    

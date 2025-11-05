@@ -1,9 +1,8 @@
 
-
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   doc,
   setDoc,
@@ -98,9 +97,21 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [headerState, setHeaderState] = useState<HeaderState>({ title: '' });
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (isUserLoading) return;
+
+    // Check if the user is trying to import a timetable.
+    const isImporting = pathname === '/timetable' && searchParams.has('importCode');
+    
+    // If a non-logged-in user is trying to import, don't redirect them.
+    if (isImporting && !user) {
+        setIsDataLoading(false);
+        return;
+    }
+    
     if (!user) {
       setUserData(null);
       setIsDataLoading(false);
@@ -157,7 +168,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     );
 
     return () => unsubscribe();
-  }, [user, isUserLoading, firestore]);
+  }, [user, isUserLoading, firestore, pathname, searchParams]);
   
   const updateUserData = async (field: keyof UserData | string, value: any) => {
       if (!user) throw new Error('User not logged in');
@@ -412,7 +423,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
   
   const importTimetable = async (subjects: Subject[], classes: ClassSession[]) => {
-    if (!user) throw new Error('User not logged in');
+    if (!user) {
+        // If user is not logged in, redirect them to login, but carry over the import code.
+        const importCode = searchParams.get('importCode');
+        router.push(`/login?importCode=${importCode}`);
+        throw new Error('User not logged in. Redirecting to login.');
+    }
     const userDocRef = doc(firestore, 'users', user.uid);
     // Ensure all class dates are proper JS Date objects before updating
     const sanitizedClasses = classes.map(c => ({
@@ -479,9 +495,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     addGradeSubject: gradeUpdater.add,
     updateGradeSubject: gradeUpdater.update,
     deleteGradeSubject: gradeUpdater.delete,
-    shareTimetable,
-    getSharedTimetable,
-    importTimetable,
+_shareTimetable: shareTimetable,
+_getSharedTimetable: getSharedTimetable,
+_importTimetable: importTimetable,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
@@ -496,6 +512,3 @@ export const useAppContext = () => {
 };
 
     
-
-    
-
