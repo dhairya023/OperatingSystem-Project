@@ -41,38 +41,46 @@ function AppBody({ children }: { children: React.ReactNode }) {
 
   // This effect handles the initial routing logic.
   useEffect(() => {
-    // Wait until firebase auth is resolved and app data has been attempted to load.
-    if (isUserLoading || isDataLoading) return;
-
-    // If the user is not logged in, and they are not on a public page, redirect to login.
-    if (!user && pathname !== '/login' && pathname !== '/profile-setup') {
-      router.push('/login');
-    }
-    // If the user is logged in but hasn't completed their profile, send them to setup.
-    else if (user && !profile?.profileCompleted && pathname !== '/profile-setup') {
-      router.push('/profile-setup');
-    }
-    // If the user is logged in, profile is complete, but they land on a public-only page, send to dashboard.
-    else if (user && profile?.profileCompleted && (pathname === '/login' || pathname === '/profile-setup')) {
-      router.push('/');
+    // Wait until both Firebase auth and the app's data loading are fully resolved.
+    if (isUserLoading || isDataLoading) {
+      return;
     }
 
+    const isProfileSetupPage = pathname === '/profile-setup';
+    const isLoginPage = pathname === '/login';
+
+    if (user) {
+      // User is logged in.
+      if (profile?.profileCompleted) {
+        // Profile is complete, user should not be on login or setup page.
+        if (isLoginPage || isProfileSetupPage) {
+          router.push('/');
+        }
+      } else {
+        // Profile is not complete, user must be on the setup page.
+        if (!isProfileSetupPage) {
+          router.push('/profile-setup');
+        }
+      }
+    } else {
+      // User is not logged in, they should only be on the login page.
+      if (!isLoginPage) {
+        router.push('/login');
+      }
+    }
   }, [user, profile, isUserLoading, isDataLoading, pathname, router]);
 
-  // Determine if the app is ready to be shown.
-  // It's ready when the minimum splash time is over AND the initial data loading/routing checks are done.
-  const isAppReady = isSplashTimingComplete && !isUserLoading && !isDataLoading;
 
   // Determine if we should show the final content.
   // This prevents content flashes during initial load or redirects.
-  const showContent = isAppReady && (
-    (user && profile?.profileCompleted) || // Regular authenticated user
-    pathname === '/login' || // Login page is always accessible
-    (user && !profile?.profileCompleted && pathname === '/profile-setup') // Profile setup is accessible
+  const showContent = isSplashTimingComplete && !isUserLoading && !isDataLoading && (
+    (user && profile?.profileCompleted) || // Regular authenticated user in the app
+    (user && !profile?.profileCompleted && pathname === '/profile-setup') || // User is on the required profile setup page
+    (!user && pathname === '/login') // User is on the login page
   );
+  
 
-  // While the app is not ready, we show the splash screen.
-  // This prevents the black screen flash.
+  // While the app is not ready or content is not ready to be shown, we show the splash screen.
   if (!showContent) {
     return <SplashScreen />;
   }
