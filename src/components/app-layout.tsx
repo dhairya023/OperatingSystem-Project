@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -37,8 +36,8 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/timetable", label: "Timetable", icon: CalendarDays },
   { href: "/attendance", label: "Attendance", icon: UserCheck },
+  { href: "/timetable", label: "Timetable", icon: CalendarDays },
   { href: "/assignments", label: "Assignments", icon: BookCheck },
   { href: "/exams", label: "Exams", icon: ExamIcon },
   { href: "/grades", label: "Grades", icon: BarChart },
