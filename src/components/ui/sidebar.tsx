@@ -140,46 +140,37 @@ const SidebarProvider = React.forwardRef<
 SidebarProvider.displayName = "SidebarProvider"
 
 const Sidebar = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div"> & {
+  React.ElementRef<typeof Sheet>,
+  React.ComponentProps<typeof Sheet> & {
     side?: "left" | "right"
   }
->(
-  (
-    {
-      side = "left",
-      className,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const { open, setOpen, isMobile } = useSidebar()
+>(({ side = "left", className, children, ...props }, ref) => {
+  const { open, setOpen, isMobile } = useSidebar();
 
-    return (
-        <Sheet open={open} onOpenChange={setOpen} {...props}>
-          <SheetContent
-            data-sidebar="sidebar"
-            data-mobile={isMobile}
-            className="w-[var(--sidebar-width)] bg-card/90 backdrop-blur-md p-0 text-foreground [&>button]:hidden rounded-3xl"
-            style={
-              {
-                "--sidebar-width": isMobile ? SIDEBAR_WIDTH_MOBILE : SIDEBAR_WIDTH,
-              } as React.CSSProperties
-            }
-            side={side}
-          >
-             <div className="sr-only">
-                  <SheetTitle>Navigation Menu</SheetTitle>
-              </div>
-            <div className="flex h-full w-full flex-col">
-              {children}
-            </div>
-          </SheetContent>
-        </Sheet>
-    )
-  }
-)
+  return (
+    <Sheet ref={ref} open={open} onOpenChange={setOpen} {...props}>
+      <SheetContent
+        data-sidebar="sidebar"
+        data-mobile={isMobile}
+        className={cn(
+          "w-[var(--sidebar-width)] bg-card/90 backdrop-blur-md p-0 text-foreground [&>button]:hidden rounded-3xl",
+          className
+        )}
+        style={
+          {
+            "--sidebar-width": isMobile ? SIDEBAR_WIDTH_MOBILE : SIDEBAR_WIDTH,
+          } as React.CSSProperties
+        }
+        side={side}
+      >
+        <div className="sr-only">
+          <SheetTitle>Navigation Menu</SheetTitle>
+        </div>
+        <div className="flex h-full w-full flex-col">{children}</div>
+      </SheetContent>
+    </Sheet>
+  );
+});
 Sidebar.displayName = "Sidebar"
 
 const SidebarTrigger = React.forwardRef<
