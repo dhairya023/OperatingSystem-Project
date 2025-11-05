@@ -27,7 +27,7 @@ export default function Dashboard() {
     } else {
       timeOfDay = 'Good evening';
     }
-    const newGreeting = `${timeOfDay}, ${name} 👋`
+    const newGreeting = `${timeOfDay}, ${name}`
     setGreeting(newGreeting);
     setHeaderState({title: newGreeting, description: "Here's your academic summary"});
 
