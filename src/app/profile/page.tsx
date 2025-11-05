@@ -70,6 +70,9 @@ function ProfileContent() {
     });
   }, [isFormOpen, profile, setHeaderState]);
 
+  if (!profile) {
+    return null; // Or a loading indicator
+  }
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">

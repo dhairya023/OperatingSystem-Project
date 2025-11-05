@@ -76,7 +76,7 @@ interface AppContextType extends UserData {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const initialProfile: Omit<UserProfile, 'dateOfBirth'> = {
+const initialProfile: Omit<UserProfile, 'dateOfBirth' | 'profilePhotoUrl'> = {
   fullName: '',
   email: '',
   course: '',
@@ -85,7 +85,6 @@ const initialProfile: Omit<UserProfile, 'dateOfBirth'> = {
   collegeName: '',
   rollNumber: '',
   phoneNumber: '',
-  profilePhotoUrl: '',
   profileCompleted: false,
 };
 
@@ -129,7 +128,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           }
 
           setUserData({
-            profile: parseProfile(data.profile) || { ...(initialProfile as UserProfile), fullName: user.displayName, email: user.email },
+            profile: parseProfile(data.profile) || { ...(initialProfile as UserProfile), fullName: user.displayName, email: user.email, profilePhotoUrl: `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(user.email || 'user')}` },
             subjects: data.subjects || [],
             classes: parseDates(data.classes),
             assignments: parseDates(data.assignments),
@@ -138,7 +137,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           });
         } else {
            setUserData({
-            profile: { ...(initialProfile as UserProfile), fullName: user.displayName, email: user.email },
+            profile: { ...(initialProfile as UserProfile), fullName: user.displayName, email: user.email, profilePhotoUrl: `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(user.email || 'user')}` },
             subjects: [],
             classes: [],
             assignments: [],
@@ -177,6 +176,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
             ...initialProfile,
             email: newUser.email,
             fullName: newUser.displayName || '',
+            profilePhotoUrl: `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(newUser.email || 'anonymous')}`
           },
           subjects: [],
           classes: [],
@@ -210,6 +210,20 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error deleting account:", error);
       throw error;
     }
+  };
+
+  const updateProfile = async (profileData: Partial<UserProfile>) => {
+    if (!user) throw new Error('User not logged in');
+    
+    // Create a new profile object to avoid direct mutation
+    const newProfile = { ...(userData?.profile || {}), ...profileData };
+
+    // If the full name has changed, update the photo URL
+    if (profileData.fullName && profileData.fullName !== userData?.profile?.fullName) {
+        newProfile.profilePhotoUrl = `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(profileData.fullName)}`;
+    }
+    
+    await updateUserData('profile', newProfile);
   };
 
   const completeProfileSetup = async () => {
@@ -386,7 +400,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     assignments: userData?.assignments || [],
     exams: userData?.exams || [],
     grades: userData?.grades || [],
-    updateProfile: (profile: Partial<UserProfile>) => updateUserData('profile', {...(userData?.profile || {}), ...profile}),
+    updateProfile,
     addSubject: subjectUpdater.add,
     updateSubject: subjectUpdater.update,
     deleteSubject: subjectUpdater.delete,
@@ -437,5 +451,3 @@ export const useAppContext = () => {
   }
   return context;
 };
-
-    

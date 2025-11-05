@@ -1,6 +1,6 @@
 
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,9 +30,15 @@ export default function ProfileSetupPage() {
     rollNumber: '',
     phoneNumber: '',
     dateOfBirth: undefined,
-    profilePhotoUrl: '',
+    profilePhotoUrl: profile?.profilePhotoUrl || '',
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (profile?.profilePhotoUrl) {
+      setFormData(prev => ({...prev, profilePhotoUrl: profile.profilePhotoUrl}));
+    }
+  }, [profile]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,17 +47,6 @@ export default function ProfileSetupPage() {
   const handleDateChange = (date: Date | undefined) => {
     setFormData({ ...formData, dateOfBirth: date });
   }
-
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, profilePhotoUrl: reader.result as string });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +72,10 @@ export default function ProfileSetupPage() {
     if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   }
+  
+  const avatarUrl = formData.fullName
+    ? `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(formData.fullName)}`
+    : formData.profilePhotoUrl;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -99,13 +98,10 @@ export default function ProfileSetupPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
                     <div className="col-span-2 flex flex-col items-center gap-4">
                         <Avatar className="w-32 h-32 border-4 border-primary/50">
-                            <AvatarImage src={formData.profilePhotoUrl} />
+                            <AvatarImage src={avatarUrl} />
                             <AvatarFallback className="text-4xl">{getInitials(formData.fullName)}</AvatarFallback>
                         </Avatar>
-                        <div className="grid w-full max-w-sm items-center gap-1.5">
-                            <Label htmlFor="picture">Profile Photo (Optional)</Label>
-                            <Input id="picture" type="file" onChange={handlePhotoChange} accept="image/*" />
-                        </div>
+                        <p className="text-sm text-muted-foreground">Your unique avatar is generated from your name.</p>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="fullName">Full Name</Label>
