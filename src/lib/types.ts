@@ -11,6 +11,7 @@ export type ClassSession = {
   date: any; // Allow any for Firestore Timestamps
   rrule?: string; // Recurrence rule ID
   repeatUntil?: any; // End date for recurrence
+  isBreak?: boolean;
 };
 
 export type Assignment = {

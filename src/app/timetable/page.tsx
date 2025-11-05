@@ -5,23 +5,25 @@ import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/app-context';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Share2 } from 'lucide-react';
-import { addDays, subDays, format, isToday, isTomorrow, isYesterday } from 'date-fns';
-import { Card, CardContent } from '@/components/ui/card';
+import { PlusCircle, Share2, MapPin, ArrowRight } from 'lucide-react';
+import { format, isToday } from 'date-fns';
+import { Card } from '@/components/ui/card';
 import type { ClassSession } from '@/lib/types';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogFooter,
   DialogDescription,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { ClassDetailsDrawer } from '@/components/timetable/ClassDetailsDrawer';
 import { useToast } from '@/hooks/use-toast';
 import { ShareDialog } from '@/components/share-dialog';
 import Link from 'next/link';
+import WeekViewCalendar from '@/components/timetable/week-view-calendar';
+import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 const formatTime12h = (time: string) => {
     if (!time) return '';
@@ -32,12 +34,29 @@ const formatTime12h = (time: string) => {
     return `${hour12}:${m} ${period}`;
 };
 
-const TimetableCard = ({ session }: { session: ClassSession }) => {
+const TimetableCard = ({ session, isBreak = false }: { session: ClassSession, isBreak?: boolean }) => {
   const { subjects } = useAppContext();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const subject = subjects.find(s => s.name === session.subject);
   const color = subject?.color || '#A1A1AA';
+  
+  if (isBreak) {
+     return (
+         <Card
+            className="p-4 md:p-6 flex flex-col gap-2 rounded-xl border-dashed bg-transparent shadow-none"
+        >
+            <div className="flex justify-between items-start">
+            <div className="flex-1">
+                <h3 className="font-bold text-base md:text-lg text-muted-foreground">Break</h3>
+                <p className="text-xs md:text-sm text-muted-foreground/80 mt-1 flex items-center gap-2">
+                {formatTime12h(session.startTime)} <ArrowRight className="w-3 h-3" /> {formatTime12h(session.endTime)}
+                </p>
+            </div>
+            </div>
+        </Card>
+     )
+  }
 
   return (
     <>
@@ -49,11 +68,11 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <h3 className="font-bold text-base md:text-lg">{session.subject}</h3>
-            <p className="text-xs md:text-sm text-foreground/80 mt-1">
-              {formatTime12h(session.startTime)} - {formatTime12h(session.endTime)}
+            <p className="text-xs md:text-sm text-foreground/80 mt-1 flex items-center gap-2">
+              {formatTime12h(session.startTime)} <ArrowRight className="w-3 h-3" /> {formatTime12h(session.endTime)}
             </p>
             {session.room && (
-              <div className="flex items-center gap-1.5 text-xs md:text-sm text-foreground/80 mt-1">
+              <div className="flex items-center gap-1.5 text-xs md:text-sm text-foreground/80 mt-2">
                 <MapPin className="w-3 h-3 md:w-4 md:h-4" />
                 <span>{session.room}</span>
               </div>
@@ -136,28 +155,40 @@ function TimetableContent() {
     window.history.replaceState({}, '', '/timetable');
   };
 
-  const handlePrevDay = () => {
-    setCurrentDate(subDays(currentDate, 1));
-  };
+  const dailySchedule = useMemo(() => {
+    const dailyClasses = classes
+      .filter((c) => format(new Date(c.date), 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
+      .sort((a, b) => {
+          const timeA = a.startTime.split(':');
+          const timeB = b.startTime.split(':');
+          return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime();
+      });
 
-  const handleNextDay = () => {
-    setCurrentDate(addDays(currentDate, 1));
-  };
-  
-  const getRelativeDate = (date: Date) => {
-    if (isToday(date)) return 'Today';
-    if (isTomorrow(date)) return 'Tomorrow';
-    if (isYesterday(date)) return 'Yesterday';
-    return format(date, 'EEEE');
-  };
+      const scheduleWithBreaks: (ClassSession & { isBreak?: boolean })[] = [];
+      
+      for(let i = 0; i < dailyClasses.length; i++) {
+        scheduleWithBreaks.push(dailyClasses[i]);
+        if (i < dailyClasses.length - 1) {
+            const currentClassEnd = dailyClasses[i].endTime;
+            const nextClassStart = dailyClasses[i+1].startTime;
 
-  const dailyClasses = classes
-    .filter((c) => format(new Date(c.date), 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
-    .sort((a, b) => {
-        const timeA = a.startTime.split(':');
-        const timeB = b.startTime.split(':');
-        return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime();
-    });
+            if (currentClassEnd < nextClassStart) {
+                 scheduleWithBreaks.push({
+                    id: `break-${i}`,
+                    subject: 'Break',
+                    startTime: currentClassEnd,
+                    endTime: nextClassStart,
+                    isBreak: true,
+                    date: dailyClasses[i].date,
+                    teacher: '',
+                    room: '',
+                 })
+            }
+        }
+      }
+      return scheduleWithBreaks;
+
+  }, [classes, currentDate]);
 
   useEffect(() => {
     const pageActions = (
@@ -176,15 +207,14 @@ function TimetableContent() {
     );
 
     setHeaderState({
-        title: "Timetable",
-        description: "Your weekly class schedule.",
+        title: format(currentDate, 'MMMM'),
         children: pageActions
     });
   }, [currentDate, setHeaderState]);
 
   if (subjects.length === 0 && !importCode) {
     return (
-      <div className="flex flex-col gap-8 w-full">
+      <div className="flex flex-col gap-8 w-full p-4 md:p-6 lg:p-8">
         <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
           <div className="text-center px-4">
             <p className="text-lg font-medium text-muted-foreground">No subjects found.</p>
@@ -196,34 +226,23 @@ function TimetableContent() {
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full">
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-muted/50">
-          <Button variant="ghost" size="icon" onClick={handlePrevDay} className="h-8 w-8 md:h-10 md:w-10">
-            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
-          </Button>
-          <div className="text-center">
-            <p className="font-bold text-base md:text-lg">{getRelativeDate(currentDate)}</p>
-            <p className="text-muted-foreground text-xs md:text-sm">{format(currentDate, 'do MMMM yyyy')}</p>
-          </div>
-          <Button variant="ghost" size="icon" onClick={handleNextDay} className="h-8 w-8 md:h-10 md:w-10">
-            <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-          </Button>
-        </div>
+    <div className="flex flex-col gap-6 w-full p-4 md:p-6 lg:p-8">
+      <WeekViewCalendar selectedDate={currentDate} onDateChange={setCurrentDate} />
 
-        <div className="pb-6">
-          {dailyClasses.length > 0 ? (
-            <div className="flex flex-col gap-3 md:gap-4">
-              {dailyClasses.map(session => (
-                <TimetableCard key={session.id} session={session} />
-              ))}
-            </div>
-          ) : (
-            <div className="flex h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg p-4">
-              <p className="text-muted-foreground">No classes scheduled for this day.</p>
-            </div>
-          )}
-        </div>
+      <Separator />
+
+      <div className="pb-6">
+        {dailySchedule.length > 0 ? (
+          <div className="flex flex-col gap-3 md:gap-4">
+            {dailySchedule.map(session => (
+              <TimetableCard key={session.id} session={session} isBreak={session.isBreak} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex h-[50vh] flex-col items-center justify-center text-center bg-card/50 rounded-lg p-4">
+            <p className="text-muted-foreground">No classes scheduled for this day.</p>
+          </div>
+        )}
       </div>
 
       <Dialog open={isImporting} onOpenChange={setIsImporting}>
@@ -267,9 +286,7 @@ function TimetableContent() {
 export default function TimetablePage() {
   return (
     <AppLayout>
-      <div className="w-full p-4 md:p-6 lg:p-8">
-        <TimetableContent />
-      </div>
+      <TimetableContent />
     </AppLayout>
   );
 }
