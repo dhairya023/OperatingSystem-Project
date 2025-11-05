@@ -9,14 +9,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAppContext } from '@/context/app-context';
 import type { UserProfile } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Loader2 } from 'lucide-react';
 import { DatePicker } from '@/components/profile/date-picker';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
 export default function ProfileSetupPage() {
-  const { profile, updateProfile, completeProfileSetup } = useAppContext();
+  const { profile, updateProfile, completeProfileSetup, logoutUser } = useAppContext();
   const router = useRouter();
   const { toast } = useToast();
   
@@ -145,9 +145,17 @@ export default function ProfileSetupPage() {
                     </div>
                 </div>
             </ScrollArea>
-             <div className="flex justify-end mt-6">
+             <div className="flex justify-end items-center gap-4 mt-6">
+                <Button type="button" variant="ghost" onClick={logoutUser}>
+                    Logout
+                </Button>
                 <Button type="submit" disabled={isLoading}>
-                    {isLoading ? 'Saving...' : 'Save and Continue'}
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : 'Save and Continue'}
                 </Button>
             </div>
           </form>
