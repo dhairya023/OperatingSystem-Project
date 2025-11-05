@@ -156,38 +156,13 @@ function TimetableContent() {
   };
 
   const dailySchedule = useMemo(() => {
-    const dailyClasses = classes
+    return classes
       .filter((c) => format(new Date(c.date), 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))
       .sort((a, b) => {
           const timeA = a.startTime.split(':');
           const timeB = b.startTime.split(':');
           return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime();
       });
-
-      const scheduleWithBreaks: (ClassSession & { isBreak?: boolean })[] = [];
-      
-      for(let i = 0; i < dailyClasses.length; i++) {
-        scheduleWithBreaks.push(dailyClasses[i]);
-        if (i < dailyClasses.length - 1) {
-            const currentClassEnd = dailyClasses[i].endTime;
-            const nextClassStart = dailyClasses[i+1].startTime;
-
-            if (currentClassEnd < nextClassStart) {
-                 scheduleWithBreaks.push({
-                    id: `break-${i}`,
-                    subject: 'Break',
-                    startTime: currentClassEnd,
-                    endTime: nextClassStart,
-                    isBreak: true,
-                    date: dailyClasses[i].date,
-                    teacher: '',
-                    room: '',
-                 })
-            }
-        }
-      }
-      return scheduleWithBreaks;
-
   }, [classes, currentDate]);
 
   useEffect(() => {
