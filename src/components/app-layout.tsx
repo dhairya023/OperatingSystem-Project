@@ -84,10 +84,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen bg-black">
+      <div className="flex h-screen w-full bg-black">
         <Sidebar
           className="p-2"
-          variant="inset"
         >
           <div
             data-sidebar="sidebar"
@@ -110,8 +109,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                       const isActive = pathname === route.href
                       return (
                         <SidebarMenuItem key={route.href}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
                                 <SidebarMenuButton
                                   asChild
                                   className={cn(
@@ -131,11 +128,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                                     <span>{route.label}</span>
                                   </Link>
                                 </SidebarMenuButton>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" align="center">
-                              {route.label}
-                            </TooltipContent>
-                          </Tooltip>
                         </SidebarMenuItem>
                       )
                     })}
@@ -179,7 +171,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </Sidebar>
 
         <SidebarInset className="flex-1 overflow-y-auto bg-transparent text-white">
-          <header className="md:hidden flex items-center justify-between p-4 sticky top-0 z-10">
+          <header className="flex items-center justify-between p-4 sticky top-0 z-10 bg-black/50 backdrop-blur-sm">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
               <h1 className="text-lg font-bold tracking-tight font-headline text-white">
