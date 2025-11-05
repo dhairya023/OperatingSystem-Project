@@ -78,9 +78,6 @@
   * {
     @apply border-border;
   }
-  html, body {
-    overflow-x: hidden;
-  }
   body {
     @apply bg-background text-foreground;
     min-height: 100vh;
