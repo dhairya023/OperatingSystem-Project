@@ -97,11 +97,11 @@ export default function LoginPage() {
             </div>
             <h1 className="text-3xl font-bold font-headline">Grad</h1>
         </div>
-        <div className="relative rounded-lg p-1 bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 animate-gradient-border">
-          <Card className="border-none rounded-md overflow-hidden">
-            <CardHeader className="bg-background">
-              <CardTitle className="text-2xl">{isRegisterMode ? 'Create an Account' : 'Sign In'}</CardTitle>
-              <CardDescription>
+        <div className="relative rounded-2xl p-1 bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 animate-gradient-border animate-hue-glow">
+            <Card className="rounded-xl overflow-hidden border-none">
+            <CardHeader>
+                <CardTitle className="text-2xl">{isRegisterMode ? 'Create an Account' : 'Sign In'}</CardTitle>
+                <CardDescription>
                 {isRegisterMode ? 'Enter your details to get started.' : 'Enter your credentials to access your dashboard.'}
               </CardDescription>
             </CardHeader>
