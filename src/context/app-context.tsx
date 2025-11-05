@@ -197,7 +197,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const userCredential = await signInWithPopup(auth, provider);
     const newUser = userCredential.user;
 
-    const userDocRef = doc(firestore, "users", newUser.uid);
+    const userDocRef = doc(firestore, 'users', newUser.uid);
     const docSnap = await getDoc(userDocRef);
 
     if (!docSnap.exists()) {
