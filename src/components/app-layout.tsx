@@ -4,10 +4,24 @@
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useFirebase } from '@/firebase';
-import { Sidebar, SidebarHeader, SidebarContent, SidebarInset, SidebarProvider, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupContent, SidebarTrigger } from '@/components/ui/sidebar';
+import { 
+  Sidebar, 
+  SidebarHeader, 
+  SidebarContent, 
+  SidebarInset, 
+  SidebarProvider, 
+  SidebarFooter, 
+  SidebarMenu, 
+  SidebarMenuItem, 
+  SidebarMenuButton, 
+  SidebarGroup, 
+  SidebarGroupContent, 
+  SidebarTrigger 
+} from '@/components/ui/sidebar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { GraduationCap, LogOut } from 'lucide-react';
 import { useAppContext } from '@/context/app-context';
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 import Link from 'next/link';
 import {
   LayoutDashboard,
@@ -19,7 +33,7 @@ import {
   BarChart,
   GraduationCap as ExamIcon
 } from "lucide-react";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -31,7 +45,6 @@ const navItems = [
   { href: "/subjects", label: "Subjects", icon: BookCopy },
   { href: "/profile", label: "Profile", icon: User },
 ];
-
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useFirebase();
@@ -52,13 +65,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     } else if (user && profile?.profileCompleted && (pathname === '/profile-setup' || pathname === '/login')) {
       router.push('/');
     }
-
   }, [user, isUserLoading, isDataLoading, profile, pathname, router]);
 
   const isLoading = isUserLoading || (user && isDataLoading);
   
   if (isLoading || !user) {
-      return null;
+    return null;
   }
   
   if (!profile?.profileCompleted && pathname !== '/profile-setup') {
