@@ -1,10 +1,9 @@
 
 'use client';
 import AppLayout from '@/components/app-layout';
-import PageHeader from '@/components/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SubjectAttendanceCalendar from '@/components/attendance/subject-attendance-calendar';
 import { useAppContext } from '@/context/app-context';
@@ -19,9 +18,16 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import type { ClassSession } from '@/lib/types';
 
 function AttendanceContent() {
-  const { subjects, getSubjectAttendance, classes } = useAppContext();
+  const { subjects, getSubjectAttendance, classes, setHeaderState } = useAppContext();
   const [selectedSubject, setSelectedSubject] = useState(subjects.length > 0 ? subjects[0].name : '');
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    setHeaderState({
+      title: 'Attendance',
+      description: 'Track your attendance for all subjects.'
+    });
+  }, [setHeaderState]);
 
   const subjectAttendance = subjects.map(s => getSubjectAttendance(s.name));
   
@@ -65,7 +71,6 @@ function AttendanceContent() {
   if (subjects.length === 0) {
     return (
        <div className="flex flex-col gap-8 w-full p-4 md:p-6 lg:p-8">
-        <PageHeader title="Attendance" description="Track your attendance for all subjects." />
          <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
            <div className="text-center">
              <p className="text-lg font-medium text-muted-foreground">No subjects found.</p>
@@ -78,8 +83,6 @@ function AttendanceContent() {
 
   return (
     <div className="flex flex-col gap-8 w-full p-4 md:p-6 lg:p-8">
-      <PageHeader title="Attendance" description="Track your attendance for all subjects." />
-
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2">
               <Card className="h-full">

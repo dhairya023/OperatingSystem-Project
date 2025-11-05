@@ -1,12 +1,11 @@
 
 'use client';
 import AppLayout from '@/components/app-layout';
-import { useState } from 'react';
-import PageHeader from '@/components/page-header';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Edit, Mail, GraduationCap, Building, Book, Award, Briefcase, Phone, Cake, User } from 'lucide-react';
 import { useAppContext } from '@/context/app-context';
 import type { UserProfile } from '@/lib/types';
@@ -35,7 +34,7 @@ const ProfileDetail = ({ icon: Icon, label, value }: { icon: React.ElementType, 
 );
 
 function ProfileContent() {
-  const { profile, updateProfile, deleteAccount } = useAppContext();
+  const { profile, updateProfile, deleteAccount, setHeaderState } = useAppContext();
   const [isFormOpen, setIsFormOpen] = useState(false);
   
   const handleSaveProfile = (updatedProfile: UserProfile) => {
@@ -47,26 +46,33 @@ function ProfileContent() {
     return name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
   }
 
-  const pageActions = (
-    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogTrigger asChild>
-            <Button>
-            <Edit className="mr-2" /> Edit Profile
-            </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-2xl">
-            <DialogHeader>
-            <DialogTitle>Edit Your Profile</DialogTitle>
-            </DialogHeader>
-            <ProfileForm onSave={handleSaveProfile} profile={profile} />
-        </DialogContent>
-    </Dialog>
-  );
+  useEffect(() => {
+    const pageActions = (
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogTrigger asChild>
+              <Button>
+              <Edit className="mr-2" /> Edit Profile
+              </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+              <DialogHeader>
+              <DialogTitle>Edit Your Profile</DialogTitle>
+              </DialogHeader>
+              <ProfileForm onSave={handleSaveProfile} profile={profile} />
+          </DialogContent>
+      </Dialog>
+    );
+
+    setHeaderState({
+      title: 'My Profile',
+      description: 'View and manage your personal information.',
+      children: pageActions
+    });
+  }, [isFormOpen, profile, setHeaderState]);
+
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title="My Profile" description="View and manage your personal information." children={pageActions} />
-
       <Card>
         <CardHeader className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <Avatar className="w-24 h-24 border-2 border-primary">

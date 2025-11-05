@@ -16,28 +16,8 @@ export default function PageHeader({ title, description, children }: PageHeaderP
     setHeaderState({ title, description, children });
     // Clear header state on component unmount
     return () => setHeaderState({ title: '' });
-  }, [title, description, setHeaderState]);
+  }, [title, description, children, setHeaderState]);
 
-  return (
-    <div className="hidden md:flex flex-col gap-4 w-full">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        {/* Title and Description */}
-        <div className="flex flex-col gap-1">
-          <h1 className="text-3xl font-bold tracking-tight font-headline md:text-4xl text-white">
-            {title}
-          </h1>
-          {description && (
-            <p className="text-sm text-muted-foreground">{description}</p>
-          )}
-        </div>
-        
-        {/* Action Buttons */}
-        {children && (
-          <div className="flex items-center gap-2 shrink-0">
-            {children}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  // This component will no longer render anything itself, it only sets the state.
+  return null;
 }

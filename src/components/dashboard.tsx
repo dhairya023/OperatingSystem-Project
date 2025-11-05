@@ -6,7 +6,6 @@ import ExamCountdown from "@/components/dashboard/exam-countdown";
 import NextLecture from "@/components/dashboard/next-lecture";
 import PendingAssignments from "@/components/dashboard/pending-assignments";
 import UpcomingClasses from "@/components/dashboard/upcoming-classes";
-import PageHeader from "@/components/page-header";
 import { useState, useEffect } from 'react';
 import { useAppContext } from "@/context/app-context";
 
@@ -36,7 +35,6 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title={greeting} />
       
       <DashboardSummary />
 
@@ -50,7 +48,7 @@ export default function Dashboard() {
         <AttendanceOverview />
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid grid-cols-6">
           <PendingAssignments />
       </div>
     </div>

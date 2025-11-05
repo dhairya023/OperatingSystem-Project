@@ -1,8 +1,7 @@
 
 'use client';
 import AppLayout from '@/components/app-layout';
-import { useState } from 'react';
-import PageHeader from '@/components/page-header';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusCircle, Edit, Trash2, MoreVertical, Calendar, MapPin } from 'lucide-react';
@@ -86,7 +85,7 @@ const ExamItem = ({ exam, onEdit, onDelete }: { exam: Exam, onEdit: () => void, 
 
 
 function ExamsContent() {
-  const { exams, addExam, updateExam, deleteExam } = useAppContext();
+  const { exams, addExam, updateExam, deleteExam, setHeaderState } = useAppContext();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedExam, setSelectedExam] = useState<Exam | undefined>(undefined);
@@ -127,26 +126,35 @@ function ExamsContent() {
     setIsFormOpen(true);
   }
 
-  const pageActions = (
-    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogTrigger asChild>
-            <Button onClick={openNewDialog} className="self-start">
-                <PlusCircle className="mr-2" /> Add Exam
-            </Button>
-        </DialogTrigger>
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>{selectedExam ? 'Edit' : 'Add'} Exam</DialogTitle>
-            </DialogHeader>
-            <ExamForm onSave={handleSaveExam} exam={selectedExam} />
-        </DialogContent>
-    </Dialog>
-  );
+  useEffect(() => {
+    const pageActions = (
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogTrigger asChild>
+              <Button onClick={openNewDialog}>
+                  <PlusCircle className="mr-2" />
+                  <span className="hidden sm:inline">Add Exam</span>
+                  <span className="sm:hidden">Add</span>
+              </Button>
+          </DialogTrigger>
+          <DialogContent>
+              <DialogHeader>
+                  <DialogTitle>{selectedExam ? 'Edit' : 'Add'} Exam</DialogTitle>
+              </DialogHeader>
+              <ExamForm onSave={handleSaveExam} exam={selectedExam} />
+          </DialogContent>
+      </Dialog>
+    );
+
+    setHeaderState({
+      title: 'Exams',
+      description: 'Schedule and prepare for your upcoming exams.',
+      children: pageActions
+    });
+  }, [isFormOpen, selectedExam, setHeaderState]);
+
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title="Exams" description="Schedule and prepare for your upcoming exams." children={pageActions} />
-
       <div className="grid gap-8 lg:grid-cols-1">
         <Card>
             <CardHeader>

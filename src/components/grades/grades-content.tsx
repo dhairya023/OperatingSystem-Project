@@ -1,6 +1,6 @@
 
 'use client';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useAppContext } from '@/context/app-context';
 import type { Semester, GradeSubject } from '@/lib/types';
 import { calculateCgpa, calculateSgpa } from '@/lib/grade-calculator';
@@ -11,11 +11,37 @@ import { Button } from '../ui/button';
 import { PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import SubjectForm from './subject-form';
-import PageHeader from '../page-header';
 
 const GradesContent = () => {
-  const { grades, addGradeSubject } = useAppContext();
+  const { grades, addGradeSubject, setHeaderState } = useAppContext();
   const [isFormOpen, setIsFormOpen] = useState(false);
+
+  useEffect(() => {
+    const pageActions = (
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogTrigger asChild>
+          <Button>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Subject
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Subject</DialogTitle>
+          </DialogHeader>
+          <SubjectForm
+            onSave={handleSave}
+          />
+        </DialogContent>
+      </Dialog>
+    );
+
+    setHeaderState({
+      title: 'Grades',
+      description: 'Track your academic performance, semester by semester.',
+      children: pageActions
+    });
+  }, [isFormOpen, setHeaderState]);
 
   const semesters: Semester[] = useMemo(() => {
     const semesterData: Semester[] = Array.from({ length: 8 }, (_, i) => ({
@@ -42,32 +68,8 @@ const GradesContent = () => {
     setIsFormOpen(false);
   }
 
-  const pageActions = (
-    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Subject
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add Subject</DialogTitle>
-        </DialogHeader>
-        <SubjectForm
-          onSave={handleSave}
-        />
-      </DialogContent>
-    </Dialog>
-  );
-
   return (
     <div className="space-y-8 p-4 md:p-6 lg:p-8">
-      <PageHeader
-        title="Grades"
-        description="Track your academic performance, semester by semester."
-        children={pageActions}
-      />
       <Card>
         <CardHeader>
           <CardTitle>Overall Performance</CardTitle>

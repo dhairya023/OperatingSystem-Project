@@ -1,8 +1,7 @@
 
 'use client';
 import AppLayout from '@/components/app-layout';
-import { useState } from 'react';
-import PageHeader from '@/components/page-header';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusCircle, Edit, Trash2 } from 'lucide-react';
@@ -78,7 +77,7 @@ const SubjectForm = ({ subject, onSave }: { subject?: Subject; onSave: (subject:
 };
 
 function SubjectsContent() {
-  const { subjects, addSubject, updateSubject, deleteSubject } = useAppContext();
+  const { subjects, addSubject, updateSubject, deleteSubject, setHeaderState } = useAppContext();
   const [isNewSubjectDialogOpen, setIsNewSubjectDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -101,25 +100,32 @@ function SubjectsContent() {
     }
   }
 
-  const pageActions = (
-    <Dialog open={isNewSubjectDialogOpen} onOpenChange={setIsNewSubjectDialogOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <PlusCircle className="mr-2" /> Add Subject
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add New Subject</DialogTitle>
-        </DialogHeader>
-        <SubjectForm onSave={handleAddSubject} />
-      </DialogContent>
-    </Dialog>
-  );
+  useEffect(() => {
+    const pageActions = (
+      <Dialog open={isNewSubjectDialogOpen} onOpenChange={setIsNewSubjectDialogOpen}>
+        <DialogTrigger asChild>
+          <Button>
+            <PlusCircle className="mr-2" /> Add Subject
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Subject</DialogTitle>
+          </DialogHeader>
+          <SubjectForm onSave={handleAddSubject} />
+        </DialogContent>
+      </Dialog>
+    );
+    setHeaderState({
+      title: 'Subjects',
+      description: 'Manage your academic subjects.',
+      children: pageActions
+    });
+  }, [isNewSubjectDialogOpen, setHeaderState]);
+
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title="Subjects" description="Manage your academic subjects." children={pageActions} />
       <Card>
         <CardHeader>
            <div className="flex flex-col items-center sm:flex-row justify-between sm:items-center gap-4">
