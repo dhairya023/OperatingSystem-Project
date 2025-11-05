@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import { SkeletonAppLayout } from './skeletons/skeleton-app-layout';
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -56,26 +57,32 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isUserLoading || isDataLoading) return;
 
-    if (!user) {
-      router.push('/login');
-      return;
-    }
+    const isAuthPage = pathname === '/login' || pathname === '/profile-setup';
 
-    if (user && !profile?.profileCompleted && pathname !== '/profile-setup') {
-      router.push('/profile-setup');
-    } else if (user && profile?.profileCompleted && (pathname === '/profile-setup' || pathname === '/login')) {
-      router.push('/');
+    if (!user && !isAuthPage) {
+      router.replace('/login');
+    } else if (user && !profile?.profileCompleted && pathname !== '/profile-setup') {
+      router.replace('/profile-setup');
+    } else if (user && profile?.profileCompleted && isAuthPage) {
+      router.replace('/');
     }
-  }, [user, isUserLoading, isDataLoading, profile, pathname, router]);
+  }, [user, profile, isUserLoading, isDataLoading, pathname, router]);
 
-  const isLoading = isUserLoading || (user && isDataLoading);
-  
-  if (isLoading || !user) {
-    return null;
-  }
-  
-  if (!profile?.profileCompleted && pathname !== '/profile-setup') {
-    return null;
+
+  const showContent = () => {
+    if (isUserLoading || isDataLoading) return false;
+
+    const isAuthPage = pathname === '/login' || pathname === '/profile-setup';
+
+    if (!user && isAuthPage) return true;
+    if (user && !profile?.profileCompleted && pathname === '/profile-setup') return true;
+    if (user && profile?.profileCompleted && !isAuthPage) return true;
+
+    return false;
+  };
+
+  if (!showContent()) {
+    return <SkeletonAppLayout pathname={pathname} />;
   }
 
   const getInitials = (name?: string) => {

@@ -1,7 +1,6 @@
 
 'use client';
 
-import type { Metadata } from 'next';
 import { useState, useEffect } from 'react';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -10,84 +9,47 @@ import { FirebaseClientProvider } from '@/firebase';
 import { useAppContext } from '@/context/app-context';
 import { useFirebase } from '@/firebase';
 import { usePathname, useRouter } from 'next/navigation';
-import SplashScreen from '@/components/splash-screen';
+import { SkeletonAppLayout } from '@/components/skeletons/skeleton-app-layout';
 
-// This component is necessary to use client-side hooks like useState, useEffect, and the context hooks
-// within the body, while still allowing the RootLayout to provide metadata.
 function AppBody({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useFirebase();
   const { isDataLoading, profile } = useAppContext();
   const pathname = usePathname();
   const router = useRouter();
 
-  const [isSplashTimingComplete, setIsSplashTimingComplete] = useState(false);
-
-  // This effect handles the minimum splash screen display time.
   useEffect(() => {
-    const splashShown = sessionStorage.getItem('splashShown');
-    if (splashShown) {
-      setIsSplashTimingComplete(true);
-      return;
-    }
-    
-    // Show splash screen for at least 1.2 seconds
-    const timer = setTimeout(() => {
-      setIsSplashTimingComplete(true);
-      sessionStorage.setItem('splashShown', 'true');
-    }, 1200);
+    if (isUserLoading || isDataLoading) return;
 
-    return () => clearTimeout(timer);
-  }, []);
+    const isAuthPage = pathname === '/login' || pathname === '/profile-setup';
 
-  // This effect handles the initial routing logic.
-  useEffect(() => {
-    // Wait until both Firebase auth and the app's data loading are fully resolved.
-    if (isUserLoading || isDataLoading) {
-      return;
-    }
-
-    const isProfileSetupPage = pathname === '/profile-setup';
-    const isLoginPage = pathname === '/login';
-
-    if (user) {
-      // User is logged in.
-      if (profile?.profileCompleted) {
-        // Profile is complete, user should not be on login or setup page.
-        if (isLoginPage || isProfileSetupPage) {
-          router.push('/');
-        }
-      } else {
-        // Profile is not complete, user must be on the setup page.
-        if (!isProfileSetupPage) {
-          router.push('/profile-setup');
-        }
-      }
-    } else {
-      // User is not logged in, they should only be on the login page.
-      if (!isLoginPage) {
-        router.push('/login');
-      }
+    if (!user && !isAuthPage) {
+      router.replace('/login');
+    } else if (user && !profile?.profileCompleted && pathname !== '/profile-setup') {
+      router.replace('/profile-setup');
+    } else if (user && profile?.profileCompleted && isAuthPage) {
+      router.replace('/');
     }
   }, [user, profile, isUserLoading, isDataLoading, pathname, router]);
 
 
-  // Determine if we should show the final content.
-  // This prevents content flashes during initial load or redirects.
-  const showContent = isSplashTimingComplete && !isUserLoading && !isDataLoading && (
-    (user && profile?.profileCompleted) || // Regular authenticated user in the app
-    (user && !profile?.profileCompleted && pathname === '/profile-setup') || // User is on the required profile setup page
-    (!user && pathname === '/login') // User is on the login page
-  );
-  
+  const showContent = () => {
+    if (isUserLoading || isDataLoading) return false;
 
-  // While the app is not ready or content is not ready to be shown, we show the splash screen.
-  if (!showContent) {
-    return <SplashScreen />;
+    const isAuthPage = pathname === '/login' || pathname === '/profile-setup';
+
+    if (!user && isAuthPage) return true;
+    if (user && !profile?.profileCompleted && pathname === '/profile-setup') return true;
+    if (user && profile?.profileCompleted && !isAuthPage) return true;
+
+    return false;
+  };
+
+  if (!showContent()) {
+    return <SkeletonAppLayout pathname={pathname} />;
   }
-  
+
   return <>{children}</>;
 }
-
 
 export default function RootLayout({
   children,
