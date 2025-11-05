@@ -47,7 +47,7 @@ const navItems = [
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useFirebase();
-  const { isDataLoading, profile, logoutUser } = useAppContext();
+  const { isDataLoading, profile, logoutUser, headerState } = useAppContext();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -170,8 +170,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </Sidebar>
 
         <SidebarInset className="flex-1 overflow-y-auto bg-transparent text-white">
-          <header className="md:hidden flex items-center justify-start mb-4 p-4 sticky top-0 bg-black/50 backdrop-blur-sm z-10">
-            <SidebarTrigger />
+          <header className="md:hidden flex items-center justify-between p-4 sticky top-0 bg-black/50 backdrop-blur-sm z-10">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger />
+              <h1 className="text-lg font-bold tracking-tight font-headline text-white">
+                {headerState.title}
+              </h1>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+                {headerState.children}
+            </div>
           </header>
            <main className="flex-1">
             {children}

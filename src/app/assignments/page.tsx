@@ -109,24 +109,25 @@ function AssignmentsContent() {
     setIsFormOpen(true);
   }
 
+  const pageActions = (
+    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogTrigger asChild>
+            <Button onClick={openNewDialog} className="self-start">
+                <PlusCircle className="mr-2" /> Add Assignment
+            </Button>
+        </DialogTrigger>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{selectedAssignment ? 'Edit' : 'Add'} Assignment</DialogTitle>
+            </DialogHeader>
+            <AssignmentForm onSave={handleSaveAssignment} assignment={selectedAssignment} />
+        </DialogContent>
+    </Dialog>
+  );
+
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <div className="flex flex-col gap-4">
-        <PageHeader title="Assignments" description="Keep track of all your assignments." />
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-            <DialogTrigger asChild>
-                <Button onClick={openNewDialog} className="self-start">
-                    <PlusCircle className="mr-2" /> Add Assignment
-                </Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>{selectedAssignment ? 'Edit' : 'Add'} Assignment</DialogTitle>
-                </DialogHeader>
-                <AssignmentForm onSave={handleSaveAssignment} assignment={selectedAssignment} />
-            </DialogContent>
-        </Dialog>
-      </div>
+      <PageHeader title="Assignments" description="Keep track of all your assignments." children={pageActions} />
 
       <div className="grid gap-8 lg:grid-cols-2">
         <Card>

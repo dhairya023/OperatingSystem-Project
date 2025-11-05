@@ -127,24 +127,25 @@ function ExamsContent() {
     setIsFormOpen(true);
   }
 
+  const pageActions = (
+    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogTrigger asChild>
+            <Button onClick={openNewDialog} className="self-start">
+                <PlusCircle className="mr-2" /> Add Exam
+            </Button>
+        </DialogTrigger>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{selectedExam ? 'Edit' : 'Add'} Exam</DialogTitle>
+            </DialogHeader>
+            <ExamForm onSave={handleSaveExam} exam={selectedExam} />
+        </DialogContent>
+    </Dialog>
+  );
+
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <div className="flex flex-col gap-4">
-        <PageHeader title="Exams" description="Schedule and prepare for your upcoming exams." />
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-            <DialogTrigger asChild>
-                <Button onClick={openNewDialog} className="self-start">
-                    <PlusCircle className="mr-2" /> Add Exam
-                </Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>{selectedExam ? 'Edit' : 'Add'} Exam</DialogTitle>
-                </DialogHeader>
-                <ExamForm onSave={handleSaveExam} exam={selectedExam} />
-            </DialogContent>
-        </Dialog>
-      </div>
+      <PageHeader title="Exams" description="Schedule and prepare for your upcoming exams." children={pageActions} />
 
       <div className="grid gap-8 lg:grid-cols-1">
         <Card>

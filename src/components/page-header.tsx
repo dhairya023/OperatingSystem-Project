@@ -1,4 +1,6 @@
+import { useAppContext } from '@/context/app-context';
 import * as React from 'react';
+import { useEffect } from 'react';
 
 type PageHeaderProps = {
   title: string;
@@ -7,8 +9,16 @@ type PageHeaderProps = {
 };
 
 export default function PageHeader({ title, description, children }: PageHeaderProps) {
+  const { setHeaderState } = useAppContext();
+
+  useEffect(() => {
+    setHeaderState({ title, description, children });
+    // Clear header state on component unmount
+    return () => setHeaderState({ title: '' });
+  }, [title, description, children, setHeaderState]);
+
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="hidden md:flex flex-col gap-4 w-full">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         {/* Title and Description */}
         <div className="flex flex-col gap-1">

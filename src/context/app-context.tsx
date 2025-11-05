@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
@@ -25,6 +24,11 @@ import { addDays, addMonths, startOfDay, getDay } from 'date-fns';
 import type { ClassSession, Subject, Assignment, Exam, UserProfile, GradeSubject } from '@/lib/types';
 import { useFirebase } from '@/firebase/provider';
 
+interface HeaderState {
+  title: string;
+  description?: string;
+  children?: React.ReactNode;
+}
 interface UserData {
   profile: UserProfile;
   subjects: Subject[];
@@ -36,6 +40,8 @@ interface UserData {
 
 interface AppContextType extends UserData {
   isDataLoading: boolean;
+  headerState: HeaderState;
+  setHeaderState: (state: HeaderState) => void;
   addSubject: (subject: Subject) => Promise<void>;
   updateSubject: (subject: Subject) => Promise<void>;
   deleteSubject: (id: string) => Promise<void>;
@@ -87,6 +93,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const { user, isUserLoading, auth, firestore } = useFirebase();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
+  const [headerState, setHeaderState] = useState<HeaderState>({ title: '' });
   const router = useRouter();
 
   useEffect(() => {
@@ -376,6 +383,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const value: AppContextType = {
     isDataLoading,
+    headerState,
+    setHeaderState,
     profile: userData?.profile!,
     subjects: userData?.subjects || [],
     classes: userData?.classes || [],

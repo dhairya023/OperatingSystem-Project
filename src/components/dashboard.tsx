@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react';
 import { useAppContext } from "@/context/app-context";
 
 export default function Dashboard() {
-  const { profile } = useAppContext();
+  const { profile, setHeaderState } = useAppContext();
   const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
@@ -28,9 +28,11 @@ export default function Dashboard() {
     } else {
       timeOfDay = 'Good evening';
     }
-    setGreeting(`${timeOfDay}, ${name} 👋`);
+    const newGreeting = `${timeOfDay}, ${name} 👋`
+    setGreeting(newGreeting);
+    setHeaderState({title: newGreeting});
 
-  }, [profile]); // Rerun this effect if the profile data changes.
+  }, [profile, setHeaderState]); // Rerun this effect if the profile data changes.
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">

@@ -47,9 +47,25 @@ function ProfileContent() {
     return name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
   }
 
+  const pageActions = (
+    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogTrigger asChild>
+            <Button>
+            <Edit className="mr-2" /> Edit Profile
+            </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-2xl">
+            <DialogHeader>
+            <DialogTitle>Edit Your Profile</DialogTitle>
+            </DialogHeader>
+            <ProfileForm onSave={handleSaveProfile} profile={profile} />
+        </DialogContent>
+    </Dialog>
+  );
+
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title="My Profile" description="View and manage your personal information." />
+      <PageHeader title="My Profile" description="View and manage your personal information." children={pageActions} />
 
       <Card>
         <CardHeader className="flex flex-col md:flex-row items-start md:items-center gap-4">
@@ -77,21 +93,6 @@ function ProfileContent() {
           <ProfileDetail icon={Phone} label="Phone Number" value={profile.phoneNumber} />
           <ProfileDetail icon={Cake} label="Date of Birth" value={profile.dateOfBirth ? format(new Date(profile.dateOfBirth), 'PPP') : '-'} />
         </CardContent>
-        <CardFooter>
-            <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-                <DialogTrigger asChild>
-                    <Button>
-                    <Edit className="mr-2" /> Edit Profile
-                    </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                    <DialogTitle>Edit Your Profile</DialogTitle>
-                    </DialogHeader>
-                    <ProfileForm onSave={handleSaveProfile} profile={profile} />
-                </DialogContent>
-            </Dialog>
-        </CardFooter>
       </Card>
       
       <Card className="border-destructive">

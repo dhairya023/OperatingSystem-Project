@@ -101,9 +101,25 @@ function SubjectsContent() {
     }
   }
 
+  const pageActions = (
+    <Dialog open={isNewSubjectDialogOpen} onOpenChange={setIsNewSubjectDialogOpen}>
+      <DialogTrigger asChild>
+        <Button>
+          <PlusCircle className="mr-2" /> Add Subject
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add New Subject</DialogTitle>
+        </DialogHeader>
+        <SubjectForm onSave={handleAddSubject} />
+      </DialogContent>
+    </Dialog>
+  );
+
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title="Subjects" description="Manage your academic subjects." />
+      <PageHeader title="Subjects" description="Manage your academic subjects." children={pageActions} />
       <Card>
         <CardHeader>
            <div className="flex flex-col items-center sm:flex-row justify-between sm:items-center gap-4">
@@ -111,19 +127,6 @@ function SubjectsContent() {
               <CardTitle>Your Subjects</CardTitle>
               <CardDescription>Add, edit, or remove your subjects here.</CardDescription>
             </div>
-            <Dialog open={isNewSubjectDialogOpen} onOpenChange={setIsNewSubjectDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <PlusCircle className="mr-2" /> Add Subject
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Subject</DialogTitle>
-                </DialogHeader>
-                <SubjectForm onSave={handleAddSubject} />
-              </DialogContent>
-            </Dialog>
           </div>
         </CardHeader>
         <CardContent>

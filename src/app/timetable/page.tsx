@@ -161,7 +161,7 @@ function TimetableContent() {
 
   if (subjects.length === 0 && !importCode) {
     return (
-      <div className="flex flex-col gap-8 w-full">
+      <div className="flex flex-col gap-8 w-full p-4 md:p-6 lg:p-8">
         <PageHeader title="Timetable" description="Manage your class schedule." />
         <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
           <div className="text-center px-4">
@@ -173,33 +173,36 @@ function TimetableContent() {
     );
   }
 
+  const pageActions = (
+    <div className="flex items-center gap-2">
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogTrigger asChild>
+          <Button>
+            <PlusCircle className="mr-2 h-4 w-4" /> 
+            <span className="hidden sm:inline">Add Class</span>
+            <span className="sm:hidden">Add</span>
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add New Class</DialogTitle>
+          </DialogHeader>
+          <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+        </DialogContent>
+      </Dialog>
+      <Button variant="outline" size="icon" onClick={handleShare}>
+        <Share2 className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+
   return (
-    <div className="flex flex-col gap-8 w-full">
+    <div className="flex flex-col gap-8 w-full p-4 md:p-6 lg:p-8">
       <PageHeader 
         title="Timetable" 
         description="Your weekly class schedule."
-      >
-        <div className="flex items-center gap-2">
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <PlusCircle className="mr-2 h-4 w-4" /> 
-                <span className="hidden sm:inline">Add Class</span>
-                <span className="sm:hidden">Add</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Add New Class</DialogTitle>
-              </DialogHeader>
-              <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-            </DialogContent>
-          </Dialog>
-          <Button variant="outline" size="icon" onClick={handleShare}>
-            <Share2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </PageHeader>
+        children={pageActions}
+      />
 
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-muted/50">
@@ -271,9 +274,7 @@ function TimetableContent() {
 export default function TimetablePage() {
   return (
     <AppLayout>
-      <div className="w-full p-4 md:p-6 lg:p-8">
         <TimetableContent />
-      </div>
     </AppLayout>
   );
 }
