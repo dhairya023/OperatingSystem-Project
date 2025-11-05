@@ -2,7 +2,6 @@
 import AppLayout from '@/components/app-layout';
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import PageHeader from '@/components/page-header';
 import { useAppContext } from '@/context/app-context';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, MapPin, PlusCircle, Share2 } from 'lucide-react';
@@ -71,7 +70,7 @@ const TimetableCard = ({ session }: { session: ClassSession }) => {
 };
 
 function TimetableContent() {
-  const { subjects, classes, shareTimetable, getSharedTimetable, importTimetable } = useAppContext();
+  const { subjects, classes, shareTimetable, getSharedTimetable, importTimetable, setHeaderState } = useAppContext();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
@@ -159,33 +158,40 @@ function TimetableContent() {
         return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime();
     });
 
-  const pageActions = (
-    <div className="flex items-center gap-2">
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogTrigger asChild>
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" /> 
-            <span className="hidden sm:inline">Add Class</span>
-            <span className="sm:hidden">Add</span>
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Add New Class</DialogTitle>
-          </DialogHeader>
-          <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
-        </DialogContent>
-      </Dialog>
-      <Button variant="outline" size="icon" onClick={handleShare}>
-        <Share2 className="h-4 w-4" />
-      </Button>
-    </div>
-  );
+  useEffect(() => {
+    const pageActions = (
+      <div className="flex items-center gap-2">
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" /> 
+              <span className="hidden sm:inline">Add Class</span>
+              <span className="sm:hidden">Add</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Add New Class</DialogTitle>
+            </DialogHeader>
+            <ClassSessionForm onSave={() => setIsAddDialogOpen(false)} defaultDate={currentDate} />
+          </DialogContent>
+        </Dialog>
+        <Button variant="outline" size="icon" onClick={handleShare}>
+          <Share2 className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+
+    setHeaderState({
+        title: "Timetable",
+        description: "Your weekly class schedule.",
+        children: pageActions
+    });
+  }, [isAddDialogOpen, currentDate, setHeaderState]);
 
   if (subjects.length === 0 && !importCode) {
     return (
       <div className="flex flex-col gap-8 w-full">
-        <PageHeader title="Timetable" description="Manage your class schedule." />
         <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
           <div className="text-center px-4">
             <p className="text-lg font-medium text-muted-foreground">No subjects found.</p>
@@ -198,11 +204,6 @@ function TimetableContent() {
 
   return (
     <div className="flex flex-col gap-8 w-full">
-       <PageHeader
-        title="Timetable"
-        description="Your weekly class schedule."
-        children={pageActions}
-      />
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-muted/50">
           <Button variant="ghost" size="icon" onClick={handlePrevDay} className="h-8 w-8 md:h-10 md:w-10">
