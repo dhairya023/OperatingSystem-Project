@@ -9,7 +9,9 @@ import { FirebaseClientProvider } from '@/firebase';
 import { useAppContext } from '@/context/app-context';
 import { useFirebase } from '@/firebase';
 import { usePathname, useRouter } from 'next/navigation';
-import { SkeletonAppLayout } from '@/components/skeletons/skeleton-app-layout';
+import SplashScreen from '@/components/splash-screen';
+import { SkeletonSidebar } from '@/components/skeletons/skeleton-sidebar';
+import { SkeletonHeader } from '@/components/skeletons/skeleton-header';
 
 function AppBody({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useFirebase();
@@ -45,7 +47,19 @@ function AppBody({ children }: { children: React.ReactNode }) {
   };
 
   if (!showContent()) {
-    return <SkeletonAppLayout pathname={pathname} />;
+    return (
+       <div className="flex h-screen bg-background text-foreground">
+        <div className="w-[17rem] p-2 hidden md:block">
+            <SkeletonSidebar />
+        </div>
+        <main className="flex-1 overflow-y-auto bg-transparent flex flex-col">
+            <SkeletonHeader />
+            <div className="flex-1 flex items-center justify-center">
+              <SplashScreen />
+            </div>
+        </main>
+    </div>
+    );
   }
 
   return <>{children}</>;
@@ -57,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

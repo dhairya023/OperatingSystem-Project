@@ -5,73 +5,74 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 275 87% 53%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 285 36% 15%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 285 36% 20%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 275 87% 63%;
-    --accent-foreground: 0 0% 98%;
+    --background: 240 20% 96%;
+    --foreground: 240 10% 10%;
+    --card: 240 20% 96%;
+    --card-foreground: 240 10% 10%;
+    --popover: 240 20% 96%;
+    --popover-foreground: 240 10% 10%;
+    --primary: 260 80% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 10% 90%;
+    --secondary-foreground: 240 10% 10%;
+    --muted: 240 10% 85%;
+    --muted-foreground: 240 10% 40%;
+    --accent: 240 10% 90%;
+    --accent-foreground: 240 10% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 275 87% 53%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.8rem;
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-  .dark {
-    --background: 0 0% 7%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 275 87% 53%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 285 36% 15%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 285 36% 20%;
-    --muted-foreground: 0 0% 98%;
-    --accent: 275 87% 63%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 275 87% 53%;
-    --chart-1: 275 87% 53%;
-    --chart-2: 275 87% 63%;
-    --chart-3: 275 87% 73%;
-    --chart-4: 285 36% 30%;
-    --chart-5: 285 36% 40%;
-    --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 275 87% 53%;
+    --border: 240 10% 88%;
+    --input: 240 10% 88%;
+    --ring: 260 80% 60%;
+    --chart-1: 260 80% 60%;
+    --chart-2: 260 70% 70%;
+    --chart-3: 260 60% 80%;
+    --chart-4: 260 50% 85%;
+    --chart-5: 260 40% 90%;
+    --radius: 1rem;
+    --sidebar-background: 240 20% 96%;
+    --sidebar-foreground: 240 10% 10%;
+    --sidebar-primary: 260 80% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15.9%;
-    --sidebar-accent-foreground: 0 0% 95.9%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 275 87% 53%;
+    --sidebar-accent: 240 10% 90%;
+    --sidebar-accent-foreground: 240 10% 10%;
+    --sidebar-border: 240 10% 88%;
+    --sidebar-ring: 260 80% 60%;
+  }
+
+  .dark {
+    --background: 220 15% 12%;
+    --foreground: 220 15% 90%;
+    --card: 220 15% 12%;
+    --card-foreground: 220 15% 90%;
+    --popover: 220 15% 10%;
+    --popover-foreground: 220 15% 90%;
+    --primary: 260 80% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 220 15% 90%;
+    --muted: 220, 15%, 25%;
+    --muted-foreground: 220 15% 60%;
+    --accent: 220 15% 20%;
+    --accent-foreground: 220 15% 90%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 260 80% 65%;
+    --chart-1: 260 80% 65%;
+    --chart-2: 260 70% 55%;
+    --chart-3: 260 60% 45%;
+    --chart-4: 260 50% 35%;
+    --chart-5: 260 40% 25%;
+    --sidebar-background: 220 15% 12%;
+    --sidebar-foreground: 220 15% 90%;
+    --sidebar-primary: 260 80% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 20%;
+    --sidebar-accent-foreground: 220 15% 90%;
+    --sidebar-border: 220 15% 22%;
+    --sidebar-ring: 260 80% 65%;
   }
 }
 
@@ -86,18 +87,6 @@
 }
 
 @layer components {
-  .neon-icon {
-    @apply drop-shadow-[0_0_4px_hsl(var(--primary)/0.7)];
-  }
-
-  [data-sidebar='menu-button'] > svg {
-      @apply stroke-[2.5px] text-primary/70;
-  }
-  
-  [data-sidebar='menu-button'][data-active='true'] > svg {
-      @apply text-primary neon-icon;
-  }
-
   .splash-screen {
     @apply flex items-center justify-center h-full w-full;
   }
@@ -108,35 +97,25 @@
   .animate-jump {
     animation: jump 1.2s cubic-bezier(0.6, 0.01, -0.05, 0.95) infinite;
   }
+  
+  .neumorphic-shadow {
+    @apply shadow-neumorphic;
+  }
+
+  .neumorphic-shadow-inset {
+    @apply shadow-neumorphic-inset;
+  }
+
+  .neumorphic-shadow-sm {
+    @apply shadow-neumorphic-sm;
+  }
+
+  .neumorphic-shadow-sm-inset {
+    @apply shadow-neumorphic-sm-inset;
+  }
 }
 
 @layer utilities {
-  @keyframes gradient-border {
-     0% { background-position: 0% 50%; }
-     50% { background-position: 100% 50%; }
-     100% { background-position: 0% 50%; }
-   }
-
-   .animate-gradient-border {
-     background-size: 200% 200%;
-     animation: gradient-border 4s linear infinite;
-   }
-   
-  @keyframes blob {
-	0% {
-		transform: translate(0px, 0px) scale(1);
-	}
-	33% {
-		transform: translate(30px, -50px) scale(1.1);
-	}
-	66% {
-		transform: translate(-20px, 20px) scale(0.9);
-	}
-	100% {
-		transform: translate(0px, 0px) scale(1);
-	}
-  }
-
   @keyframes jump {
     0%, 20%, 50%, 80%, 100% {
       transform: translateY(0);
@@ -147,29 +126,5 @@
     60% {
       transform: translateY(-15px);
     }
-  }
-
-  .animate-blob {
-    animation: blob 7s infinite;
-  }
-
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
-
-  .animation-delay-4000 {
-    animation-delay: 4s;
-  }
-
-  .animate-hue-glow::before {
-    content: "";
-    position: absolute;
-    inset: -8px;
-    background: inherit;
-    background-size: inherit;
-    animation: inherit;
-    filter: blur(16px);
-    opacity: 0.7;
-    z-index: -1;
   }
 }

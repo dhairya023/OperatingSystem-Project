@@ -11,13 +11,10 @@ import { useState, useEffect } from 'react';
 import { useAppContext } from "@/context/app-context";
 
 export default function Dashboard() {
-  const { profile } = useAppContext();
-  const [greeting, setGreeting] = useState('');
+  const { profile, setHeaderState } = useAppContext();
 
   useEffect(() => {
-    // This code runs only on the client, avoiding server/client mismatches.
     const hour = new Date().getHours();
-    // Use the first name from the user's profile, or a generic greeting if not available.
     const name = profile?.fullName?.split(' ')[0] || 'there';
     
     let timeOfDay;
@@ -28,13 +25,13 @@ export default function Dashboard() {
     } else {
       timeOfDay = 'Good evening';
     }
-    setGreeting(`${timeOfDay}, ${name} 👋`);
+    const newGreeting = `${timeOfDay}, ${name} 👋`
+    setHeaderState({title: newGreeting, description: "Here's your academic summary"});
 
-  }, [profile]); // Rerun this effect if the profile data changes.
+  }, [profile, setHeaderState]);
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title={greeting} description="Here's your academic summary" />
       
       <DashboardSummary />
 

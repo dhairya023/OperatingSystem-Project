@@ -34,8 +34,9 @@ import {
   GraduationCap as ExamIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { SkeletonAppLayout } from './skeletons/skeleton-app-layout';
+import SplashScreen from './splash-screen';
+import { SkeletonSidebar } from './skeletons/skeleton-sidebar';
+import { SkeletonHeader } from './skeletons/skeleton-header';
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -82,7 +83,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   };
 
   if (!showContent()) {
-    return <SkeletonAppLayout pathname={pathname} />;
+    return (
+       <div className="flex h-screen bg-background text-foreground">
+        <div className="w-[17rem] p-2 hidden md:block">
+            <SkeletonSidebar />
+        </div>
+        <main className="flex-1 overflow-y-auto bg-transparent flex flex-col">
+            <SkeletonHeader />
+            <div className="flex-1 flex items-center justify-center">
+              <SplashScreen />
+            </div>
+        </main>
+    </div>
+    );
   }
 
   const getInitials = (name?: string) => {
@@ -91,20 +104,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full bg-black">
+      <div className="flex h-screen w-full bg-background">
         <Sidebar
           className="p-2"
         >
           <div
             data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-card/50 backdrop-blur-md border border-border/40 rounded-3xl shadow-xl overflow-hidden"
+            className="flex h-full w-full flex-col bg-card rounded-3xl shadow-neumorphic dark:shadow-dark-neumorphic overflow-hidden"
           >
-            <SidebarHeader className="p-4 border-b border-border/40">
-                <div className="flex items-center gap-2 p-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                        <GraduationCap className="h-6 w-6 text-primary-foreground" />
+            <SidebarHeader className="p-4">
+                <div className="flex items-center gap-3 p-2">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary shadow-neumorphic-sm dark:shadow-dark-neumorphic-sm">
+                        <GraduationCap className="h-7 w-7 text-primary-foreground" />
                     </div>
-                    <h1 className="text-xl font-bold font-headline">Grad</h1>
+                    <h1 className="text-2xl font-bold font-headline">Grad</h1>
                 </div>
             </SidebarHeader>
 
@@ -118,8 +131,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                         <SidebarMenuItem key={route.href}>
                                 <SidebarMenuButton
                                   asChild
+                                  variant={isActive ? 'outline' : 'ghost'}
                                   className={cn(
-                                    "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-3 md:gap-3 text-muted-foreground hover:bg-black/20 hover:text-white"
+                                    "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-in-out md:text-sm md:py-3 md:gap-3 text-muted-foreground",
+                                    isActive && "font-semibold text-primary border-transparent shadow-neumorphic-inset dark:shadow-dark-neumorphic-inset"
                                   )}
                                 >
                                   <Link href={route.href}>
@@ -139,11 +154,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </SidebarGroup>
             </SidebarContent>
 
-            <SidebarFooter className="p-4 border-t border-border/40 mt-auto">
+            <SidebarFooter className="p-4 mt-auto">
               {user ? (
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between p-2 rounded-xl shadow-neumorphic-inset dark:shadow-dark-neumorphic-inset">
                   <div className="flex items-center gap-3">
-                     <Avatar className="h-8 w-8">
+                     <Avatar className="h-8 w-8 shadow-neumorphic-sm dark:shadow-dark-neumorphic-sm">
                        <AvatarImage src={profile?.profilePhotoUrl} />
                        <AvatarFallback>{getInitials(profile?.fullName)}</AvatarFallback>
                      </Avatar>
@@ -162,8 +177,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </div>
               ) : (
                 <Button
-                  variant="secondary"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl"
+                  className="w-full"
                   onClick={() => router.push('/login')}
                 >
                   Login
@@ -173,13 +187,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </Sidebar>
 
-        <SidebarInset className="flex-1 overflow-y-auto bg-transparent text-white">
-          <header className="flex items-center justify-between p-4 md:p-6 lg:p-8 sticky top-0 z-10 bg-black/50 backdrop-blur-sm">
+        <SidebarInset className="flex-1 overflow-y-auto bg-transparent">
+          <header className="flex items-center justify-between p-4 md:p-6 lg:p-8 sticky top-0 z-10 bg-background/80 backdrop-blur-sm">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
-              <h1 className="text-xl md:text-2xl font-bold tracking-tight font-headline text-white truncate">
-                {headerState.title}
-              </h1>
+              <div className='hidden md:block'>
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight font-headline truncate">
+                  {headerState.title}
+                </h1>
+                {headerState.description && <p className="text-sm text-muted-foreground">{headerState.description}</p>}
+              </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
                 {headerState.children}
