@@ -2,7 +2,7 @@
 'use client';
 import { useAppContext } from "@/context/app-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DoorClosed, Clock, Bell } from "lucide-react";
+import { DoorClosed, Clock, Bell, User } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 
@@ -63,12 +63,12 @@ export default function NextLecture() {
                 <CardContent className="space-y-2 md:space-y-3 p-4 pt-0 md:p-6 md:pt-0">
                     <div className="space-y-1">
                         <h3 className="text-lg md:text-2xl font-bold text-primary" style={{color: color}}>{nextClass.subject}</h3>
-                        <p className="text-xs md:text-sm text-foreground/80">{nextClass.teacher}</p>
                     </div>
-                    <div className="flex items-center gap-4 text-xs md:text-sm text-muted-foreground">
+                    <div className="flex flex-col gap-2 text-xs md:text-sm text-muted-foreground">
+                        {nextClass.teacher && (
+                          <span className="flex items-center gap-1.5"><User className="w-4 h-4"/> {nextClass.teacher}</span>
+                        )}
                         <span className="flex items-center gap-1.5"><Clock className="w-4 h-4"/> {formatTime12h(nextClass.startTime)} - {formatTime12h(nextClass.endTime)}</span>
-                    </div>
-                     <div className="flex items-center gap-4 text-xs md:text-sm text-muted-foreground">
                         {nextClass.room && <span className="flex items-center gap-1.5"><DoorClosed className="w-4 h-4"/> {nextClass.room}</span>}
                     </div>
                 </CardContent>
