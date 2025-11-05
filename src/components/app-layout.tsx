@@ -38,8 +38,8 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/comp
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/attendance", label: "Attendance", icon: UserCheck },
   { href: "/timetable", label: "Timetable", icon: CalendarDays },
+  { href: "/attendance", label: "Attendance", icon: UserCheck },
   { href: "/assignments", label: "Assignments", icon: BookCheck },
   { href: "/exams", label: "Exams", icon: ExamIcon },
   { href: "/grades", label: "Grades", icon: BarChart },

@@ -22,8 +22,8 @@ import {
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/attendance", label: "Attendance", icon: UserCheck },
   { href: "/timetable", label: "Timetable", icon: CalendarDays },
+  { href: "/attendance", label: "Attendance", icon: UserCheck },
   { href: "/assignments", label: "Assignments", icon: BookCheck },
   { href: "/exams", label: "Exams", icon: GraduationCap },
   { href: "/grades", label: "Grades", icon: BarChart },
