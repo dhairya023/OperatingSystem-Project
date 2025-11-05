@@ -113,7 +113,7 @@ function AttendanceContent() {
                   <CardHeader>
                       <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                           <div>
-                          <CardTitle>Subject-wise Details</CardTitle>
+                          <CardTitle>Subject-Wise Details</CardTitle>
                           <CardDescription>Select a subject to view its details.</CardDescription>
                           </div>
                           <Select value={selectedSubject} onValueChange={setSelectedSubject}>

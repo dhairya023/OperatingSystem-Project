@@ -116,7 +116,7 @@ export default function SubjectAttendanceCalendar({ classes, isMini = false, vie
                         'w-9 h-9 rounded-full flex items-center justify-center cursor-pointer border text-xs',
                          isSameDay(day, viewingDate) && 'border-primary border-2',
                         !isSameMonth(day, calendarMonth) && 'text-muted-foreground',
-                         status && statusColors[status]
+                         status ? statusColors[status] : "bg-transparent"
                         )}
                     >
                         {getDate(day)}
