@@ -213,7 +213,7 @@ function TimetableContent() {
                 </Button>
             </div>
 
-            <div className="mt-6 flex-1 pb-8">
+            <div className="mt-6 flex-1 pb-8 min-h-[50vh]">
                 {dailyClasses.length > 0 ? (
                 <div className="flex flex-col gap-4">
                     {dailyClasses.map(session => (
