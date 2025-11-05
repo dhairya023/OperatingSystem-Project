@@ -20,6 +20,8 @@ import {
   sendPasswordResetEmail,
   deleteUser,
   signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from 'firebase/auth';
 import { addDays, addMonths, startOfDay, getDay } from 'date-fns';
 
@@ -61,6 +63,7 @@ interface AppContextType extends UserData {
   updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
   loginUser: (email: string, password: string) => Promise<void>;
   registerUser: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   logoutUser: () => Promise<void>;
   deleteAccount: () => Promise<void>;
@@ -183,6 +186,35 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           assignments: [],
           exams: [],
           grades: [],
+      });
+    }
+  };
+
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    const userCredential = await signInWithPopup(auth, provider);
+    const newUser = userCredential.user;
+
+    const userDocRef = doc(firestore, "users", newUser.uid);
+    const docSnap = await getDoc(userDocRef);
+
+    if (!docSnap.exists()) {
+      // If the user is new, create their profile document
+      await setDoc(userDocRef, {
+        uid: newUser.uid,
+        email: newUser.email,
+        createdAt: serverTimestamp(),
+        profile: {
+          ...initialProfile,
+          fullName: newUser.displayName || '',
+          email: newUser.email || '',
+          profilePhotoUrl: newUser.photoURL || `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(newUser.email || 'anonymous')}`,
+        },
+        subjects: [],
+        classes: [],
+        assignments: [],
+        exams: [],
+        grades: [],
       });
     }
   };
@@ -423,6 +455,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     deleteExam: examUpdater.delete,
     loginUser,
     registerUser,
+    loginWithGoogle,
     sendPasswordReset,
     logoutUser,
     deleteAccount,
@@ -451,3 +484,5 @@ export const useAppContext = () => {
   }
   return context;
 };
+
+    
