@@ -159,20 +159,6 @@ function TimetableContent() {
         return new Date(0,0,0, parseInt(timeA[0]), parseInt(timeA[1])).getTime() - new Date(0,0,0, parseInt(timeB[0]), parseInt(timeB[1])).getTime();
     });
 
-  if (subjects.length === 0 && !importCode) {
-    return (
-      <div className="flex flex-col gap-8 w-full p-4 md:p-6 lg:p-8">
-        <PageHeader title="Timetable" description="Manage your class schedule." />
-        <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
-          <div className="text-center px-4">
-            <p className="text-lg font-medium text-muted-foreground">No subjects found.</p>
-            <p className="text-sm text-muted-foreground/80 mt-2">Add subjects in the 'Subjects' page to build your timetable.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   const pageActions = (
     <div className="flex items-center gap-2">
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -196,14 +182,27 @@ function TimetableContent() {
     </div>
   );
 
+  if (subjects.length === 0 && !importCode) {
+    return (
+      <div className="flex flex-col gap-8 w-full">
+        <PageHeader title="Timetable" description="Manage your class schedule." />
+        <div className="flex h-[60vh] items-center justify-center rounded-xl border-2 border-dashed border-border bg-card/50">
+          <div className="text-center px-4">
+            <p className="text-lg font-medium text-muted-foreground">No subjects found.</p>
+            <p className="text-sm text-muted-foreground/80 mt-2">Add subjects in the 'Subjects' page to build your timetable.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col gap-8 w-full p-4 md:p-6 lg:p-8">
-      <PageHeader 
-        title="Timetable" 
+    <div className="flex flex-col gap-8 w-full">
+       <PageHeader
+        title="Timetable"
         description="Your weekly class schedule."
         children={pageActions}
       />
-
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-muted/50">
           <Button variant="ghost" size="icon" onClick={handlePrevDay} className="h-8 w-8 md:h-10 md:w-10">
@@ -274,7 +273,9 @@ function TimetableContent() {
 export default function TimetablePage() {
   return (
     <AppLayout>
+      <div className="w-full p-4 md:p-6 lg:p-8">
         <TimetableContent />
+      </div>
     </AppLayout>
   );
 }
