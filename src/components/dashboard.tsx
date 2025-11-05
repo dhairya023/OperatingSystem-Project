@@ -8,7 +8,6 @@ import UpcomingClasses from "@/components/dashboard/upcoming-classes";
 import { useState, useEffect } from 'react';
 import { useAppContext } from "@/context/app-context";
 import PageHeader from "@/components/page-header";
-import AttendanceOverview from "./dashboard/attendance-overview";
 
 export default function Dashboard() {
   const { profile, setHeaderState } = useAppContext();
@@ -47,10 +46,6 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <UpcomingClasses />
         <PendingAssignments />
-      </div>
-
-       <div className="grid grid-cols-1">
-        <AttendanceOverview />
       </div>
     </div>
   );
