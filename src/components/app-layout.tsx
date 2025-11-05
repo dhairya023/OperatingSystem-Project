@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -111,8 +112,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                         <SidebarMenuItem key={route.href}>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Link href={route.href}>
                                 <SidebarMenuButton
+                                  asChild
                                   className={cn(
                                     "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-out md:text-sm md:py-3 md:gap-3",
                                     isActive
@@ -121,14 +122,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                                   )}
                                   isActive={isActive}
                                 >
-                                  <route.icon
-                                    className={cn(
-                                      "h-5 w-5",
-                                    )}
-                                  />
-                                  <span>{route.label}</span>
+                                  <Link href={route.href}>
+                                    <route.icon
+                                      className={cn(
+                                        "h-5 w-5",
+                                      )}
+                                    />
+                                    <span>{route.label}</span>
+                                  </Link>
                                 </SidebarMenuButton>
-                              </Link>
                             </TooltipTrigger>
                             <TooltipContent side="right" align="center">
                               {route.label}
@@ -177,7 +179,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </Sidebar>
 
         <SidebarInset className="flex-1 overflow-y-auto bg-transparent text-white">
-          <header className="md:hidden flex items-center justify-between p-4 sticky top-0 bg-black/50 backdrop-blur-sm z-10">
+          <header className="md:hidden flex items-center justify-between p-4 sticky top-0 z-10">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
               <h1 className="text-lg font-bold tracking-tight font-headline text-white">
