@@ -1,8 +1,7 @@
 
 'use client';
 import AppLayout from '@/components/app-layout';
-import { useState } from 'react';
-import PageHeader from '@/components/page-header';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusCircle, FileText } from 'lucide-react';
@@ -18,7 +17,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAppContext } from '@/context/app-context';
 import type { Assignment } from '@/lib/types';
-import { format, formatDistanceToNow, isPast } from 'date-fns';
+import { formatDistanceToNow, isPast } from 'date-fns';
 import AssignmentForm from '@/components/assignments/assignment-form';
 import { cn } from '@/lib/utils';
 import { AssignmentDetailsDrawer } from '@/components/assignments/assignment-details-drawer';
@@ -68,7 +67,7 @@ const AssignmentItem = ({ assignment, onEdit, onDelete, onToggle }: { assignment
 
 
 function AssignmentsContent() {
-  const { assignments, addAssignment, updateAssignment, deleteAssignment, toggleAssignmentCompletion } = useAppContext();
+  const { assignments, addAssignment, updateAssignment, deleteAssignment, toggleAssignmentCompletion, setHeaderState } = useAppContext();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | undefined>(undefined);
@@ -109,26 +108,38 @@ function AssignmentsContent() {
     setIsFormOpen(true);
   }
 
-  const pageActions = (
-    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogTrigger asChild>
-            <Button onClick={openNewDialog} className="self-start">
-                <PlusCircle className="mr-2" /> Add Assignment
-            </Button>
-        </DialogTrigger>
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>{selectedAssignment ? 'Edit' : 'Add'} Assignment</DialogTitle>
-            </DialogHeader>
-            <AssignmentForm onSave={handleSaveAssignment} assignment={selectedAssignment} />
-        </DialogContent>
-    </Dialog>
-  );
+  useEffect(() => {
+    const pageActions = (
+      <Dialog open={isFormOpen} onOpenChange={(isOpen) => {
+          if (!isOpen) setSelectedAssignment(undefined);
+          setIsFormOpen(isOpen);
+      }}>
+          <DialogTrigger asChild>
+              <Button onClick={openNewDialog}>
+                  <PlusCircle className="mr-2" />
+                  <span className="hidden sm:inline">Add Assignment</span>
+                  <span className="sm:hidden">Add</span>
+              </Button>
+          </DialogTrigger>
+          <DialogContent>
+              <DialogHeader>
+                  <DialogTitle>{selectedAssignment ? 'Edit' : 'Add'} Assignment</DialogTitle>
+              </DialogHeader>
+              <AssignmentForm onSave={handleSaveAssignment} assignment={selectedAssignment} />
+          </DialogContent>
+      </Dialog>
+    );
+
+    setHeaderState({
+        title: "Assignments",
+        description: "Keep track of all your assignments.",
+        children: pageActions
+    });
+  }, [isFormOpen, selectedAssignment, setHeaderState]);
+
 
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
-      <PageHeader title="Assignments" description="Keep track of all your assignments." children={pageActions} />
-
       <div className="grid gap-8 lg:grid-cols-2">
         <Card>
             <CardHeader>
