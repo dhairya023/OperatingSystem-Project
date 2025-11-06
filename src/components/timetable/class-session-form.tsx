@@ -20,7 +20,7 @@ import Link from 'next/link';
 
 type ClassSessionFormProps = {
   session?: ClassSession;
-  onSave: (session: ClassSession, scope?: 'single' | 'future' | 'all') => void;
+  onSave: (session: ClassSession, scope?: 'single' | 'future') => void;
   defaultDate?: Date;
   isRecurring?: boolean;
   className?: string;
@@ -48,7 +48,7 @@ export default function ClassSessionForm({ session, onSave, defaultDate, isRecur
   }, [startTime, session]);
 
 
-  const handleSubmit = (scope: 'single' | 'future' | 'all' = 'single') => {
+  const handleSubmit = (scope: 'single' | 'future' = 'single') => {
     if (!subject || !date || !startTime || !endTime) return;
     
     const selectedSubject = subjects.find(s => s.name === subject);
@@ -155,7 +155,6 @@ export default function ClassSessionForm({ session, onSave, defaultDate, isRecur
                 <Separator className="my-4" />
                 <Button type="button" onClick={() => handleSubmit('single')}>Save For This Class Only</Button>
                 <Button type="button" onClick={() => handleSubmit('future')}>Save For This & Future Classes</Button>
-                <Button type="button" onClick={() => handleSubmit('all')}>Save For All Classes</Button>
             </div>
         ) : (
             <Button type="button" className="w-full" onClick={() => handleSubmit('single')}>Save Class</Button>

@@ -71,7 +71,7 @@ export function ClassDetailsDrawer({ session, isOpen, onOpenChange }: ClassDetai
     }
   }
   
-  const handleScopeConfirm = (scope: 'single' | 'future' | 'all') => {
+  const handleScopeConfirm = (scope: 'single' | 'future') => {
       setIsScopeDialogOpen(false);
       if (actionType === 'edit') {
         // We pass the scope to the form through a prop that is not there,
@@ -83,7 +83,7 @@ export function ClassDetailsDrawer({ session, isOpen, onOpenChange }: ClassDetai
       }
   }
   
-  const handleUpdate = (updatedSession: ClassSession, scope: 'single' | 'future' | 'all') => {
+  const handleUpdate = (updatedSession: ClassSession, scope: 'single' | 'future') => {
     updateClass(updatedSession, scope);
     setIsEditDialogOpen(false);
   };
@@ -140,7 +140,7 @@ export function ClassDetailsDrawer({ session, isOpen, onOpenChange }: ClassDetai
           </DialogHeader>
           <ClassSessionForm
             session={session}
-            onSave={(updatedSession, scope) => handleUpdate(updatedSession, scope)}
+            onSave={(updatedSession, scope) => handleUpdate(updatedSession, scope as 'single' | 'future')}
             isRecurring={!!session.rrule}
           />
         </DialogContent>
@@ -173,9 +173,6 @@ export function ClassDetailsDrawer({ session, isOpen, onOpenChange }: ClassDetai
                   </Button>
                   <Button variant="outline" onClick={() => handleScopeConfirm('future')}>
                       {actionType === 'edit' ? 'Edit' : 'Delete'} This and All Future Classes
-                  </Button>
-                  <Button variant="outline" onClick={() => handleScopeConfirm('all')}>
-                      {actionType === 'edit' ? 'Edit' : 'Delete'} All Classes in Series
                   </Button>
               </div>
               <DialogFooter>

@@ -49,9 +49,9 @@ interface AppContextType extends UserData {
   updateSubject: (subject: Subject) => Promise<void>;
   deleteSubject: (id: string) => Promise<void>;
   addClass: (session: ClassSession) => Promise<void>;
-  updateClass: (session: ClassSession, scope: 'single' | 'future' | 'all') => Promise<void>;
+  updateClass: (session: ClassSession, scope: 'single' | 'future') => Promise<void>;
   updateClassStatus: (sessionId: string, status: ClassSession['status']) => Promise<void>;
-  deleteClass: (session: ClassSession, scope: 'single' | 'future' | 'all') => Promise<void>;
+  deleteClass: (session: ClassSession, scope: 'single' | 'future') => Promise<void>;
   addAssignment: (assignment: Assignment) => Promise<void>;
   updateAssignment: (assignment: Assignment) => Promise<void>;
   deleteAssignment: (id: string) => Promise<void>;
@@ -323,7 +323,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
 
-  const updateClass = async (session: ClassSession, scope: 'single' | 'future' | 'all') => {
+  const updateClass = async (session: ClassSession, scope: 'single' | 'future') => {
       let currentClasses = [...(userData?.classes || [])];
       
       if (scope === 'single' || !session.rrule) {
@@ -336,9 +336,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           currentClasses = currentClasses.map(c => {
               if (c.rrule === session.rrule) {
                   const cDate = startOfDay(new Date(c.date));
-                  const shouldUpdate = 
-                      (scope === 'all') ||
-                      (scope === 'future' && (cDate.getTime() >= sessionDate.getTime()));
+                  const shouldUpdate = scope === 'future' && (cDate.getTime() >= sessionDate.getTime());
                   
                   if (shouldUpdate) {
                       // Preserve original date and id, but update other details
@@ -367,7 +365,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const deleteClass = async (session: ClassSession, scope: 'single' | 'future' | 'all') => {
+  const deleteClass = async (session: ClassSession, scope: 'single' | 'future') => {
     let currentClasses = [...(userData?.classes || [])];
 
     if (scope === 'single' || !session.rrule) {
@@ -377,9 +375,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         currentClasses = currentClasses.filter(c => {
             if (c.rrule === session.rrule) {
                 const cDate = startOfDay(new Date(c.date));
-                const shouldDelete =
-                    (scope === 'all') ||
-                    (scope === 'future' && (cDate.getTime() >= sessionDate.getTime()));
+                const shouldDelete = scope === 'future' && (cDate.getTime() >= sessionDate.getTime());
                 return !shouldDelete;
             }
             return true;
