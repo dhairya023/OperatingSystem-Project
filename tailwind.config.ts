@@ -72,16 +72,6 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
-      boxShadow: {
-        'neumorphic': '9px 9px 16px rgba(193, 203, 222, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5)',
-        'neumorphic-inset': 'inset 9px 9px 16px rgba(193, 203, 222, 0.6), inset -9px -9px 16px rgba(255, 255, 255, 0.5)',
-        'neumorphic-sm': '5px 5px 10px rgba(193, 203, 222, 0.6), -5px -5px 10px rgba(255, 255, 255, 0.5)',
-        'neumorphic-sm-inset': 'inset 5px 5px 10px rgba(193, 203, 222, 0.6), inset -5px -5px 10px rgba(255, 255, 255, 0.5)',
-        'dark-neumorphic': '9px 9px 16px rgba(24, 27, 31, 0.6), -9px -9px 16px rgba(40, 45, 51, 0.5)',
-        'dark-neumorphic-inset': 'inset 9px 9px 16px rgba(24, 27, 31, 0.6), inset -9px -9px 16px rgba(40, 45, 51, 0.5)',
-        'dark-neumorphic-sm': '5px 5px 10px rgba(24, 27, 31, 0.6), -5px -5px 10px rgba(40, 45, 51, 0.5)',
-        'dark-neumorphic-sm-inset': 'inset 5px 5px 10px rgba(24, 27, 31, 0.6), inset -5px -5px 10px rgba(40, 45, 51, 0.5)',
-      },
       keyframes: {
         'accordion-down': {
           from: {

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useFirebase } from '@/firebase';
 import { 
@@ -54,6 +54,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { isDataLoading, profile, logoutUser, headerState } = useAppContext();
   const router = useRouter();
   const pathname = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (isUserLoading || isDataLoading) return;
@@ -103,21 +104,21 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
       <div className="flex h-screen w-full bg-background">
-        <Sidebar
-          className="p-2"
-        >
+        <Sidebar className="p-2">
           <div
             data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-card rounded-3xl shadow-neumorphic dark:shadow-dark-neumorphic overflow-hidden"
+            className="flex h-full w-full flex-col bg-card rounded-3xl shadow-lg overflow-hidden"
           >
             <SidebarHeader className="p-4">
                 <div className="flex items-center gap-3 p-2">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary shadow-neumorphic-sm dark:shadow-dark-neumorphic-sm">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary shadow-sm">
                         <GraduationCap className="h-7 w-7 text-primary-foreground" />
                     </div>
-                    <h1 className="text-2xl font-bold font-headline">Grad</h1>
+                    <div className={cn("overflow-hidden transition-all duration-300", isSidebarOpen ? 'w-auto opacity-100' : 'w-0 opacity-0')}>
+                      <h1 className="text-2xl font-bold font-headline">Grad</h1>
+                    </div>
                 </div>
             </SidebarHeader>
 
@@ -131,11 +132,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                         <SidebarMenuItem key={route.href}>
                                 <SidebarMenuButton
                                   asChild
-                                  variant={isActive ? 'outline' : 'ghost'}
+                                  isActive={isActive}
+                                  variant={isActive ? 'secondary' : 'ghost'}
                                   className={cn(
                                     "flex w-full items-center gap-4 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 ease-in-out md:text-sm md:py-3 md:gap-3 text-muted-foreground",
-                                    isActive && "font-semibold text-primary border-transparent shadow-neumorphic-inset dark:shadow-dark-neumorphic-inset"
+                                    !isSidebarOpen && "justify-center",
+                                    isActive && "font-semibold text-primary"
                                   )}
+                                  tooltip={{children: route.label, side: 'right', align: 'center'}}
                                 >
                                   <Link href={route.href}>
                                     <route.icon
@@ -143,7 +147,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                                         "h-5 w-5",
                                       )}
                                     />
-                                    <span>{route.label}</span>
+                                    <span className={cn(isSidebarOpen ? 'inline-block' : 'hidden')}>{route.label}</span>
                                   </Link>
                                 </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -156,9 +160,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
             <SidebarFooter className="p-4 mt-auto">
               {user ? (
-                <div className="flex items-center justify-between p-2 rounded-xl shadow-neumorphic-inset dark:shadow-dark-neumorphic-inset">
-                  <div className="flex items-center gap-3">
-                     <Avatar className="h-8 w-8 shadow-neumorphic-sm dark:shadow-dark-neumorphic-sm">
+                <div className="flex items-center justify-between p-2 rounded-xl border">
+                  <div className={cn("flex items-center gap-3 overflow-hidden", isSidebarOpen ? 'w-auto' : 'w-0')}>
+                     <Avatar className="h-8 w-8">
                        <AvatarImage src={profile?.profilePhotoUrl} />
                        <AvatarFallback>{getInitials(profile?.fullName)}</AvatarFallback>
                      </Avatar>

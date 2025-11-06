@@ -5,74 +5,74 @@
 
 @layer base {
   :root {
-    --background: 240 20% 96%;
-    --foreground: 240 10% 10%;
-    --card: 240 20% 96%;
-    --card-foreground: 240 10% 10%;
-    --popover: 240 20% 96%;
-    --popover-foreground: 240 10% 10%;
-    --primary: 260 80% 60%;
+    --background: 282 25% 6%;
+    --foreground: 220 15% 90%;
+    --card: 282 25% 10%;
+    --card-foreground: 220 15% 90%;
+    --popover: 282 25% 6%;
+    --popover-foreground: 220 15% 90%;
+    --primary: 275 80% 65%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 10% 90%;
-    --secondary-foreground: 240 10% 10%;
-    --muted: 240 10% 85%;
-    --muted-foreground: 240 10% 40%;
-    --accent: 240 10% 90%;
-    --accent-foreground: 240 10% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 10% 88%;
-    --input: 240 10% 88%;
-    --ring: 260 80% 60%;
-    --chart-1: 260 80% 60%;
-    --chart-2: 260 70% 70%;
-    --chart-3: 260 60% 80%;
-    --chart-4: 260 50% 85%;
-    --chart-5: 260 40% 90%;
+    --secondary: 282 25% 20%;
+    --secondary-foreground: 220 15% 90%;
+    --muted: 282, 25%, 25%;
+    --muted-foreground: 220 15% 60%;
+    --accent: 275 80% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 282 25% 22%;
+    --input: 282 25% 22%;
+    --ring: 275 80% 65%;
+    --chart-1: 275 80% 65%;
+    --chart-2: 275 70% 55%;
+    --chart-3: 275 60% 45%;
+    --chart-4: 275 50% 35%;
+    --chart-5: 275 40% 25%;
     --radius: 1rem;
-    --sidebar-background: 240 20% 96%;
-    --sidebar-foreground: 240 10% 10%;
-    --sidebar-primary: 260 80% 60%;
+    --sidebar-background: 282 25% 6%;
+    --sidebar-foreground: 220 15% 90%;
+    --sidebar-primary: 275 80% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 10% 90%;
-    --sidebar-accent-foreground: 240 10% 10%;
-    --sidebar-border: 240 10% 88%;
-    --sidebar-ring: 260 80% 60%;
+    --sidebar-accent: 282 25% 20%;
+    --sidebar-accent-foreground: 220 15% 90%;
+    --sidebar-border: 282 25% 22%;
+    --sidebar-ring: 275 80% 65%;
   }
 
   .dark {
-    --background: 220 15% 12%;
+    --background: 282 25% 6%;
     --foreground: 220 15% 90%;
-    --card: 220 15% 12%;
+    --card: 282 25% 10%;
     --card-foreground: 220 15% 90%;
-    --popover: 220 15% 10%;
+    --popover: 282 25% 6%;
     --popover-foreground: 220 15% 90%;
-    --primary: 260 80% 65%;
+    --primary: 275 80% 65%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 15% 20%;
+    --secondary: 282 25% 20%;
     --secondary-foreground: 220 15% 90%;
-    --muted: 220, 15%, 25%;
+    --muted: 282, 25%, 25%;
     --muted-foreground: 220 15% 60%;
-    --accent: 220 15% 20%;
-    --accent-foreground: 220 15% 90%;
+    --accent: 275 80% 50%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 15% 22%;
-    --input: 220 15% 22%;
-    --ring: 260 80% 65%;
-    --chart-1: 260 80% 65%;
-    --chart-2: 260 70% 55%;
-    --chart-3: 260 60% 45%;
-    --chart-4: 260 50% 35%;
-    --chart-5: 260 40% 25%;
-    --sidebar-background: 220 15% 12%;
+    --border: 282 25% 22%;
+    --input: 282 25% 22%;
+    --ring: 275 80% 65%;
+    --chart-1: 275 80% 65%;
+    --chart-2: 275 70% 55%;
+    --chart-3: 275 60% 45%;
+    --chart-4: 275 50% 35%;
+    --chart-5: 275 40% 25%;
+    --sidebar-background: 282 25% 6%;
     --sidebar-foreground: 220 15% 90%;
-    --sidebar-primary: 260 80% 65%;
+    --sidebar-primary: 275 80% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 20%;
+    --sidebar-accent: 282 25% 20%;
     --sidebar-accent-foreground: 220 15% 90%;
-    --sidebar-border: 220 15% 22%;
-    --sidebar-ring: 260 80% 65%;
+    --sidebar-border: 282 25% 22%;
+    --sidebar-ring: 275 80% 65%;
   }
 }
 
@@ -96,22 +96,6 @@
 
   .animate-jump {
     animation: jump 1.2s cubic-bezier(0.6, 0.01, -0.05, 0.95) infinite;
-  }
-  
-  .neumorphic-shadow {
-    @apply shadow-neumorphic;
-  }
-
-  .neumorphic-shadow-inset {
-    @apply shadow-neumorphic-inset;
-  }
-
-  .neumorphic-shadow-sm {
-    @apply shadow-neumorphic-sm;
-  }
-
-  .neumorphic-shadow-sm-inset {
-    @apply shadow-neumorphic-sm-inset;
   }
 }
 
