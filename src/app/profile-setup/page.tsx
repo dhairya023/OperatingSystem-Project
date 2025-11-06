@@ -1,6 +1,6 @@
 
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,30 +21,28 @@ export default function ProfileSetupPage() {
   const { toast } = useToast();
   
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<UserProfile>>({
+
+  const initialFormData = useMemo(() => ({
     fullName: profile?.fullName || '',
     email: profile?.email || '',
-    course: '',
-    branch: '',
-    semester: '',
-    collegeName: '',
-    rollNumber: '',
-    phoneNumber: '',
-    dateOfBirth: undefined,
+    course: profile?.course || '',
+    branch: profile?.branch || '',
+    semester: profile?.semester || '',
+    collegeName: profile?.collegeName || '',
+    rollNumber: profile?.rollNumber || '',
+    phoneNumber: profile?.phoneNumber || '',
+    dateOfBirth: profile?.dateOfBirth ? new Date(profile.dateOfBirth) : undefined,
     profilePhotoUrl: profile?.profilePhotoUrl || '',
-  });
+  }), [profile]);
+
+  const [formData, setFormData] = useState<Partial<UserProfile>>(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (profile) {
-      setFormData(prev => ({
-        ...prev,
-        fullName: profile.fullName || '',
-        email: profile.email || '',
-        profilePhotoUrl: profile.profilePhotoUrl || `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(profile.email || 'user')}`,
-      }));
-    }
-  }, [profile]);
+    // When the profile is loaded, reset the form data to match it.
+    // This handles cases where the user navigates away and comes back.
+    setFormData(initialFormData);
+  }, [initialFormData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
