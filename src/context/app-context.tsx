@@ -19,6 +19,8 @@ import {
   sendPasswordResetEmail,
   deleteUser,
   signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from 'firebase/auth';
 import { addDays, addMonths, startOfDay, getDay } from 'date-fns';
 
@@ -59,6 +61,7 @@ interface AppContextType extends UserData {
   deleteExam: (id: string) => Promise<void>;
   updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
   loginUser: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   registerUser: (email: string, password: string) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   logoutUser: () => Promise<void>;
@@ -175,6 +178,36 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const loginUser = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
+  };
+
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const newUser = result.user;
+      const userDocRef = doc(firestore, 'users', newUser.uid);
+      const docSnap = await getDoc(userDocRef);
+
+      if (!docSnap.exists()) {
+        // This is a new user, create their profile document
+        await setDoc(userDocRef, {
+          profile: {
+            ...initialProfile,
+            email: newUser.email || '',
+            fullName: newUser.displayName || '',
+            profilePhotoUrl: newUser.photoURL || `https://api.dicebear.com/8.x/bottts-neutral/svg?seed=${encodeURIComponent(newUser.email || 'anonymous')}`,
+          },
+          subjects: [],
+          classes: [],
+          assignments: [],
+          exams: [],
+          grades: [],
+        });
+      }
+    } catch (error) {
+      console.error("Error during Google sign-in:", error);
+      throw error;
+    }
   };
   
   const registerUser = async (email: string, password: string) => {
@@ -447,6 +480,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     updateExam: examUpdater.update,
     deleteExam: examUpdater.delete,
     loginUser,
+    loginWithGoogle,
     registerUser,
     sendPasswordReset,
     logoutUser,
@@ -476,3 +510,5 @@ export const useAppContext = () => {
   }
   return context;
 };
+
+    
