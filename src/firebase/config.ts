@@ -7,3 +7,10 @@ export const firebaseConfig = {
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
 };
+
+export const areFirebaseCredentialsSet = 
+    !!firebaseConfig.projectId &&
+    !!firebaseConfig.appId &&
+    !!firebaseConfig.apiKey &&
+    !!firebaseConfig.authDomain &&
+    !!firebaseConfig.messagingSenderId;

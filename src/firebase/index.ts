@@ -1,12 +1,22 @@
 'use client';
 
-import { firebaseConfig } from '@/firebase/config';
+import { firebaseConfig, areFirebaseCredentialsSet } from '@/firebase/config';
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore'
 
 // IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
+  if (!areFirebaseCredentialsSet) {
+    // Return mock/empty services if credentials are not set
+    // This allows the app to build and run without a full Firebase connection
+    return {
+      firebaseApp: null,
+      auth: null,
+      firestore: null,
+    };
+  }
+
   if (!getApps().length) {
     const firebaseApp = initializeApp(firebaseConfig);
     return getSdks(firebaseApp);
